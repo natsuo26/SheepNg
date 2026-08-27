@@ -1,96 +1,109 @@
 # SheepNg
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+An Nx monorepo for the **`@sheep-ng`** Angular UI component library, its demos, and a demo app.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+- **Nx** 23.1.2
+- **Angular** 22.0.4 — standalone, zoneless (no `zone.js`)
+- **TypeScript** 6.0.3
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## Structure
 
-## Run tasks
+| Project | Path | Import path | Purpose |
+| --- | --- | --- | --- |
+| `ui` | `libs/ui` | `@sheep-ng/ui` | The component library. Publishable (ng-packagr). |
+| `demo` | `libs/demo` | `@sheep-ng/demo` | One demo component per UI component. Buildable, not published. |
+| `demo-app` | `apps/demo-app` | — | The single app that renders the demos. |
+| `demo-app-e2e` | `apps/demo-app-e2e` | — | Playwright e2e tests for `demo-app`. |
 
-To run tasks with Nx use:
+Dependencies flow one way:
 
-```sh
-npx nx <target> <project-name>
+```
+demo-app  →  @sheep-ng/demo  →  @sheep-ng/ui
 ```
 
-For example:
+`demo-app` holds routing and layout only — every component demo lives in `libs/demo` so the
+demos stay versioned alongside the library.
+
+## Prerequisites
+
+- Node.js 20+ (developed on 24.19.0)
+- npm 10+
+
+## Getting started
 
 ```sh
-npx nx build myproject
+npm install
+npx nx serve demo-app        # http://localhost:4200
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
-
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
-```
-
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
+## Commands
 
 ```sh
-# Generate an app
-npx nx g @nx/react:app demo
+npx nx build ui              # package the library → dist/libs/ui
+npx nx test ui               # unit tests (Vitest)
+npx nx lint ui               # ESLint
 
-# Generate a library
-npx nx g @nx/react:lib some-lib
+npx nx run-many -t build     # build everything
+npx nx run-many -t test lint # test + lint everything
+
+npx nx e2e demo-app-e2e      # Playwright (starts demo-app automatically)
+npx nx graph                 # visualize the dependency graph
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+Nx caches task results, so repeat runs are near-instant. `npx nx reset` clears the cache.
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Adding a component
 
-## Set up CI!
+1. Generate it in the library and export it from the public entrypoint:
 
-### Step 1
+   ```sh
+   npx nx g @nx/angular:component --path=libs/ui/src/lib/button/button --export
+   ```
 
-To connect to Nx Cloud, run the following command:
+2. Generate its demo:
+
+   ```sh
+   npx nx g @nx/angular:component --path=libs/demo/src/lib/button-demo/button-demo --export
+   ```
+
+   Import the component from `@sheep-ng/ui` (never by relative path across libraries).
+
+3. Add a route for the demo in `apps/demo-app/src/app/app.routes.ts`.
+
+Both libraries default to SCSS and standalone components — see `generators` in `nx.json`.
+
+## Conventions
+
+| | `ui` | `demo` | `demo-app` |
+| --- | --- | --- | --- |
+| Selector prefix | `sheep-` | `sheep-demo-` | `sheep-app-` |
+| Tags | `type:ui`, `scope:shared` | `type:demo`, `scope:shared` | `type:app`, `scope:demo` |
+
+Anything exported from `libs/ui/src/index.ts` is public API — treat changes there as breaking.
+
+## Publishing
+
+`@sheep-ng/ui` is published from its build output (`dist/libs/ui`) via
+[Nx release](https://nx.dev/features/manage-releases). Versions resolve from git tags
+(`v{version}`), falling back to `libs/ui/package.json`.
 
 ```sh
-npx nx connect
+npx nx release --dry-run     # preview version bump + changelog
+npx nx release
 ```
 
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
+To test a publish without hitting npm, run the local Verdaccio registry first:
 
 ```sh
-npx nx g ci-workflow
+npx nx local-registry         # http://localhost:4873
 ```
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Known issues
 
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- `nx lint ui` and `nx lint demo` currently fail: the `@nx/dependency-checks` rule reports
+  `@angular/common` as an unused peer dependency. This clears itself as soon as a real
+  component uses anything from `@angular/common`.
+- Generators emit `@nx/eslint:lint` executor targets, which are deprecated and removed in
+  Nx 24. Migrate with `npx nx g @nx/eslint:convert-to-inferred`.
+- `@nx/enforce-module-boundaries` is configured with the default permissive constraint
+  (`*` may depend on `*`), so the project tags above are documentation, not enforcement.
