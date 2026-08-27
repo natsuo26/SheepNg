@@ -7,37 +7,13 @@ import {
   input,
   viewChild,
 } from '@angular/core';
-
-/**
- * Visual weight.
- *
- * `outline` is the default and the library's signature: an accent line on a
- * transparent ground. `solid` is reserved for the one most important action in
- * a view — the spec does not flood large areas with a tone.
- */
-export type SheepButtonVariant =
-  | 'outline'
-  | 'solid'
-  | 'soft'
-  | 'ghost'
-  | 'link';
-
-/** Semantic colour, resolved from the theme's tone stops. */
-export type SheepButtonTone =
-  | 'primary'
-  | 'neutral'
-  | 'success'
-  | 'warning'
-  | 'danger';
-
-/** Control size. Shared with every other control in the library. */
-export type SheepButtonSize = 'sm' | 'md' | 'lg';
-
-/** Corner treatment. `square` is the icon-only 1:1 box. */
-export type SheepButtonShape = 'rounded' | 'square';
-
-/** Native `type` of the underlying `<button>`. */
-export type SheepButtonType = 'button' | 'submit' | 'reset';
+import type {
+  SheepButtonShape,
+  SheepButtonSize,
+  SheepButtonTone,
+  SheepButtonType,
+  SheepButtonVariant,
+} from './sheep-button.constants';
 
 /**
  * A styled button.
