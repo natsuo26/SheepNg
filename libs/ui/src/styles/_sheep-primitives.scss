@@ -1,0 +1,88 @@
+// =============================================================================
+// @sheep-ng/ui — primitives
+// Raw scales. Nothing here is theme-aware; nothing here should be referenced
+// by a component. Components read the semantic roles in _sheep-theme-spec.scss.
+// =============================================================================
+
+// Tonal ramps. Generated in OKLCH on one shared lightness scale, so step 500
+// of any ramp carries the same visual weight as step 500 of every other.
+$sheep-neutral: (
+  100: #f3f5fe,
+  200: #e4e7f5,
+  300: #cfd3e5,
+  400: #b2b6ca,
+  500: #9397ab,
+  600: #75798c,
+  700: #595d6c,
+  800: #3f424d,
+  900: #292b31,
+);
+
+$sheep-accent: (
+  100: #f5f4ff,
+  200: #e7e5fe,
+  300: #d2cefd,
+  400: #b5abfc,
+  500: #968ae0,
+  600: #796cbf,
+  700: #5d5294,
+  800: #423a6a,
+  900: #2b2741,
+);
+
+// Status hues, derived at the accent's chroma discipline (OKLCH C ~0.10-0.13)
+// so they read as siblings of the accent, not as a second, louder palette.
+$sheep-success: (
+  200: #b7e2cf,
+  300: #8fd3b9,
+  400: #6fc0a1,
+  500: #58ac8c,
+  600: #469073,
+  700: #35735c,
+  800: #2a5c4a,
+  900: #1f4536,
+);
+
+$sheep-warning: (
+  200: #f2dcbb,
+  300: #ecc48d,
+  400: #dcae72,
+  500: #c99a5e,
+  600: #a67c47,
+  700: #7f6135,
+  800: #674e2a,
+  900: #4e3b1f,
+);
+
+$sheep-danger: (
+  200: #f4cdc9,
+  300: #f0b3ad,
+  400: #e39a95,
+  500: #d3837f,
+  600: #b26460,
+  700: #964840,
+  800: #7a3a33,
+  900: #5c2b26,
+);
+
+// Density 0.70x — this library is compact on purpose.
+$sheep-space: (
+  1: 2.8px,
+  2: 5.6px,
+  3: 8.4px,
+  4: 11.2px,
+  6: 16.8px,
+  8: 22.4px,
+  12: 33.6px,
+  16: 44.8px,
+);
+
+$sheep-radius: (
+  sm: 4px,
+  md: 8px,
+  lg: 14px,
+);
+
+$sheep-font-heading: ('Inter', system-ui, sans-serif);
+$sheep-font-body: ('Inter', system-ui, sans-serif);
+$sheep-font-mono: (ui-monospace, 'SF Mono', 'Cascadia Mono', monospace);

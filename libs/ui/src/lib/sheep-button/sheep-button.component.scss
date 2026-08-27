@@ -1,0 +1,275 @@
+@use 'sass:map';
+
+/* ==========================================================================
+   sheep-button
+
+   No public custom-property API. Every colour, metric, radius and timing
+   resolves from the theme layer (`--sheep-*`), so a button cannot be styled
+   into something that is not in the spec. Retheme in _sheep-theme-spec.scss.
+
+   Signature: the DEFAULT variant is an accent outline. `solid` exists, but it
+   is reserved for the single most important action in a view — the library
+   never floods a large area with a tone.
+   ========================================================================== */
+
+$tones: primary, neutral, success, warning, danger;
+$sizes: sm, md, lg;
+
+:host {
+  display: inline-flex;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.sheep-button {
+  /* Derived from the tone's base — one value drives fill, line and tint. */
+  --_tint: color-mix(in srgb, var(--_base) 14%, transparent);
+  --_tint-hover: color-mix(in srgb, var(--_base) 22%, transparent);
+  --_tint-active: color-mix(in srgb, var(--_base) 30%, transparent);
+  --_line: color-mix(in srgb, var(--_base) 46%, transparent);
+  --_motion: var(--sheep-motion-duration) var(--sheep-motion-ease);
+
+  position: relative;
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: var(--_h);
+  padding: 0 var(--_px);
+
+  border: 1px solid transparent;
+  border-radius: var(--_radius);
+  background: transparent;
+
+  font-family: var(--sheep-font-body);
+  font-size: var(--_fs);
+  font-weight: var(--sheep-font-weight-label);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+
+  cursor: pointer;
+  user-select: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    background-color var(--_motion),
+    border-color var(--_motion),
+    color var(--_motion);
+}
+
+/* Keyboard focus is a 2px accent outline — never a soft glow, never the
+   browser default. */
+.sheep-button:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+}
+
+.sheep-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* --------------------------------------------------------------------------
+   Tones
+   -------------------------------------------------------------------------- */
+
+@each $tone in $tones {
+  .sheep-button--#{$tone} {
+    --_base: var(--sheep-tone-#{$tone}-base);
+    --_hover: var(--sheep-tone-#{$tone}-hover);
+    --_active: var(--sheep-tone-#{$tone}-active);
+    --_on: var(--sheep-tone-#{$tone}-on);
+    --_quiet: var(--sheep-tone-#{$tone}-quiet);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Sizes
+   -------------------------------------------------------------------------- */
+
+@each $size in $sizes {
+  .sheep-button--#{$size} {
+    --_h: var(--sheep-ctl-#{$size}-height);
+    --_px: var(--sheep-ctl-#{$size}-pad-x);
+    --_fs: var(--sheep-ctl-#{$size}-font);
+    --_icon: var(--sheep-ctl-#{$size}-icon);
+    --_gap: var(--sheep-ctl-#{$size}-gap);
+    --_radius: var(--sheep-ctl-#{$size}-radius);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Variants
+   -------------------------------------------------------------------------- */
+
+.sheep-button--outline {
+  border-color: var(--_line);
+  color: var(--_quiet);
+}
+.sheep-button--outline:hover:not(:disabled) {
+  border-color: var(--_base);
+  background: var(--_tint);
+}
+.sheep-button--outline:active:not(:disabled) {
+  background: var(--_tint-hover);
+}
+
+.sheep-button--solid {
+  background: var(--_base);
+  color: var(--_on);
+}
+.sheep-button--solid:hover:not(:disabled) {
+  background: var(--_hover);
+}
+.sheep-button--solid:active:not(:disabled) {
+  background: var(--_active);
+}
+
+.sheep-button--soft {
+  background: var(--_tint);
+  color: var(--_quiet);
+}
+.sheep-button--soft:hover:not(:disabled) {
+  background: var(--_tint-hover);
+}
+.sheep-button--soft:active:not(:disabled) {
+  background: var(--_tint-active);
+}
+
+.sheep-button--ghost {
+  color: var(--_quiet);
+}
+.sheep-button--ghost:hover:not(:disabled) {
+  background: var(--_tint);
+}
+.sheep-button--ghost:active:not(:disabled) {
+  background: var(--_tint-hover);
+}
+
+/* Reads as text: no box, no metrics. */
+.sheep-button--link {
+  --_px: 0;
+
+  min-height: 0;
+  border-radius: var(--sheep-radius-sm);
+  color: var(--_quiet);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.25em;
+  white-space: normal;
+}
+.sheep-button--link:hover:not(:disabled) {
+  text-decoration-color: currentColor;
+}
+.sheep-button--link:active:not(:disabled) {
+  color: var(--_active);
+}
+
+/* --------------------------------------------------------------------------
+   Shape — `square` is the icon-only 1:1 box. Requires `ariaLabel`.
+   -------------------------------------------------------------------------- */
+
+.sheep-button--square {
+  --_px: 0;
+
+  flex: none;
+  width: var(--_h);
+  min-width: var(--_h);
+}
+
+.sheep-button--link.sheep-button--square {
+  width: auto;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Content slots
+   -------------------------------------------------------------------------- */
+
+.sheep-button__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sheep-button__slot {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.sheep-button__slot:empty,
+.sheep-button__label:empty {
+  display: none;
+}
+
+/* Projected icons are compiled in the consumer's scope. Paint is left alone —
+   an icon declares its own fill/stroke, normally currentColor. */
+:host ::ng-deep .sheep-button__slot > :is(svg, img) {
+  display: block;
+  flex: none;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+
+/* --------------------------------------------------------------------------
+   Loading
+   -------------------------------------------------------------------------- */
+
+.sheep-button__spinner {
+  display: none;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--_icon);
+  height: var(--_icon);
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: sheep-button-spin 600ms linear infinite;
+}
+
+.sheep-button--loading .sheep-button__spinner {
+  display: block;
+}
+.sheep-button--loading .sheep-button__slot--start {
+  display: none;
+}
+.sheep-button--loading:disabled {
+  cursor: progress;
+  opacity: 1;
+}
+
+@keyframes sheep-button-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheep-button {
+    transition: none;
+  }
+  .sheep-button__spinner {
+    animation-duration: 1.6s;
+  }
+}
+
+@media (forced-colors: active) {
+  .sheep-button {
+    border-color: currentColor;
+  }
+  .sheep-button:focus-visible {
+    outline-color: Highlight;
+  }
+  .sheep-button:disabled {
+    color: GrayText;
+    border-color: GrayText;
+    opacity: 1;
+  }
+}

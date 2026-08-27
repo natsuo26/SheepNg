@@ -1,0 +1,97 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--sheep-color-bg);
+  color: var(--sheep-color-text);
+}
+
+.app__bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--sheep-space-8);
+  padding: var(--sheep-space-4) var(--sheep-space-8);
+  background: var(--sheep-color-bg);
+  /* Rules fade at their ends rather than stopping cleanly. */
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(
+      to right,
+      transparent,
+      var(--sheep-color-line) 48px,
+      var(--sheep-color-line) calc(100% - 48px),
+      transparent
+    )
+    1;
+}
+
+.app__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sheep-space-3);
+}
+
+.app__mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--sheep-color-accent);
+}
+
+.app__name {
+  font-family: var(--sheep-font-heading);
+  font-weight: var(--sheep-font-weight-heading);
+  font-size: 14px;
+  letter-spacing: 0.01em;
+}
+
+.app__version {
+  color: var(--sheep-color-text-faint);
+  font-family: var(--sheep-font-mono);
+  font-size: 11px;
+}
+
+.app__nav {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: var(--sheep-space-1) var(--sheep-space-4);
+}
+
+.app__link {
+  padding: var(--sheep-space-2) var(--sheep-space-3);
+  border-radius: var(--sheep-radius-sm);
+  color: var(--sheep-color-text-muted);
+  font-size: 12px;
+  font-weight: var(--sheep-font-weight-label);
+  text-decoration: none;
+  transition: color var(--sheep-motion-duration) var(--sheep-motion-ease);
+}
+
+.app__link:hover {
+  color: var(--sheep-color-text);
+  background: color-mix(in srgb, var(--sheep-color-accent) 12%, transparent);
+}
+
+.app__link:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+}
+
+.app__link--on {
+  color: var(--sheep-color-text);
+  box-shadow: inset 0 -1px 0 var(--sheep-color-accent);
+}
+
+.app__link--soon {
+  color: var(--sheep-color-text-faint);
+  opacity: 0.55;
+  cursor: default;
+}
+
+.app__main {
+  flex: 1;
+  padding: var(--sheep-space-12) var(--sheep-space-8);
+}

@@ -1,0 +1,47 @@
+// =============================================================================
+// @sheep-ng/ui — theme entry point
+//
+// Import this once, from the app's global stylesheet:
+//
+//   @use '@sheep-ng/ui/styles/sheep-theme';
+//
+// Then either let the OS decide, or pin a theme on the root element:
+//
+//   <html data-sheep-theme="dark">
+// =============================================================================
+
+@use 'sheep-theme-spec' as t;
+
+:root {
+  @include t.emit-invariants();
+  @include t.emit-theme(light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-sheep-theme]) {
+    @include t.emit-theme(dark);
+  }
+}
+
+// An explicit choice always wins over the OS, and can be scoped to a subtree
+// (a dark toolbar on a light page) rather than only to the document root.
+[data-sheep-theme='light'] {
+  @include t.emit-theme(light);
+}
+[data-sheep-theme='dark'] {
+  @include t.emit-theme(dark);
+}
+
+body {
+  margin: 0;
+  background: var(--sheep-color-bg);
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--sheep-color-accent) 32%, transparent);
+}

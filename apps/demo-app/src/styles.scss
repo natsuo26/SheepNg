@@ -1,1 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+/* The theme layer owns colour, type, spacing, radius, motion and focus for
+   every @sheep-ng/ui component, and sets `color-scheme` per theme. Import it
+   once, here — components read only from it. */
+@use 'sheep-theme';

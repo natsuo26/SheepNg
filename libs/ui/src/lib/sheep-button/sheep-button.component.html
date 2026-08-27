@@ -1,0 +1,19 @@
+<button
+  #button
+  class="sheep-button"
+  [class]="classes()"
+  [class.sheep-button--loading]="loading()"
+  [attr.type]="type()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-busy]="loading() ? 'true' : null"
+  [disabled]="isDisabled()"
+>
+  <span class="sheep-button__spinner" aria-hidden="true"></span>
+  <span class="sheep-button__slot sheep-button__slot--start"
+    ><ng-content select="[sheepButtonStart]"
+  /></span>
+  <span class="sheep-button__label"><ng-content /></span>
+  <span class="sheep-button__slot sheep-button__slot--end"
+    ><ng-content select="[sheepButtonEnd]"
+  /></span>
+</button>

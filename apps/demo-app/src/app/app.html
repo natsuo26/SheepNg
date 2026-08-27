@@ -1,2 +1,30 @@
-<sheep-app-nx-welcome></sheep-app-nx-welcome>
-<router-outlet></router-outlet>
+<div class="app">
+  <header class="app__bar">
+    <div class="app__brand">
+      <span class="app__mark" aria-hidden="true"></span>
+      <span class="app__name">sheep&#8209;ng</span>
+      <span class="app__version">ui 0.1.0</span>
+    </div>
+
+    <nav class="app__nav" aria-label="Components">
+      @for (item of components; track item.path) { @if (item.ready) {
+      <a
+        class="app__link"
+        [routerLink]="item.path"
+        routerLinkActive="app__link--on"
+        >{{ item.label }}</a
+      >
+      } @else {
+      <span class="app__link app__link--soon" aria-disabled="true"
+        >{{ item.label }}</span
+      >
+      } }
+    </nav>
+
+    <sheep-theme-switcher />
+  </header>
+
+  <main class="app__main">
+    <router-outlet />
+  </main>
+</div>

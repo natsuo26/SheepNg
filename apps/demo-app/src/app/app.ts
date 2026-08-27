@@ -1,13 +1,36 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcome } from './nx-welcome';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { SheepThemeSwitcherComponent } from '@sheep-ng/ui';
 
+/**
+ * The app shell: brand, component nav, theme switcher. Layout only — every
+ * demo lives in `@sheep-ng/demo`.
+ */
 @Component({
-  imports: [NxWelcome, RouterModule],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    SheepThemeSwitcherComponent,
+  ],
   selector: 'sheep-app-root',
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
-  protected title = 'demo-app';
+  /** The library roadmap, in nav order. `ready` gates the route link. */
+  protected readonly components = [
+    { path: 'button', label: 'Button', ready: true },
+    { path: 'icon-button', label: 'Icon button', ready: false },
+    { path: 'text-field', label: 'Text field', ready: false },
+    { path: 'number-field', label: 'Number field', ready: false },
+    { path: 'chips', label: 'Chips', ready: false },
+    { path: 'badges', label: 'Badges', ready: false },
+    { path: 'nav-bar', label: 'Nav bar', ready: false },
+    { path: 'side-sheet', label: 'Side sheet', ready: false },
+    { path: 'list', label: 'List', ready: false },
+    { path: 'tree', label: 'Tree', ready: false },
+    { path: 'table', label: 'Table', ready: false },
+    { path: 'dialog', label: 'Dialog', ready: false },
+  ];
 }

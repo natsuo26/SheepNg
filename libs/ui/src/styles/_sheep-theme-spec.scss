@@ -1,0 +1,206 @@
+// =============================================================================
+// @sheep-ng/ui — the theme layer
+//
+// This file is the style spec, in code. It emits two things:
+//
+//   1. Semantic surface/text/line roles, per theme.
+//   2. A five-stop set per tone, per theme.
+//
+// Components consume ONLY these `--sheep-*` roles. They never reach into the
+// primitive ramps and they publish no per-instance override hooks: a component
+// looks the way the theme says it looks. Retheming happens here, once, and
+// every component in the library moves with it.
+//
+// Selection is attribute-driven and SSR-safe — no runtime JS required for the
+// initial paint:
+//
+//   <html data-sheep-theme="dark">
+//
+// With no attribute the theme follows `prefers-color-scheme`.
+// =============================================================================
+
+@use 'sass:map';
+@use 'sheep-primitives' as p;
+
+$themes: (
+  light: (
+    bg: map.get(p.$sheep-neutral, 200),
+    surface: map.get(p.$sheep-neutral, 100),
+    surface-sunk: #eaedf9,
+    text: map.get(p.$sheep-neutral, 900),
+    text-muted: map.get(p.$sheep-neutral, 700),
+    text-faint: map.get(p.$sheep-neutral, 600),
+    line: map.get(p.$sheep-neutral, 300),
+    line-strong: map.get(p.$sheep-neutral, 400),
+    accent: map.get(p.$sheep-accent, 600),
+    shadow-sm: (
+      0 1px 2px rgba(41, 43, 49, 0.08),
+    ),
+    shadow-md: (
+      0 1px 2px rgba(41, 43, 49, 0.06),
+      0 6px 18px rgba(41, 43, 49, 0.1),
+    ),
+    tones: (
+      primary: (
+        base: map.get(p.$sheep-accent, 600),
+        hover: map.get(p.$sheep-accent, 700),
+        active: map.get(p.$sheep-accent, 800),
+        on: map.get(p.$sheep-accent, 100),
+        quiet: map.get(p.$sheep-accent, 700),
+      ),
+      neutral: (
+        base: map.get(p.$sheep-neutral, 700),
+        hover: map.get(p.$sheep-neutral, 800),
+        active: map.get(p.$sheep-neutral, 900),
+        on: map.get(p.$sheep-neutral, 100),
+        quiet: map.get(p.$sheep-neutral, 800),
+      ),
+      success: (
+        base: map.get(p.$sheep-success, 700),
+        hover: map.get(p.$sheep-success, 800),
+        active: map.get(p.$sheep-success, 900),
+        on: #f0f8f4,
+        quiet: map.get(p.$sheep-success, 800),
+      ),
+      warning: (
+        base: map.get(p.$sheep-warning, 700),
+        hover: map.get(p.$sheep-warning, 800),
+        active: map.get(p.$sheep-warning, 900),
+        on: #fdf7ee,
+        quiet: map.get(p.$sheep-warning, 800),
+      ),
+      danger: (
+        base: map.get(p.$sheep-danger, 700),
+        hover: map.get(p.$sheep-danger, 800),
+        active: map.get(p.$sheep-danger, 900),
+        on: #fdf2f0,
+        quiet: map.get(p.$sheep-danger, 800),
+      ),
+    ),
+  ),
+  dark: (
+    bg: #161826,
+    surface: #232532,
+    surface-sunk: #1b1d29,
+    text: #e9e9ed,
+    text-muted: map.get(p.$sheep-neutral, 500),
+    text-faint: map.get(p.$sheep-neutral, 600),
+    line: map.get(p.$sheep-neutral, 800),
+    line-strong: map.get(p.$sheep-neutral, 700),
+    accent: #9184d9,
+    shadow-sm: (
+      0 0 0 1px #3f424d,
+    ),
+    shadow-md: (
+      0 0 0 1px #595d6c,
+      0 6px 18px rgba(0, 0, 0, 0.55),
+    ),
+    tones: (
+      primary: (
+        base: map.get(p.$sheep-accent, 500),
+        hover: map.get(p.$sheep-accent, 400),
+        active: map.get(p.$sheep-accent, 300),
+        on: #1b1830,
+        quiet: map.get(p.$sheep-accent, 300),
+      ),
+      neutral: (
+        base: map.get(p.$sheep-neutral, 500),
+        hover: map.get(p.$sheep-neutral, 400),
+        active: map.get(p.$sheep-neutral, 300),
+        on: #22242c,
+        quiet: map.get(p.$sheep-neutral, 300),
+      ),
+      success: (
+        base: map.get(p.$sheep-success, 500),
+        hover: map.get(p.$sheep-success, 400),
+        active: map.get(p.$sheep-success, 300),
+        on: #10231c,
+        quiet: map.get(p.$sheep-success, 300),
+      ),
+      warning: (
+        base: map.get(p.$sheep-warning, 500),
+        hover: map.get(p.$sheep-warning, 400),
+        active: map.get(p.$sheep-warning, 300),
+        on: #241a0c,
+        quiet: map.get(p.$sheep-warning, 300),
+      ),
+      danger: (
+        base: map.get(p.$sheep-danger, 500),
+        hover: map.get(p.$sheep-danger, 400),
+        active: map.get(p.$sheep-danger, 300),
+        on: #2a1413,
+        quiet: map.get(p.$sheep-danger, 300),
+      ),
+    ),
+  ),
+);
+
+@mixin emit-theme($name) {
+  $t: map.get($themes, $name);
+
+  color-scheme: #{$name};
+
+  --sheep-color-bg: #{map.get($t, bg)};
+  --sheep-color-surface: #{map.get($t, surface)};
+  --sheep-color-surface-sunk: #{map.get($t, surface-sunk)};
+  --sheep-color-text: #{map.get($t, text)};
+  --sheep-color-text-muted: #{map.get($t, text-muted)};
+  --sheep-color-text-faint: #{map.get($t, text-faint)};
+  --sheep-color-line: #{map.get($t, line)};
+  --sheep-color-line-strong: #{map.get($t, line-strong)};
+  --sheep-color-accent: #{map.get($t, accent)};
+  --sheep-shadow-sm: #{map.get($t, shadow-sm)};
+  --sheep-shadow-md: #{map.get($t, shadow-md)};
+
+  @each $tone, $stops in map.get($t, tones) {
+    --sheep-tone-#{$tone}-base: #{map.get($stops, base)};
+    --sheep-tone-#{$tone}-hover: #{map.get($stops, hover)};
+    --sheep-tone-#{$tone}-active: #{map.get($stops, active)};
+    --sheep-tone-#{$tone}-on: #{map.get($stops, on)};
+    --sheep-tone-#{$tone}-quiet: #{map.get($stops, quiet)};
+  }
+}
+
+@mixin emit-invariants() {
+  // Scales do not change between themes.
+  @each $step, $value in p.$sheep-space {
+    --sheep-space-#{$step}: #{$value};
+  }
+  @each $step, $value in p.$sheep-radius {
+    --sheep-radius-#{$step}: #{$value};
+  }
+
+  --sheep-font-heading: #{p.$sheep-font-heading};
+  --sheep-font-body: #{p.$sheep-font-body};
+  --sheep-font-mono: #{p.$sheep-font-mono};
+  --sheep-font-weight-heading: 500;
+  --sheep-font-weight-label: 500;
+
+  // Control metrics — every interactive control in the library sits on these
+  // three sizes, so a button, a text field and a select line up on a row.
+  --sheep-ctl-sm-height: 28px;
+  --sheep-ctl-sm-pad-x: 10px;
+  --sheep-ctl-sm-font: 12px;
+  --sheep-ctl-sm-icon: 14px;
+  --sheep-ctl-sm-gap: 6px;
+  --sheep-ctl-sm-radius: var(--sheep-radius-sm);
+
+  --sheep-ctl-md-height: 34px;
+  --sheep-ctl-md-pad-x: 14px;
+  --sheep-ctl-md-font: 13px;
+  --sheep-ctl-md-icon: 16px;
+  --sheep-ctl-md-gap: 8px;
+  --sheep-ctl-md-radius: var(--sheep-radius-md);
+
+  --sheep-ctl-lg-height: 42px;
+  --sheep-ctl-lg-pad-x: 20px;
+  --sheep-ctl-lg-font: 15px;
+  --sheep-ctl-lg-icon: 18px;
+  --sheep-ctl-lg-gap: 10px;
+  --sheep-ctl-lg-radius: var(--sheep-radius-md);
+
+  --sheep-motion-duration: 150ms;
+  --sheep-motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --sheep-focus-width: 2px;
+  --sheep-focus-offset: 2px;
+}

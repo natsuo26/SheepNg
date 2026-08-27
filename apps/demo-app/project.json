@@ -21,7 +21,10 @@
             "input": "apps/demo-app/public"
           }
         ],
-        "styles": ["apps/demo-app/src/styles.scss"]
+        "styles": ["apps/demo-app/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["libs/ui/src/styles"]
+        }
       },
       "configurations": {
         "production": {
@@ -33,8 +36,8 @@
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "4kb",
-              "maximumError": "8kb"
+              "maximumWarning": "8kb",
+              "maximumError": "16kb"
             }
           ],
           "outputHashing": "all"
