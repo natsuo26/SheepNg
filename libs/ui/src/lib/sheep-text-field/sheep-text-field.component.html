@@ -1,14 +1,16 @@
-<label class="sheep-text-field__label" [attr.for]="inputId">
-  <span class="sheep-text-field__label-text"
-    ><ng-content select="[sheepTextFieldLabel]"
-  /></span>
-  @if (required()) {
-  <span class="sheep-text-field__required" aria-hidden="true">*</span>
-  }
-</label>
+<div class="sheep-text-field__label-row">
+  <label class="sheep-text-field__label" [attr.for]="inputId">
+    <span class="sheep-text-field__label-text"
+      ><ng-content select="[sheepTextFieldLabel]"
+    /></span>
+    @if (required()) {
+    <span class="sheep-text-field__required" aria-hidden="true">*</span>
+    }
+  </label>
+</div>
 
 <div class="sheep-text-field__box">
-  <span class="sheep-text-field__affix"
+  <span class="sheep-text-field__affix sheep-text-field__affix--start"
     ><ng-content select="[sheepTextFieldPrefix]"
   /></span>
 
@@ -18,7 +20,7 @@
     [id]="inputId"
     [attr.type]="resolvedType()"
     [attr.name]="name() || null"
-    [attr.placeholder]="placeholder()"
+    [attr.placeholder]="placeholder() || null"
     [attr.autocomplete]="autocomplete()"
     [attr.inputmode]="inputMode()"
     [attr.autocapitalize]="autoCapitalize()"
@@ -37,6 +39,7 @@
     [disabled]="disabled()"
     [value]="value()"
     (input)="onInput($event)"
+    (focus)="onFocus()"
     (blur)="onBlur()"
   />
 
@@ -44,7 +47,7 @@
   <span class="sheep-text-field__spinner" aria-hidden="true"></span>
   }
 
-  <span class="sheep-text-field__affix"
+  <span class="sheep-text-field__affix sheep-text-field__affix--end"
     ><ng-content select="[sheepTextFieldSuffix]"
   /></span>
 

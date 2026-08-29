@@ -51,17 +51,22 @@ export class TextFieldDemo {
     {
       id: 'anatomy',
       heading: 'Anatomy',
-      note: 'A label, a box and a footer. The field owns all three and the id, aria-describedby and aria-invalid between them — the call site never wires an input to its own label.',
+      note: 'A label, a rule and a footer. The field owns all three and the id, aria-describedby and aria-invalid between them — the call site never wires an input to its own label.',
+    },
+    {
+      id: 'float',
+      heading: 'The label floats',
+      note: 'At rest the label stands in for a placeholder, inside the field. On focus, or once there is a value, it lifts to its row above. Only the label moves — the row keeps its height, so nothing below it shifts.  A leading prefix waits in the space the resting label occupies, and fades in as it lifts.',
     },
     {
       id: 'sizes',
       heading: 'Sizes',
-      note: 'The same three control metrics a button sits on, so a field and a button line up on one row without either being nudged.',
+      note: 'The same three sizes every control in the library takes. An underline field is shorter than a button of the same size on purpose: its height follows the type it holds, not the size of a thing you press. soft, which has a ground to fill, keeps the button height.',
     },
     {
       id: 'variants',
       heading: 'Variants',
-      note: 'outline is the default and the library signature. soft sinks the field into a filled well, for a dense form where a page of outlines would read as a grid of boxes.',
+      note: 'underline is the default: one hairline under the value, with empty space doing the framing. soft adds a sunk ground under the same rule, for a form dense enough that the rows need telling apart.',
     },
     {
       id: 'states',
@@ -103,6 +108,8 @@ export class TextFieldDemo {
   // --- anatomy / states -----------------------------------------------------
 
   protected readonly displayName = signal('Bo Peep');
+  protected readonly emptyField = signal('');
+  protected readonly filledField = signal('Cotswold');
   protected readonly readonlyValue = signal('flock-2f9c1a');
   protected readonly pendingValue = signal('shepherd');
 
@@ -168,7 +175,7 @@ export class TextFieldDemo {
     default: string;
     type: string;
   }[] = [
-    { name: 'variant', default: "'outline'", type: "'outline' | 'soft'" },
+    { name: 'variant', default: "'underline'", type: "'underline' | 'soft'" },
     { name: 'size', default: "'md'", type: "'sm' | 'md' | 'lg'" },
     {
       name: 'type',
@@ -204,6 +211,17 @@ export class TextFieldDemo {
       type: 'error text and toggle labels',
     },
   ];
+
+  protected readonly floatSnippet = `/* Nothing to turn on. A field given a
+   placeholder keeps its label lifted for good —
+   the two would otherwise print on top of each
+   other, and the placeholder is the one that
+   was asked for.
+
+   A leading prefix keeps its width but fades
+   out while the label rests over it, so the
+   value never shifts sideways under the
+   caret. */`;
 
   protected readonly anatomySnippet = `<sheep-text-field [(value)]="name" required>
   <span sheepTextFieldLabel>Display name</span>

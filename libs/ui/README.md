@@ -148,10 +148,40 @@ import { SHEEP_TEXT_FIELD } from '@sheep-ng/ui';
 ```
 
 It renders a real `<input>`, so typing, selection, autofill, IME composition and
-the password manager are the platform's. The component owns the label, the hint,
-the error line and the box around them, and wires the `id`, `for`,
-`aria-describedby`, `aria-invalid` and `aria-errormessage` between them — the
-call site never labels an input by hand.
+the password manager are the platform's. The component owns the label, the hint
+and the error line, and wires the `id`, `for`, `aria-describedby`,
+`aria-invalid` and `aria-errormessage` between them — the call site never labels
+an input by hand.
+
+### A rule, not a box
+
+The field is one hairline under the value, with empty space doing the framing,
+so a column of fields reads as a page of writing rather than a stack of
+containers. There are no side or top borders in either variant, and the value
+starts flush with the label above it — the look depends on that column being
+straight.
+
+The height follows from the type rather than from the shared control scale: a
+button's height is the size of a thing you press, and standing a rule off from
+its text by that much reads as a gap rather than as an underline. So an
+`underline` field is shorter than a button of the same `size`. `soft` — a sunk
+ground under the same rule, for a form dense enough that the rows need telling
+apart — keeps the button's height, because it has a ground to fill.
+
+### The label floats
+
+At rest the label stands where the value will be, in place of a placeholder. It
+lifts to the row above on focus, and stays there once there is a value:
+
+Only the label moves. Its row is reserved whether it is occupied or not, so the
+rule never shifts and a column of fields does not jitter as one is filled in.
+There is nothing to switch on, and two cases resolve themselves:
+
+- A field given a `placeholder` keeps its label lifted for good. The two would
+  otherwise print on top of each other, and the placeholder is the one that was
+  asked for.
+- A leading prefix keeps its width but fades out while the label rests over it,
+  so the value never shifts sideways under the caret.
 
 `SHEEP_TEXT_FIELD` is the field plus its eight directives, ready to drop into a
 component's `imports`. The pieces are standalone and importable one at a time,
@@ -237,7 +267,7 @@ Reach for the directives on a field with no form behind it.
 | Input                     | Type                                                | Default     | Notes                                        |
 | ------------------------- | --------------------------------------------------- | ----------- | -------------------------------------------- |
 | `value`                   | `model<string>`                                     | `''`        | Two-way, and bound by `[formField]`.         |
-| `variant`                 | `outline \| soft`                                   | `outline`   | Visual weight.                               |
+| `variant`                 | `underline \| soft`                                 | `underline` | Visual weight.                               |
 | `size`                    | `sm \| md \| lg`                                    | `md`        | Shared with every control in the library.    |
 | `type`                    | `text \| password \| email \| search \| tel \| url` | `text`      | A feature directive overrides it.            |
 | `placeholder`             | `string \| null`                                    | `null`      | Not a label — it is gone once typing starts. |
@@ -262,8 +292,13 @@ forgets the blur it has seen, and so the errors it was showing.
 
 ### Accessibility
 
-Focus is a 2px accent outline on the box, never the browser default and never a
-soft glow. The reveal toggle is a real focusable button, but takes no focus on a
-mouse click, so the caret stays where it was mid-word.
-`prefers-reduced-motion` drops the transitions and slows the spinner, and
+This is the one control in the library that does not take the 2px accent
+outline on focus: an outline is a box, and a box is what the field is defined by
+not having. Instead the rule under the value doubles in weight, takes the
+accent, and grows out of the centre — a larger indicator than the outline it
+replaces, not a quieter one. The label takes the accent with it.
+
+The reveal toggle is a real focusable button, but takes no focus on a mouse
+click, so the caret stays where it was mid-word.
+`prefers-reduced-motion` drops every transition, including the label's, and
 `forced-colors` hands the palette over to system colours.

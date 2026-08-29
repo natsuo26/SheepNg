@@ -58,6 +58,11 @@ let nextId = 0;
  * `sheepPassword`, `sheepEmail`, `sheepCounter`, `sheepValidate` — so a plain
  * field carries none of their weight. See `SheepTextFieldFeature`.
  *
+ * The field is a rule, not a box: one hairline under the value, with empty
+ * space doing the framing. Its label floats — resting inside the box in place
+ * of a placeholder, lifting to the row above on focus or once there is a
+ * value, without the box moving.
+ *
  * Deliberately NOT themeable per instance. Every colour and metric comes from
  * the `--sheep-*` theme layer, and the two appearance inputs pick between
  * spec'd looks rather than opening one up.
@@ -77,8 +82,8 @@ let nextId = 0;
 export class SheepTextFieldComponent implements FormValueControl<string> {
   // --- appearance ----------------------------------------------------------
 
-  /** Visual weight. Defaults to `outline`. */
-  readonly variant = input<SheepTextFieldVariant>('outline');
+  /** Visual weight. Defaults to `underline`. */
+  readonly variant = input<SheepTextFieldVariant>('underline');
 
   /** Control size. Defaults to `md`. */
   readonly size = input<SheepTextFieldSize>('md');
@@ -197,6 +202,9 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
   /** Blur seen by this field, so a standalone field gates errors too. */
   private readonly blurred = signal(false);
 
+  /** Focus, tracked here rather than left to `:focus-within` — see below. */
+  private readonly focused = signal(false);
+
   /** True once errors are worth showing — from either side of `touched`. */
   protected readonly isTouched = computed(
     () => this.touched() || this.blurred(),
@@ -204,6 +212,23 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
 
   /** Not editable, for either reason. Features are told, so they can dim. */
   protected readonly isInert = computed(() => this.disabled() || this.readonly());
+
+  /**
+   * Whether the label sits up in its row rather than standing in for a
+   * placeholder inside the box.
+   *
+   * Resolved here rather than in CSS. `:focus-within` and `:has()` could each
+   * answer part of it, but spreading the condition across four selectors of
+   * different specificity means the colour rules that key off the same states
+   * — accent on focus, danger on error — have to win a specificity fight to
+   * be seen. One class settles it, and the state is testable.
+   *
+   * A placeholder forces the float: the two would otherwise print on top of
+   * each other, and the placeholder is the one the caller asked for.
+   */
+  protected readonly isFloating = computed(
+    () => this.focused() || this.value() !== '' || !!this.placeholder(),
+  );
 
   /** What every feature hook is handed. */
   private readonly state = computed<SheepTextFieldState>(() => ({
@@ -303,6 +328,7 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
   protected readonly classes = computed(
     () =>
       `sheep-text-field--${this.variant()} sheep-text-field--${this.size()}` +
+      (this.isFloating() ? ' sheep-text-field--floated' : '') +
       (this.showErrors() ? ' sheep-text-field--errored' : '') +
       (this.disabled() ? ' sheep-text-field--disabled' : '') +
       (this.readonly() ? ' sheep-text-field--readonly' : ''),
@@ -314,7 +340,12 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
     this.value.set((event.target as HTMLInputElement).value);
   }
 
+  protected onFocus(): void {
+    this.focused.set(true);
+  }
+
   protected onBlur(): void {
+    this.focused.set(false);
     this.blurred.set(true);
     this.touch.emit();
   }
@@ -335,4 +366,5 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
   reset(): void {
     this.blurred.set(false);
   }
+
 }

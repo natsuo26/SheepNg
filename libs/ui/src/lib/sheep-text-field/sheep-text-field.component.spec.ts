@@ -72,11 +72,11 @@ describe('SheepTextFieldComponent', () => {
       expect(input(fixture).getAttribute('type')).toBe('text');
     });
 
-    it('defaults to the outline variant at md — the library signature', () => {
+    it('defaults to the underline variant at md', () => {
       const classes: DOMTokenList = fixture.nativeElement.classList;
 
       expect(classes).toContain('sheep-text-field');
-      expect(classes).toContain('sheep-text-field--outline');
+      expect(classes).toContain('sheep-text-field--underline');
       expect(classes).toContain('sheep-text-field--md');
     });
 
@@ -90,6 +90,45 @@ describe('SheepTextFieldComponent', () => {
       await other.whenStable();
 
       expect(input(other).id).not.toBe(input(fixture).id);
+    });
+
+    it('rests the label inside the box until there is a reason to lift it', async () => {
+      // The label is the placeholder until the field is in use, and its home
+      // is the row above the box. Nothing about the box moves either way.
+      expect(fixture.nativeElement.classList).not.toContain(
+        'sheep-text-field--floated',
+      );
+
+      input(fixture).dispatchEvent(new Event('focus'));
+      await fixture.whenStable();
+      expect(fixture.nativeElement.classList).toContain(
+        'sheep-text-field--floated',
+      );
+
+      await blur(fixture);
+      expect(fixture.nativeElement.classList).not.toContain(
+        'sheep-text-field--floated',
+      );
+    });
+
+    it('keeps the label lifted once the field has a value', async () => {
+      await type(fixture, 'ewe');
+      await blur(fixture);
+
+      expect(fixture.nativeElement.classList).toContain(
+        'sheep-text-field--floated',
+      );
+    });
+
+    it('lifts the label for good when there is a placeholder under it', async () => {
+      fixture.componentRef.setInput('placeholder', 'you@example.com');
+      await fixture.whenStable();
+
+      // Otherwise the two would print on top of each other, and the
+      // placeholder is the one the caller asked for.
+      expect(fixture.nativeElement.classList).toContain(
+        'sheep-text-field--floated',
+      );
     });
 
     it('exposes no per-instance style hooks', () => {

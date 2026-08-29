@@ -6,9 +6,18 @@
    into something that is not in the spec. Retheme in _sheep-theme-spec.scss.
 
    Three stacked rows — label, box, footer — so a column of fields lines up
-   whether or not each one has a label, a hint or an error to show. The box is
-   the only part that carries a border, and it is the focus target: focus lands
-   on the input, and the ring is drawn on the box around it.
+   whether or not each one has a label, a hint or an error to show.
+
+   The field is a rule, not a box: one hairline under the value and nothing
+   else. Empty space does the framing, so a column of fields reads as a page of
+   writing rather than a stack of containers. `soft` is the one look that adds
+   a ground, for forms dense enough to need the rows told apart.
+
+   The label floats. Its HOME is the label row, where a stacked label would
+   sit; at rest it drops into the box and grows to the input's size, standing
+   in for a placeholder. Only the label moves — the row keeps its height
+   throughout, so the box never shifts and a column of fields never jitters
+   as one of them is filled in.
    ========================================================================== */
 
 $sizes: sm, md, lg;
@@ -26,6 +35,8 @@ $sizes: sm, md, lg;
   --_motion: var(--sheep-motion-duration) var(--sheep-motion-ease);
   --_line: var(--sheep-color-line-strong);
   --_ground: transparent;
+  /* Weight of the one rule the field is made of. */
+  --_rule: 1px;
 }
 
 /* --------------------------------------------------------------------------
@@ -40,6 +51,15 @@ $sizes: sm, md, lg;
     --_icon: var(--sheep-ctl-#{$size}-icon);
     --_gap: var(--sheep-ctl-#{$size}-gap);
     --_radius: var(--sheep-ctl-#{$size}-radius);
+
+    /* The value's line box. The input and the underline variant's height are
+       both built on it, so they cannot drift apart. */
+    --_text-h: calc(var(--sheep-ctl-#{$size}-font) * 1.2);
+
+    /* The floated label, and the line box reserved for it. Matches the
+       footer's size, so the two lines bracketing the box read as one pair. */
+    --_label-fs: max(11px, calc(var(--sheep-ctl-#{$size}-font) - 2px));
+    --_label-h: calc(var(--_label-fs) * 1.35);
   }
 }
 
@@ -47,37 +67,106 @@ $sizes: sm, md, lg;
    Variants
    -------------------------------------------------------------------------- */
 
+/* No side or top borders in either variant, so the value starts flush with the
+   label above it — the plain look depends on that column being straight. */
+:host(.sheep-text-field--underline) {
+  --_px: 0;
+
+  /* Height is the value plus its breath, NOT the shared control height. A
+     button's height is the size of a thing you press; here there is no thing,
+     only a line under some text, and standing that line off by a button's
+     worth of empty space reads as a gap rather than as an underline. The
+     breath scales with the type, so it stays proportional across the sizes. */
+  --_h: calc(var(--_text-h) + var(--_fs) * 0.7 + var(--_rule));
+}
+
 :host(.sheep-text-field--soft) {
   --_ground: var(--sheep-color-surface-sunk);
-  --_line: transparent;
 }
 
 /* --------------------------------------------------------------------------
    Label
+
+   The row reserves the floated label's line box and never changes height. The
+   label itself is taken out of flow inside it, so dropping into the box is a
+   transform and a font-size on one element and moves nothing else.
    -------------------------------------------------------------------------- */
 
+.sheep-text-field__label-row {
+  /* Positioned, so the label can leave the row and drop into the box; raised,
+     so it paints over it once there. The box is positioned too — it carries
+     the focus rule — and would otherwise win on document order and hide the
+     resting label behind `soft`'s ground. */
+  position: relative;
+  z-index: 1;
+  height: var(--_label-h);
+}
+
+/* Nothing projected: the row collapses instead of leaving a gap, so a labelled
+   field and an unlabelled one still start at the same y. */
+.sheep-text-field__label-row:has(.sheep-text-field__label-text:empty) {
+  display: none;
+}
+
 .sheep-text-field__label {
+  position: absolute;
+  inset: 0 auto 0 0;
+  max-width: 100%;
+
   display: flex;
   align-items: baseline;
   gap: 0.25em;
 
   color: var(--sheep-color-text-muted);
   font-family: var(--sheep-font-body);
-  font-size: var(--_fs);
+  font-size: var(--_label-fs);
   font-weight: var(--sheep-font-weight-label);
-  line-height: 1.35;
+  line-height: var(--_label-h);
+  white-space: nowrap;
 
-  cursor: pointer;
+  cursor: text;
+  transform-origin: left center;
+
+  transition:
+    transform var(--_motion),
+    font-size var(--_motion),
+    color var(--_motion);
 }
 
-/* Nothing projected: the row collapses instead of leaving a gap, so a labelled
-   field and an unlabelled one still start at the same y. */
-.sheep-text-field__label:has(> .sheep-text-field__label-text:empty) {
-  display: none;
+/* At rest the label is where the input's text will be: across by the box's
+   padding, down by the distance between the two centres — the rule under the
+   value takes a pixel off the box's usable height, so it counts. All of it is
+   arithmetic on the control metrics rather than numbers typed in, so a retuned
+   size scale carries the label with it. */
+:host(:not(.sheep-text-field--floated)) .sheep-text-field__label {
+  font-size: var(--_fs);
+  color: var(--sheep-color-text-faint);
+  transform: translate(
+    var(--_px),
+    calc(
+      (var(--_label-h) + var(--_h) - var(--_rule)) / 2 + var(--sheep-space-1)
+    )
+  );
+}
+
+/* Autofill can land a value without an input event, which would leave the
+   label sitting on top of the filled text. Geometry only: the browser paints
+   an autofilled field in its own colours anyway. */
+:host(:has(.sheep-text-field__input:autofill)) .sheep-text-field__label {
+  font-size: var(--_label-fs);
+  transform: none;
 }
 
 .sheep-text-field__required {
   color: var(--sheep-tone-danger-base);
+}
+
+:host(.sheep-text-field--errored) .sheep-text-field__label {
+  color: var(--sheep-tone-danger-quiet);
+}
+
+:host(:focus-within) .sheep-text-field__label {
+  color: var(--sheep-color-accent);
 }
 
 :host(.sheep-text-field--disabled) .sheep-text-field__label {
@@ -90,6 +179,8 @@ $sizes: sm, md, lg;
    -------------------------------------------------------------------------- */
 
 .sheep-text-field__box {
+  position: relative;
+
   display: flex;
   align-items: center;
   gap: var(--_gap);
@@ -99,9 +190,12 @@ $sizes: sm, md, lg;
   min-height: var(--_h);
   padding: 0 var(--_px);
 
-  border: 1px solid var(--_line);
-  border-radius: var(--_radius);
+  /* The whole frame: one hairline under the value. */
+  border-bottom: var(--_rule) solid var(--_line);
   background: var(--_ground);
+  /* Only `soft` has a ground to round, and only at the top — the rule below is
+     the one straight edge the look is built on. */
+  border-radius: var(--_radius) var(--_radius) 0 0;
 
   cursor: text;
 
@@ -111,21 +205,50 @@ $sizes: sm, md, lg;
 }
 
 .sheep-text-field__box:hover {
-  border-color: var(--sheep-color-text-faint);
+  border-bottom-color: var(--sheep-color-text-faint);
 }
 
-/* Focus is a 2px accent outline — never a soft glow, never the browser
-   default. It is drawn on the box because the input inside it is borderless:
-   the box is what the user sees as the control. */
-.sheep-text-field__box:has(.sheep-text-field__input:focus-visible) {
-  border-color: var(--sheep-color-accent);
-  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
-  outline-offset: var(--sheep-focus-offset);
+/* The focus indicator is an accent rule that grows out of the centre, drawn
+   over the resting hairline.
+
+   This is the one control in the library that does not take the 2px accent
+   outline: an outline is a box, and a box is exactly what this field is
+   defined by not having. The rule doubles in weight and takes the accent, at
+   full width — a larger indicator than the outline it replaces, not a
+   quieter one. */
+.sheep-text-field__box::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 calc(-1 * var(--_rule)) 0;
+  height: var(--sheep-focus-width);
+
+  background: var(--sheep-color-accent);
+  transform: scaleX(0);
+
+  transition: transform var(--_motion);
 }
 
+.sheep-text-field__box:has(.sheep-text-field__input:focus-visible)::after {
+  transform: scaleX(1);
+}
+
+/* Errored: the rule is already the wrong colour before focus arrives, so it
+   is drawn at full width rather than grown. */
 :host(.sheep-text-field--errored) .sheep-text-field__box,
 :host(.sheep-text-field--errored) .sheep-text-field__box:hover {
-  border-color: var(--sheep-tone-danger-base);
+  border-bottom-color: var(--sheep-tone-danger-base);
+}
+
+:host(.sheep-text-field--errored) .sheep-text-field__box::after {
+  background: var(--sheep-tone-danger-base);
+}
+
+/* Not editable, but still readable and copyable — so the rule breaks up
+   instead of the field growing a ground it otherwise never has. */
+:host(.sheep-text-field--readonly) .sheep-text-field__box,
+:host(.sheep-text-field--readonly) .sheep-text-field__box:hover {
+  border-bottom-style: dashed;
+  border-bottom-color: var(--sheep-color-line);
 }
 
 :host(.sheep-text-field--disabled) .sheep-text-field__box {
@@ -134,15 +257,11 @@ $sizes: sm, md, lg;
 }
 
 :host(.sheep-text-field--disabled) .sheep-text-field__box:hover {
-  border-color: var(--_line);
-}
-
-:host(.sheep-text-field--readonly) .sheep-text-field__box {
-  background: var(--sheep-color-surface-sunk);
+  border-bottom-color: var(--_line);
 }
 
 /* --------------------------------------------------------------------------
-   Input — chrome-free, because the box is the chrome.
+   Input — chrome-free, because the rule under it is all the chrome there is.
    -------------------------------------------------------------------------- */
 
 .sheep-text-field__input {
@@ -150,8 +269,8 @@ $sizes: sm, md, lg;
 
   box-sizing: border-box;
   min-width: 0;
-  /* One line short of the box, so the caret is not clipped at either edge. */
-  height: calc(var(--_h) - 2px);
+  /* Short by the rule under it, so the caret is not clipped against it. */
+  height: calc(var(--_h) - var(--_rule));
   padding: 0;
 
   border: 0;
@@ -160,7 +279,7 @@ $sizes: sm, md, lg;
   color: var(--sheep-color-text);
   font-family: var(--sheep-font-body);
   font-size: var(--_fs);
-  line-height: 1.2;
+  line-height: var(--_text-h);
 
   appearance: none;
   -webkit-tap-highlight-color: transparent;
@@ -208,6 +327,17 @@ $sizes: sm, md, lg;
 
 .sheep-text-field__affix:empty {
   display: none;
+}
+
+/* The resting label stands where a leading affix does. The affix fades in as
+   the label lifts out of the way, keeping its width throughout so the value
+   never shifts sideways under the caret. */
+.sheep-text-field__affix--start {
+  transition: opacity var(--_motion);
+}
+
+:host(:not(.sheep-text-field--floated)) .sheep-text-field__affix--start {
+  opacity: 0;
 }
 
 /* Projected icons are compiled in the consumer's scope. Paint is left alone —
@@ -336,6 +466,17 @@ $sizes: sm, md, lg;
 .sheep-text-field__error {
   margin: 0;
   color: var(--sheep-tone-danger-quiet);
+  animation: sheep-text-field-raise var(--sheep-motion-duration)
+    var(--sheep-motion-ease);
+}
+
+/* The message arrives from under the box rather than appearing whole, so a
+   line of text turning up below a field reads as a consequence of leaving it. */
+@keyframes sheep-text-field-raise {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
 }
 
 .sheep-text-field__error-line {
@@ -354,8 +495,14 @@ $sizes: sm, md, lg;
 
 @media (prefers-reduced-motion: reduce) {
   .sheep-text-field__box,
-  .sheep-text-field__action {
+  .sheep-text-field__box::after,
+  .sheep-text-field__action,
+  .sheep-text-field__label,
+  .sheep-text-field__affix--start {
     transition: none;
+  }
+  .sheep-text-field__error {
+    animation: none;
   }
   .sheep-text-field__spinner {
     animation-duration: 1.6s;
@@ -364,13 +511,13 @@ $sizes: sm, md, lg;
 
 @media (forced-colors: active) {
   .sheep-text-field__box {
-    border-color: currentColor;
+    border-bottom-color: currentColor;
   }
-  .sheep-text-field__box:has(.sheep-text-field__input:focus-visible) {
-    outline-color: Highlight;
+  .sheep-text-field__box::after {
+    background: Highlight;
   }
   :host(.sheep-text-field--disabled) .sheep-text-field__box {
-    border-color: GrayText;
+    border-bottom-color: GrayText;
     opacity: 1;
   }
   :host(.sheep-text-field--disabled) .sheep-text-field__label,

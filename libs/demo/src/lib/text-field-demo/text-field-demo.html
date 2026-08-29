@@ -43,6 +43,41 @@
 
       <pre class="demo-code">{{ anatomySnippet }}</pre>
     </div>
+    } @case ('float') {
+    <div class="field-coupled">
+      <div class="field-grid">
+        <div class="demo-group">
+          <p class="demo-eyebrow">At rest</p>
+          <sheep-text-field [(value)]="emptyField">
+            <span sheepTextFieldLabel>County</span>
+          </sheep-text-field>
+        </div>
+
+        <div class="demo-group">
+          <p class="demo-eyebrow">Lifted, by a value</p>
+          <sheep-text-field [(value)]="filledField">
+            <span sheepTextFieldLabel>Breed</span>
+          </sheep-text-field>
+        </div>
+
+        <div class="demo-group">
+          <p class="demo-eyebrow">Lifted, by a placeholder</p>
+          <sheep-text-field placeholder="e.g. 250 head">
+            <span sheepTextFieldLabel>Flock size</span>
+          </sheep-text-field>
+        </div>
+
+        <div class="demo-group">
+          <p class="demo-eyebrow">Prefix waits its turn</p>
+          <sheep-text-field>
+            <span sheepTextFieldLabel>Rate</span>
+            <span sheepTextFieldPrefix>&pound;</span>
+          </sheep-text-field>
+        </div>
+      </div>
+
+      <pre class="demo-code">{{ floatSnippet }}</pre>
+    </div>
     } @case ('sizes') {
     <div class="field-grid">
       @for (size of sizes; track size) {

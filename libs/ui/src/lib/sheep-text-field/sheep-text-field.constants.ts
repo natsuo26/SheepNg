@@ -11,11 +11,12 @@
 /**
  * Visual weight.
  *
- * `outline` is the default and matches the library's signature: a line on a
- * transparent ground. `soft` sinks the field into a filled well, for dense
- * forms where a page of outlines would read as a grid of boxes.
+ * `underline` is the default: one hairline under the value and nothing else,
+ * so a column of fields reads as a page of writing rather than a stack of
+ * boxes. `soft` adds a sunk ground under the same rule, for a form dense
+ * enough that the rows need telling apart.
  */
-export const SHEEP_TEXT_FIELD_VARIANTS = ['outline', 'soft'] as const;
+export const SHEEP_TEXT_FIELD_VARIANTS = ['underline', 'soft'] as const;
 
 export type SheepTextFieldVariant = (typeof SHEEP_TEXT_FIELD_VARIANTS)[number];
 
