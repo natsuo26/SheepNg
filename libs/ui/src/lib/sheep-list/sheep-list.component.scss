@@ -1,0 +1,115 @@
+@use 'sass:map';
+
+/* ==========================================================================
+   sheep-list
+
+   No public custom-property API. The `--_list-*` values below are the contract
+   between a list and its rows: they are declared here and read by
+   `sheep-list-item` through ordinary inheritance, which is what keeps one
+   list's rows on one density. They are private — a caller setting them is
+   reaching past the spec.
+
+   The container paints nothing of its own. Framing a list (a card, a rule, a
+   scroll box) is the page's job, not the component's.
+   ========================================================================== */
+
+$sizes: (
+  sm: (
+    min-h: 28px,
+    pad-y: 2,
+    pad-x: 3,
+    gap: 3,
+    font: 12px,
+    line: 11px,
+    icon: 14px,
+  ),
+  md: (
+    min-h: 36px,
+    pad-y: 3,
+    pad-x: 4,
+    gap: 4,
+    font: 13px,
+    line: 12px,
+    icon: 16px,
+  ),
+  lg: (
+    min-h: 44px,
+    pad-y: 4,
+    pad-x: 6,
+    gap: 4,
+    font: 15px,
+    line: 13px,
+    icon: 18px,
+  ),
+);
+
+:host {
+  display: block;
+  min-width: 0;
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+}
+
+@each $size, $m in $sizes {
+  :host(.sheep-list--#{$size}) {
+    --_list-min-h: #{map.get($m, min-h)};
+    --_list-pad-y: var(--sheep-space-#{map.get($m, pad-y)});
+    --_list-pad-x: var(--sheep-space-#{map.get($m, pad-x)});
+    --_list-gap: var(--sheep-space-#{map.get($m, gap)});
+    --_list-font: #{map.get($m, font)};
+    --_list-line-font: #{map.get($m, line)};
+    --_list-icon: #{map.get($m, icon)};
+  }
+}
+
+/* Rows draw their own top hairline from this. Handing them a colour rather
+   than a class keeps the rule out of ::ng-deep. */
+:host(.sheep-list--divided) {
+  --_list-divider: var(--sheep-color-line);
+}
+
+/* The run continues above the first rendered row, so that row keeps its line.
+   Only a virtual viewport scrolled off the top sets this. */
+:host(.sheep-list--continued) {
+  --_list-first-divider: var(--_list-divider, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Projected chrome
+
+   A subheader and a divider are the caller's elements, compiled in the
+   caller's scope, so they are reached through ::ng-deep.
+   -------------------------------------------------------------------------- */
+
+:host ::ng-deep .sheep-list__subheader {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: var(--sheep-space-6) var(--_list-pad-x) var(--sheep-space-2);
+  color: var(--sheep-color-text-faint);
+  font-size: 11px;
+  font-weight: var(--sheep-font-weight-label);
+  line-height: 1.45;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+:host ::ng-deep .sheep-list__subheader:first-child {
+  padding-top: var(--sheep-space-2);
+}
+
+/* A subheader ends the run above it, so the row beneath starts clean. */
+:host ::ng-deep .sheep-list__subheader + .sheep-list-item {
+  border-top-color: transparent;
+}
+
+:host ::ng-deep .sheep-list__divider {
+  margin: var(--sheep-space-2) 0;
+  border: 0;
+  height: 1px;
+  background: var(--sheep-color-line);
+}
+
+:host ::ng-deep .sheep-list__divider + .sheep-list-item {
+  border-top-color: transparent;
+}

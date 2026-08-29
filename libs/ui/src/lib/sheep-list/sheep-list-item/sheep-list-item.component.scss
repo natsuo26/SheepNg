@@ -1,0 +1,209 @@
+/* ==========================================================================
+   sheep-list-item
+
+   No public custom-property API. Density arrives from the parent list through
+   the inherited `--_list-*` values; everything else resolves from the theme
+   layer (`--sheep-*`). Retheme in _sheep-theme-spec.scss.
+
+   The fallbacks below are the `md` metrics, so a row used outside a
+   `sheep-list` still lands on the spec instead of collapsing.
+   ========================================================================== */
+
+:host {
+  --_min-h: var(--_list-min-h, 36px);
+  --_pad-y: var(--_list-pad-y, var(--sheep-space-3));
+  --_pad-x: var(--_list-pad-x, var(--sheep-space-4));
+  --_gap: var(--_list-gap, var(--sheep-space-4));
+  --_font: var(--_list-font, 13px);
+  --_line-font: var(--_list-line-font, 12px);
+  --_icon: var(--_list-icon, 16px);
+  --_motion: var(--sheep-motion-duration) var(--sheep-motion-ease);
+  --_tint: color-mix(in srgb, var(--sheep-color-accent) 10%, transparent);
+
+  display: flex;
+  align-items: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--_min-h);
+  padding: var(--_pad-y) var(--_pad-x);
+  /* Transparent unless the parent list turns dividers on. */
+  border-top: 1px solid var(--_list-divider, transparent);
+
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+  font-size: var(--_font);
+  text-align: left;
+
+  transition: background-color var(--_motion);
+}
+
+/* The first row draws no divider against the list's own edge — unless the list
+   says otherwise, which it does when this is merely the first row a virtual
+   viewport has rendered and the run actually continues above it. */
+:host(:first-child) {
+  border-top-color: var(--_list-first-divider, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Interactive rows
+
+   `<a sheep-list-item>` and `<button sheep-list-item>` ARE the row. These rules
+   only strip the platform's default chrome — the behaviour stays native.
+   -------------------------------------------------------------------------- */
+
+:host(:is(a, button)) {
+  appearance: none;
+  margin: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--_font);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:host(:is(a, button):hover) {
+  background: var(--_tint);
+}
+
+:host(:is(a, button):active) {
+  background: color-mix(in srgb, var(--sheep-color-accent) 16%, transparent);
+}
+
+/* Focus sits inside the row: a full-bleed row has no room for an offset ring. */
+:host(:is(a, button):focus-visible) {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: calc(var(--sheep-focus-offset) * -1);
+}
+
+:host(button:disabled) {
+  background: transparent;
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* --------------------------------------------------------------------------
+   Selected
+   -------------------------------------------------------------------------- */
+
+:host(.sheep-list-item--selected) {
+  background: color-mix(
+    in srgb,
+    var(--sheep-tone-primary-base) 14%,
+    transparent
+  );
+}
+
+:host(.sheep-list-item--selected:is(a, button):hover) {
+  background: color-mix(
+    in srgb,
+    var(--sheep-tone-primary-base) 20%,
+    transparent
+  );
+}
+
+:host(.sheep-list-item--selected) .sheep-list-item__lead {
+  color: var(--sheep-tone-primary-quiet);
+}
+
+/* --------------------------------------------------------------------------
+   Slots
+   -------------------------------------------------------------------------- */
+
+.sheep-list-item__lead,
+.sheep-list-item__tail {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--sheep-space-2);
+}
+
+.sheep-list-item__lead {
+  color: var(--sheep-color-text-faint);
+}
+
+.sheep-list-item__tail {
+  color: var(--sheep-color-text-muted);
+  font-size: var(--_line-font);
+}
+
+.sheep-list-item__lead:empty,
+.sheep-list-item__tail:empty {
+  display: none;
+}
+
+/* Grows, and is allowed to shrink — `min-width: 0` is what lets the title
+   ellipsize instead of pushing the meta off the row. */
+.sheep-list-item__text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Projected content
+
+   Compiled in the caller's scope, so it is reached through ::ng-deep. Paint on
+   an icon is left alone — it declares its own fill/stroke, normally
+   currentColor.
+   -------------------------------------------------------------------------- */
+
+:host ::ng-deep .sheep-list-item__icon {
+  display: block;
+  flex: none;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+
+:host ::ng-deep .sheep-list-item__title,
+:host ::ng-deep .sheep-list-item__line {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep .sheep-list-item__title {
+  color: var(--sheep-color-text);
+  font-size: var(--_font);
+  font-weight: var(--sheep-font-weight-label);
+  line-height: 1.35;
+}
+
+:host ::ng-deep .sheep-list-item__line {
+  color: var(--sheep-color-text-muted);
+  font-size: var(--_line-font);
+  line-height: 1.45;
+}
+
+:host(.sheep-list-item--selected) ::ng-deep .sheep-list-item__title {
+  color: var(--sheep-tone-primary-quiet);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  :host(.sheep-list-item--selected) {
+    outline: 1px solid Highlight;
+    outline-offset: -1px;
+  }
+  :host(:is(a, button):focus-visible) {
+    outline-color: Highlight;
+  }
+  :host(button:disabled) {
+    color: GrayText;
+    opacity: 1;
+  }
+}
