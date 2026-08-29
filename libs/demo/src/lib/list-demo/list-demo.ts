@@ -101,6 +101,65 @@ export class ListDemo {
     },
   ];
 
+  /**
+   * The markup behind each specimen, keyed by section.
+   *
+   * Every example on the page is a few lines of HTML and nothing else, so the
+   * page shows those lines rather than describing them. A section with its own
+   * coupled code block is absent here — it already has one.
+   */
+  protected readonly snippets: Record<string, string> = {
+    anatomy: `<sheep-list divided>
+  <sheep-list-item>
+    <svg sheepListItemIcon viewBox="0 0 24 24">...</svg>
+    <div sheepListItemTitle>Photos</div>
+    <div sheepListItemLine>Updated Jan 12, 2026</div>
+    <span sheepListItemMeta>12 items</span>
+  </sheep-list-item>
+</sheep-list>`,
+
+    lines: `<sheep-list-item>
+  <div sheepListItemTitle>Vacation itinerary</div>
+</sheep-list-item>
+
+<sheep-list-item>
+  <div sheepListItemTitle>Vacation itinerary</div>
+  <div sheepListItemLine>Edited Mar 02, 2026</div>
+  <div sheepListItemLine>8 KB</div>
+</sheep-list-item>`,
+
+    sizes: `<sheep-list size="sm">...</sheep-list>
+<sheep-list>...</sheep-list>
+<sheep-list size="lg">...</sheep-list>
+
+/* Density is set once, on the list. A row cannot
+   disagree with the list it sits in. */`,
+
+    sections: `<sheep-list divided>
+  <div sheepListSubheader>Folders</div>
+  <sheep-list-item>...</sheep-list-item>
+
+  <hr sheepListDivider />
+
+  <div sheepListSubheader>Notes</div>
+  <sheep-list-item>...</sheep-list-item>
+</sheep-list>`,
+
+    interactive: `<a sheep-list-item routerLink="/inbox" [selected]="current() === 'inbox'">
+  <div sheepListItemTitle>Inbox</div>
+</a>
+
+<button sheep-list-item type="button" (click)="pick(note.id)">
+  <div sheepListItemTitle>{{ note.name }}</div>
+</button>
+
+<button sheep-list-item type="button" disabled>...</button>`,
+
+    api: `import { SHEEP_LIST, SHEEP_LIST_ROW_HEIGHT } from '@sheep-ng/ui';
+
+@Component({ imports: [SHEEP_LIST], ... })`,
+  };
+
   /** The public API, rendered from one source so it cannot drift from the code. */
   protected readonly api: readonly {
     name: string;

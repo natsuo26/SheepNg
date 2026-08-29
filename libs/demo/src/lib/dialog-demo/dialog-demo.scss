@@ -1,0 +1,19 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* The one section that pairs a dialog with its markup: the trigger sits beside
+   the snippet rather than above it, since the dialog itself opens over both. */
+.dialog-coupled {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sheep-space-6);
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .dialog-coupled {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

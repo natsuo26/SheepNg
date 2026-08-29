@@ -33,6 +33,7 @@ $themes: (
     line: map.get(p.$sheep-neutral, 300),
     line-strong: map.get(p.$sheep-neutral, 400),
     accent: map.get(p.$sheep-accent, 600),
+    scrim: rgba(31, 33, 41, 0.44),
     shadow-sm: (
       0 1px 2px rgba(41, 43, 49, 0.08),
     ),
@@ -88,6 +89,7 @@ $themes: (
     line: map.get(p.$sheep-neutral, 800),
     line-strong: map.get(p.$sheep-neutral, 700),
     accent: #9184d9,
+    scrim: rgba(8, 9, 15, 0.66),
     shadow-sm: (
       0 0 0 1px #3f424d,
     ),
@@ -149,6 +151,7 @@ $themes: (
   --sheep-color-line: #{map.get($t, line)};
   --sheep-color-line-strong: #{map.get($t, line-strong)};
   --sheep-color-accent: #{map.get($t, accent)};
+  --sheep-color-scrim: #{map.get($t, scrim)};
   --sheep-shadow-sm: #{map.get($t, shadow-sm)};
   --sheep-shadow-md: #{map.get($t, shadow-md)};
 

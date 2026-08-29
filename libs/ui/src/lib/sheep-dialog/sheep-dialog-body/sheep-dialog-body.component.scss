@@ -1,0 +1,37 @@
+/* ==========================================================================
+   sheep-dialog-body
+
+   Density comes from the dialog through the inherited `--_dlg-*` contract.
+   Nothing here is styleable per instance.
+   ========================================================================== */
+
+:host {
+  /* The one part that gives: it takes the slack while the panel has room, and
+     `min-height: 0` is what lets it shrink far enough to scroll once it does
+     not — without it a flex item refuses to go below its content. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  display: block;
+  box-sizing: border-box;
+  padding: 0 var(--_dlg-pad-x) var(--_dlg-pad-y);
+
+  color: var(--sheep-color-text-muted);
+  line-height: 1.55;
+}
+
+/* No header above it, so the body opens the panel and takes its top padding. */
+:host(:first-child) {
+  padding-top: var(--_dlg-pad-y);
+}
+
+/* The caller's prose, sitting on the body's rhythm rather than the browser's. */
+:host ::ng-deep :is(p, ul, ol):first-child {
+  margin-top: 0;
+}
+
+:host ::ng-deep :is(p, ul, ol):last-child {
+  margin-bottom: 0;
+}

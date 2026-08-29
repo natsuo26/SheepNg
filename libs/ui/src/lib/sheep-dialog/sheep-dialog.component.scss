@@ -1,0 +1,170 @@
+@use 'sass:map';
+
+/* ==========================================================================
+   sheep-dialog
+
+   No public custom-property API. The `--_dlg-*` values below are the contract
+   between a dialog and its three parts: they are declared on the host and read
+   by the header, body and footer through ordinary inheritance, which is what
+   keeps one dialog's interior on one rhythm. They are private — a caller
+   setting them is reaching past the spec. Retheme in _sheep-theme-spec.scss.
+
+   The `<dialog>` is not the panel. It is the whole viewport: a transparent
+   sheet over the backdrop that centres the panel and gives it a margin to
+   breathe. That is what makes "clicked outside" answerable — a click on the
+   sheet is a click on nothing — and it is why the panel can be a plain box
+   with no positioning of its own.
+
+   The panel is the library's one framed surface. Everywhere else empty space
+   does the framing; a dialog is the exception, because it has to read as
+   sitting above the page rather than in it.
+   ========================================================================== */
+
+$sizes: (
+  sm: (
+    width: 360px,
+    pad-x: 6,
+    pad-y: 6,
+    gap: 3,
+    font: 13px,
+    title: 15px,
+  ),
+  md: (
+    width: 480px,
+    pad-x: 8,
+    pad-y: 8,
+    gap: 3,
+    font: 13px,
+    title: 17px,
+  ),
+  lg: (
+    width: 640px,
+    pad-x: 12,
+    pad-y: 8,
+    gap: 4,
+    font: 15px,
+    title: 20px,
+  ),
+);
+
+/* No box of its own: the host is a handle for the parts to inherit from, and
+   the surface it renders is in the top layer either way. */
+:host {
+  display: contents;
+}
+
+@each $size, $m in $sizes {
+  :host(.sheep-dialog--#{$size}) {
+    --_dlg-width: #{map.get($m, width)};
+    --_dlg-pad-x: var(--sheep-space-#{map.get($m, pad-x)});
+    --_dlg-pad-y: var(--sheep-space-#{map.get($m, pad-y)});
+    --_dlg-gap: var(--sheep-space-#{map.get($m, gap)});
+    --_dlg-font: #{map.get($m, font)};
+    --_dlg-title-font: #{map.get($m, title)};
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The surface — the full viewport, transparent, above the backdrop.
+   -------------------------------------------------------------------------- */
+
+.sheep-dialog__surface {
+  position: fixed;
+  inset: 0;
+
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  /* Doubles as the panel's minimum gap from the viewport edge, and as the
+     dismissal target on a narrow screen where there is no room beside it. */
+  padding: var(--sheep-space-6);
+
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+/* `<dialog>` is display:none until open — only say what it becomes. */
+.sheep-dialog__surface[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sheep-dialog__surface::backdrop {
+  /* ::backdrop inherits from its originating element in current browsers, so
+     the theme's scrim reaches it. The fallback covers the ones where it does
+     not — a dark wash either way, so nothing about the page looks different. */
+  background: var(--sheep-color-scrim, rgba(8, 9, 15, 0.6));
+}
+
+/* --------------------------------------------------------------------------
+   The panel
+   -------------------------------------------------------------------------- */
+
+.sheep-dialog__panel {
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  /* Never wider than asked for, never wider than the room it has. */
+  width: min(var(--_dlg-width), 100%);
+  max-height: 100%;
+  /* The body scrolls; the panel itself never does, so the radius keeps its
+     corners and the header and footer stay where they are. */
+  overflow: hidden;
+
+  border-radius: var(--sheep-radius-lg);
+  background: var(--sheep-color-surface);
+  box-shadow: var(--sheep-shadow-md);
+
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+  font-size: var(--_dlg-font);
+}
+
+/* --------------------------------------------------------------------------
+   Entry
+
+   Opening only. A closing panel is gone from the top layer the moment the
+   element closes, so animating it out would mean holding the dialog open
+   past the caller's state — the state is the truth here, not the paint.
+   -------------------------------------------------------------------------- */
+
+.sheep-dialog__surface[open] .sheep-dialog__panel {
+  animation: sheep-dialog-rise 180ms var(--sheep-motion-ease);
+}
+
+.sheep-dialog__surface[open]::backdrop {
+  animation: sheep-dialog-fade var(--sheep-motion-duration)
+    var(--sheep-motion-ease);
+}
+
+@keyframes sheep-dialog-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+@keyframes sheep-dialog-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheep-dialog__surface[open] .sheep-dialog__panel,
+  .sheep-dialog__surface[open]::backdrop {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .sheep-dialog__panel {
+    border: 1px solid CanvasText;
+  }
+}

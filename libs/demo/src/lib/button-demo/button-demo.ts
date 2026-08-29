@@ -85,6 +85,58 @@ export class ButtonDemo {
     },
   ];
 
+  /**
+   * The markup behind each specimen, keyed by section.
+   *
+   * Every example on the page is a few lines of HTML and nothing else, so the
+   * page shows those lines rather than describing them. A section with its own
+   * coupled code block is absent here — it already has one.
+   */
+  protected readonly snippets: Record<string, string> = {
+    matrix: `<sheep-button>Cancel</sheep-button>
+<sheep-button variant="solid">Publish</sheep-button>
+<sheep-button variant="soft" tone="success">Approve</sheep-button>
+<sheep-button variant="ghost" tone="neutral">Dismiss</sheep-button>
+<sheep-button variant="link" tone="danger">Delete</sheep-button>`,
+
+    sizes: `<sheep-button size="sm">Small</sheep-button>
+<sheep-button>Medium</sheep-button>
+<sheep-button size="lg">Large</sheep-button>`,
+
+    icons: `<sheep-button tone="success">
+  <svg sheepButtonStart viewBox="0 0 24 24">...</svg>
+  Approve
+</sheep-button>
+
+<sheep-button variant="ghost" tone="neutral">
+  Continue
+  <svg sheepButtonEnd viewBox="0 0 24 24">...</svg>
+</sheep-button>
+
+<sheep-button shape="square" ariaLabel="Add item">
+  <svg sheepButtonStart viewBox="0 0 24 24">...</svg>
+</sheep-button>`,
+
+    states: `<sheep-button (click)="count()">Clicked {{ clicks() }}</sheep-button>
+
+<sheep-button variant="solid" [loading]="saving()" (click)="save()">
+  Save changes
+</sheep-button>
+
+<sheep-button disabled>Disabled</sheep-button>`,
+
+    column: `<div class="actions">
+  <sheep-button variant="solid" size="lg">Create account</sheep-button>
+  <sheep-button variant="ghost" tone="neutral">Maybe later</sheep-button>
+</div>
+
+.actions { display: flex; flex-direction: column; }`,
+
+    api: `import { SheepButtonComponent } from '@sheep-ng/ui';
+
+@Component({ imports: [SheepButtonComponent], ... })`,
+  };
+
   /** The public API, rendered from one source so it cannot drift from the code. */
   protected readonly api: readonly {
     name: string;

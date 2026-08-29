@@ -1,0 +1,25 @@
+<!--
+  The press handlers are the backdrop dismissal, not a control: the surface is
+  the sheet around the panel, and clicking off a dialog is a pointer gesture
+  with no keyboard counterpart to mirror. Escape is the keyboard's way out, and
+  the (cancel) binding below is where it is answered. Making the sheet
+  focusable would put a stop in the tab order that leads nowhere.
+-->
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<dialog
+  #surface
+  class="sheep-dialog__surface"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-labelledby]="ariaLabel() ? null : titleId"
+  (cancel)="onCancel($event)"
+  (close)="onSurfaceClose()"
+  (mousedown)="onSurfacePress($event)"
+  (click)="onSurfaceClick($event)"
+>
+  <div class="sheep-dialog__panel">
+    <ng-content select="sheep-dialog-header" />
+    <ng-content select="sheep-dialog-body" />
+    <ng-content />
+    <ng-content select="sheep-dialog-footer" />
+  </div>
+</dialog>

@@ -14,4 +14,8 @@ export const appRoutes: Route[] = [
     path: 'list',
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.ListDemo),
   },
+  {
+    path: 'dialog',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.DialogDemo),
+  },
 ];

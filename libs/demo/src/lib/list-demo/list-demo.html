@@ -308,7 +308,9 @@
       </div>
       }
     </div>
-    } }
+    } } @if (snippets[section.id]; as code) {
+    <pre class="demo-code"><code>{{ code }}</code></pre>
+    }
   </section>
   }
 </article>

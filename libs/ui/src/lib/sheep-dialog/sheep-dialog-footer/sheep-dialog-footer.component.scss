@@ -1,0 +1,35 @@
+/* ==========================================================================
+   sheep-dialog-footer
+
+   Density comes from the dialog through the inherited `--_dlg-*` contract.
+   Nothing here is styleable per instance.
+
+   No rule above the row. The panel is already a framed surface, and a second
+   line inside it would divide what is one short piece of reading — the space
+   is enough to say where the actions start.
+   ========================================================================== */
+
+:host {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--_dlg-gap);
+
+  box-sizing: border-box;
+  padding: var(--_dlg-gap) var(--_dlg-pad-x) var(--_dlg-pad-y);
+}
+
+:host(.sheep-dialog__footer--start) {
+  justify-content: flex-start;
+}
+
+:host(.sheep-dialog__footer--between) {
+  justify-content: space-between;
+}
+
+/* No body above it, so the footer opens the panel and takes its top padding. */
+:host(:first-child) {
+  padding-top: var(--_dlg-pad-y);
+}

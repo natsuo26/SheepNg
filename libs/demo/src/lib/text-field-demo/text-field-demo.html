@@ -178,7 +178,11 @@
           <span sheepTextFieldHint>The toggle is a real focusable button.</span>
         </sheep-text-field>
 
-        <sheep-text-field sheepEmail autocomplete="email" [(value)]="emailValue">
+        <sheep-text-field
+          sheepEmail
+          autocomplete="email"
+          [(value)]="emailValue"
+        >
           <span sheepTextFieldLabel>Email</span>
           <span sheepTextFieldHint>Leave the field to see the check run.</span>
         </sheep-text-field>
@@ -236,10 +240,12 @@
         </sheep-text-field>
 
         <div class="field-actions">
-          <sheep-button type="submit" variant="solid">Create account</sheep-button>
+          <sheep-button type="submit" variant="solid"
+            >Create account</sheep-button
+          >
           <span class="field-echo"
-            >valid(): {{ signUpForm().valid() }} &middot; touched():
-            {{ signUpForm().touched() }}</span
+            >valid(): {{ signUpForm().valid() }} &middot; touched(): {{
+            signUpForm().touched() }}</span
           >
         </div>
 
@@ -248,8 +254,10 @@
         }
       </form>
 
-      <pre class="demo-code">{{ formsSnippet }}
-{{ formsTemplate }}</pre>
+      <pre class="demo-code">
+{{ formsSnippet }}
+{{ formsTemplate }}</pre
+      >
     </div>
     } @case ('messages') {
     <pre class="demo-code">{{ messagesSnippet }}</pre>
@@ -265,7 +273,9 @@
       </div>
       }
     </div>
-    } }
+    } } @if (snippets[section.id]; as code) {
+    <pre class="demo-code"><code>{{ code }}</code></pre>
+    }
   </section>
   }
 </article>
