@@ -1,54 +1,54 @@
-<sheep-stack gap="12">
-  <sheep-stack gap="2">
-    <sheep-text size="xs" tone="faint" uppercase>Component</sheep-text>
-    <sheep-heading level="1">sheep-button</sheep-heading>
-    <sheep-text tone="muted" measure>
+<article class="demo-page">
+  <header class="demo-page__head">
+    <p class="demo-eyebrow">Component</p>
+    <h1 class="demo-title">sheep-button</h1>
+    <p class="demo-lede">
       A native &lt;button&gt;, outline by default. Five variants, five tones,
       three shared control sizes &mdash; and no per-instance style API: the
       theme decides.
-    </sheep-text>
-  </sheep-stack>
+    </p>
+  </header>
 
-  @for (section of sections; track section.heading) {
-  <sheep-divider />
+  @for (section of sections; track section.id) {
+  <hr class="demo-rule" />
 
-  <sheep-stack gap="6">
-    <sheep-stack gap="1">
-      <sheep-heading level="2">{{ section.heading }}</sheep-heading>
-      <sheep-text size="sm" tone="muted">{{ section.note }}</sheep-text>
-    </sheep-stack>
+  <section class="demo-section" [attr.aria-labelledby]="section.id + '-title'">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" [id]="section.id + '-title'">
+        {{ section.heading }}
+      </h2>
+      <p class="demo-note">{{ section.note }}</p>
+    </header>
 
     @switch (section.id) { @case ('matrix') {
-    <sheep-stack gap="6" data-testid="matrix">
+    <div class="demo-specimen" data-testid="matrix">
       @for (variant of variants; track variant) {
-      <sheep-stack gap="2">
-        <sheep-text size="xs" tone="faint" uppercase>
-          {{ variant }}
-        </sheep-text>
-        <sheep-row gap="3">
+      <div class="demo-group">
+        <p class="demo-eyebrow">{{ variant }}</p>
+        <div class="demo-cluster">
           @for (tone of tones; track tone) {
           <sheep-button [variant]="variant" [tone]="tone">
             {{ tone }}
           </sheep-button>
           }
-        </sheep-row>
-      </sheep-stack>
+        </div>
+      </div>
       }
-    </sheep-stack>
+    </div>
     } @case ('sizes') {
-    <sheep-row gap="3">
+    <div class="demo-cluster">
       @for (size of sizes; track size) {
       <sheep-button [size]="size">Size {{ size }}</sheep-button>
       }
-      <sheep-divider orientation="vertical" />
+      <span class="demo-vrule" aria-hidden="true"></span>
       @for (size of sizes; track size) {
       <sheep-button variant="solid" [size]="size">
         Commit {{ size }}
       </sheep-button>
       }
-    </sheep-row>
+    </div>
     } @case ('icons') {
-    <sheep-row gap="3">
+    <div class="demo-cluster">
       <sheep-button tone="success">
         <svg
           sheepButtonStart
@@ -163,9 +163,9 @@
           />
         </svg>
       </sheep-button>
-    </sheep-row>
+    </div>
     } @case ('states') {
-    <sheep-row gap="3">
+    <div class="demo-cluster">
       <sheep-button (click)="count()">
         Clicked {{ clicks() }}&times;
       </sheep-button>
@@ -182,37 +182,33 @@
       </sheep-button>
       <sheep-button disabled>Disabled</sheep-button>
       <sheep-button variant="link">Read the spec</sheep-button>
-    </sheep-row>
+    </div>
     } @case ('column') {
-    <sheep-stack gap="3" align="start">
+    <div class="demo-column">
       <sheep-button variant="solid" size="lg">Create account</sheep-button>
       <sheep-button variant="ghost" tone="neutral">Maybe later</sheep-button>
-    </sheep-stack>
+    </div>
     } @case ('coupled') {
-    <sheep-stack gap="6">
-      <sheep-code [code]="snippet" />
-      <sheep-row gap="3">
+    <div class="demo-specimen">
+      <pre class="demo-code"><code>{{ snippet }}</code></pre>
+      <div class="demo-cluster">
         <sheep-button>Cancel</sheep-button>
         <sheep-button variant="solid">Publish</sheep-button>
-      </sheep-row>
-    </sheep-stack>
+      </div>
+    </div>
     } @case ('api') {
-    <sheep-grid min="md" gap="2">
+    <div class="demo-props">
       @for (row of api; track row.name) {
-      <sheep-panel padding="4" sunk>
-        <sheep-stack gap="1">
-          <sheep-row gap="3" align="baseline">
-            <sheep-text mono size="sm">{{ row.name }}</sheep-text>
-            <sheep-text mono size="xs" tone="accent">
-              {{ row.default }}
-            </sheep-text>
-          </sheep-row>
-          <sheep-text mono size="xs" tone="faint"> {{ row.type }} </sheep-text>
-        </sheep-stack>
-      </sheep-panel>
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <code class="demo-prop__name">{{ row.name }}</code>
+          <code class="demo-prop__default">{{ row.default }}</code>
+        </div>
+        <code class="demo-prop__type">{{ row.type }}</code>
+      </div>
       }
-    </sheep-grid>
+    </div>
     } }
-  </sheep-stack>
+  </section>
   }
-</sheep-stack>
+</article>

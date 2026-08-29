@@ -1,14 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import {
   SheepButtonComponent,
-  SheepCodeComponent,
-  SheepDividerComponent,
-  SheepGridComponent,
-  SheepHeadingComponent,
-  SheepPanelComponent,
-  SheepRowComponent,
-  SheepStackComponent,
-  SheepTextComponent,
   type SheepButtonSize,
   type SheepButtonTone,
   type SheepButtonVariant,
@@ -17,25 +9,18 @@ import {
 /**
  * Showcase for every axis of `sheep-button`.
  *
- * The demo owns no stylesheet. The page is assembled entirely from library
- * primitives — stack, row, panel, divider, heading, text, code — which is the
- * claim being demonstrated: drop the components in and the theme handles
- * rhythm, surface and type without a line of CSS at the call site.
+ * The page is semantic HTML dressed by the demo page kit — see
+ * `libs/demo/src/styles/_demo-kit.scss`. That layout vocabulary is
+ * documentation chrome and stays inside this library: `@sheep-ng/ui` ships
+ * components and a theme, never a way to lay out a page. The kit itself
+ * reads only `--sheep-*` roles, so the surrounding page re-themes in step
+ * with the buttons it frames.
  */
 @Component({
   selector: 'sheep-demo-button',
-  imports: [
-    SheepButtonComponent,
-    SheepCodeComponent,
-    SheepDividerComponent,
-    SheepGridComponent,
-    SheepHeadingComponent,
-    SheepPanelComponent,
-    SheepRowComponent,
-    SheepStackComponent,
-    SheepTextComponent,
-  ],
+  imports: [SheepButtonComponent],
   templateUrl: './button-demo.html',
+  styleUrl: './button-demo.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonDemo {

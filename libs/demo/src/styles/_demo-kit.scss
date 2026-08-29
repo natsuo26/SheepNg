@@ -1,0 +1,219 @@
+// =============================================================================
+// @sheep-ng/demo — page kit
+//
+// The vocabulary every demo page is assembled from: a title block, sections,
+// specimens, a code block, a property grid. This is documentation chrome, not
+// a component library — it lives here precisely so it cannot leak into
+// @sheep-ng/ui. A consumer installs components and a theme; they never
+// inherit our docs layout.
+//
+// Reads only the `--sheep-*` theme roles, so a demo page re-themes in step
+// with the components it documents.
+//
+// Usage, from a demo component's stylesheet:
+//
+//   @use '../../styles/demo-kit' as demo;
+//   @include demo.kit;
+//
+// Angular's emulated encapsulation scopes every rule to that component, so
+// two demo pages including the kit cannot collide.
+// =============================================================================
+
+@mixin kit {
+  :host {
+    display: block;
+  }
+
+  // --- page ------------------------------------------------------------------
+
+  .demo-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sheep-space-12);
+    min-width: 0;
+  }
+
+  .demo-page__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sheep-space-2);
+  }
+
+  .demo-title {
+    margin: 0;
+    color: var(--sheep-color-text);
+    font-family: var(--sheep-font-heading);
+    font-weight: var(--sheep-font-weight-heading);
+    font-size: 30px;
+    line-height: 1.12;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+  }
+
+  .demo-lede {
+    margin: 0;
+    max-width: 58ch;
+    color: var(--sheep-color-text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  // --- section ---------------------------------------------------------------
+
+  .demo-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sheep-space-6);
+    min-width: 0;
+  }
+
+  .demo-section__head {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sheep-space-1);
+  }
+
+  .demo-section__title {
+    margin: 0;
+    color: var(--sheep-color-text);
+    font-family: var(--sheep-font-heading);
+    font-weight: var(--sheep-font-weight-heading);
+    font-size: 17px;
+    line-height: 1.25;
+    letter-spacing: -0.008em;
+  }
+
+  .demo-note {
+    margin: 0;
+    color: var(--sheep-color-text-muted);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  .demo-eyebrow {
+    margin: 0;
+    color: var(--sheep-color-text-faint);
+    font-size: 11px;
+    line-height: 1.45;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .demo-rule {
+    margin: 0;
+    border: 0;
+    height: 1px;
+    background: var(--sheep-color-line);
+  }
+
+  // --- specimens -------------------------------------------------------------
+
+  // A section's worth of examples, stacked.
+  .demo-specimen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sheep-space-6);
+    min-width: 0;
+  }
+
+  // One labelled slice of a specimen — an eyebrow over a cluster.
+  .demo-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sheep-space-2);
+    min-width: 0;
+  }
+
+  // Examples side by side. Wraps, so a wide matrix never overflows.
+  .demo-cluster {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: var(--sheep-space-3);
+    min-width: 0;
+  }
+
+  .demo-cluster--baseline {
+    align-items: baseline;
+  }
+
+  // Examples stacked, sized by their own content rather than stretched.
+  .demo-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sheep-space-3);
+  }
+
+  // A hairline between two halves of a cluster.
+  .demo-vrule {
+    flex: none;
+    align-self: stretch;
+    width: 1px;
+    background: var(--sheep-color-line);
+  }
+
+  // --- code ------------------------------------------------------------------
+
+  .demo-code {
+    margin: 0;
+    padding: var(--sheep-space-6);
+    overflow-x: auto;
+    border-radius: var(--sheep-radius-md);
+    background: var(--sheep-color-surface-sunk);
+    box-shadow: 0 0 0 1px var(--sheep-color-line);
+    font-family: var(--sheep-font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--sheep-color-text-muted);
+  }
+
+  // --- property grid ---------------------------------------------------------
+
+  .demo-props {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--sheep-space-2);
+    min-width: 0;
+  }
+
+  .demo-prop {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sheep-space-1);
+    min-width: 0;
+    padding: var(--sheep-space-4);
+    border-radius: var(--sheep-radius-md);
+    background: var(--sheep-color-surface-sunk);
+    box-shadow: 0 0 0 1px var(--sheep-color-line);
+  }
+
+  .demo-prop__head {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: baseline;
+    gap: var(--sheep-space-3);
+  }
+
+  .demo-prop__name,
+  .demo-prop__default,
+  .demo-prop__type {
+    font-family: var(--sheep-font-mono);
+  }
+
+  .demo-prop__name {
+    font-size: 12.5px;
+    color: var(--sheep-color-text);
+  }
+
+  .demo-prop__default {
+    font-size: 11px;
+    color: var(--sheep-color-accent);
+  }
+
+  .demo-prop__type {
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--sheep-color-text-faint);
+  }
+}

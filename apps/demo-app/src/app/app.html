@@ -1,10 +1,10 @@
 <div class="app">
   <header class="app__bar">
-    <sheep-row gap="3">
+    <div class="app__brand">
       <span class="app__mark" aria-hidden="true"></span>
       <span class="app__name">sheep&#8209;ng</span>
-      <sheep-text size="xs" tone="faint" mono>ui 0.1.0</sheep-text>
-    </sheep-row>
+      <span class="app__version">ui 0.1.0</span>
+    </div>
 
     <nav class="app__nav" aria-label="Components">
       @for (item of components; track item.path) { @if (item.ready) {

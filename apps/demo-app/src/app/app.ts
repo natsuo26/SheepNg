@@ -1,10 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import {
-  SheepRowComponent,
-  SheepTextComponent,
-  SheepThemeSwitcherComponent,
-} from '@sheep-ng/ui';
+import { SheepThemeSwitcherComponent } from '@sheep-ng/ui';
 
 /**
  * The app shell: brand, component nav, theme switcher. Layout only — every
@@ -15,8 +11,6 @@ import {
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
-    SheepRowComponent,
-    SheepTextComponent,
     SheepThemeSwitcherComponent,
   ],
   selector: 'sheep-app-root',

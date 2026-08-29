@@ -27,6 +27,12 @@
     1;
 }
 
+.app__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sheep-space-3);
+}
+
 .app__mark {
   width: 10px;
   height: 10px;
@@ -39,6 +45,12 @@
   font-weight: var(--sheep-font-weight-heading);
   font-size: 14px;
   letter-spacing: 0.01em;
+}
+
+.app__version {
+  color: var(--sheep-color-text-faint);
+  font-family: var(--sheep-font-mono);
+  font-size: 11px;
 }
 
 .app__nav {
