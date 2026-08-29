@@ -1,28 +1,7 @@
-export * from './lib/ui/ui';
-export * from './lib/sheep-button/sheep-button.constants';
-export * from './lib/sheep-button/sheep-button.component';
-export * from './lib/sheep-list/sheep-list.constants';
-export * from './lib/sheep-list/sheep-list.component';
-export * from './lib/sheep-list/sheep-list-item/sheep-list-item.component';
-export * from './lib/sheep-list/directives/sheep-list-subheader.directive';
-export * from './lib/sheep-list/directives/sheep-list-divider.directive';
-export * from './lib/sheep-list/directives/sheep-list-item-icon.directive';
-export * from './lib/sheep-list/directives/sheep-list-item-title.directive';
-export * from './lib/sheep-list/directives/sheep-list-item-line.directive';
-export * from './lib/sheep-list/directives/sheep-list-item-meta.directive';
-export * from './lib/sheep-list/sheep-list.imports';
-export * from './lib/theme/sheep-theme.service';
-export * from './lib/theme/sheep-theme-switcher.component';
-export * from './lib/sheep-text-field/sheep-text-field.constants';
-export * from './lib/sheep-text-field/sheep-text-field.feature';
-export * from './lib/sheep-text-field/sheep-text-field.messages';
-export * from './lib/sheep-text-field/sheep-text-field.component';
-export * from './lib/sheep-text-field/directives/sheep-text-field-label.directive';
-export * from './lib/sheep-text-field/directives/sheep-text-field-hint.directive';
-export * from './lib/sheep-text-field/directives/sheep-text-field-prefix.directive';
-export * from './lib/sheep-text-field/directives/sheep-text-field-suffix.directive';
-export * from './lib/sheep-text-field/directives/sheep-text-field-password.directive';
-export * from './lib/sheep-text-field/directives/sheep-text-field-email.directive';
-export * from './lib/sheep-text-field/directives/sheep-text-field-counter.directive';
-export * from './lib/sheep-text-field/directives/sheep-text-field-validate.directive';
-export * from './lib/sheep-text-field/sheep-text-field.imports';
+export * from './lib/sheep-button/index';
+
+export * from './lib/sheep-list/index';
+
+export * from './lib/theme/index';
+
+export * from './lib/sheep-text-field/index';
