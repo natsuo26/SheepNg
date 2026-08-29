@@ -1,0 +1,33 @@
+$steps: 1, 2, 3, 4, 6, 8, 12, 16;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+:host([data-gap='0']) {
+  gap: 0;
+}
+
+@each $step in $steps {
+  :host([data-gap='#{$step}']) {
+    gap: var(--sheep-space-#{$step});
+  }
+}
+
+:host([data-align='start']) {
+  align-items: flex-start;
+}
+:host([data-align='center']) {
+  align-items: center;
+}
+:host([data-align='end']) {
+  align-items: flex-end;
+}
+:host([data-align='baseline']) {
+  align-items: baseline;
+}
+:host([data-align='stretch']) {
+  align-items: stretch;
+}

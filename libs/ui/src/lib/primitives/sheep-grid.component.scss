@@ -1,0 +1,27 @@
+$steps: 1, 2, 3, 4, 6, 8, 12, 16;
+
+:host {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(var(--_min), 1fr));
+}
+
+:host([data-min='sm']) {
+  --_min: 180px;
+}
+:host([data-min='md']) {
+  --_min: 240px;
+}
+:host([data-min='lg']) {
+  --_min: 320px;
+}
+
+:host([data-gap='0']) {
+  gap: 0;
+}
+
+@each $step in $steps {
+  :host([data-gap='#{$step}']) {
+    gap: var(--sheep-space-#{$step});
+  }
+}

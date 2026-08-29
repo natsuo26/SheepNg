@@ -21,7 +21,7 @@ describe('ButtonDemo', () => {
 
   it('renders a button for every variant and tone combination', () => {
     const buttons = fixture.nativeElement.querySelectorAll(
-      '.demo__matrix sheep-button',
+      '[data-testid="matrix"] sheep-button',
     );
 
     expect(buttons.length).toBe(25);
