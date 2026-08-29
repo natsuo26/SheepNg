@@ -28,7 +28,7 @@ export class App {
     { path: 'badges', label: 'Badges', ready: false },
     { path: 'nav-bar', label: 'Nav bar', ready: false },
     { path: 'side-sheet', label: 'Side sheet', ready: false },
-    { path: 'list', label: 'List', ready: false },
+    { path: 'list', label: 'List', ready: true },
     { path: 'tree', label: 'Tree', ready: false },
     { path: 'table', label: 'Table', ready: false },
     { path: 'dialog', label: 'Dialog', ready: false },

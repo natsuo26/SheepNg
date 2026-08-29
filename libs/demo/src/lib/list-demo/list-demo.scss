@@ -1,0 +1,56 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* The list paints nothing of its own, so a demo has to frame it. This is the
+   page's job — exactly the seam the component leaves open. */
+.list-frame {
+  min-width: 0;
+  max-width: 420px;
+  padding: var(--sheep-space-2) 0;
+  border-radius: var(--sheep-radius-md);
+  /* Clips a hovered or selected row's ground to the frame's corners. */
+  overflow: hidden;
+  background: var(--sheep-color-surface);
+  box-shadow: 0 0 0 1px var(--sheep-color-line);
+}
+
+.list-frames {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+  align-items: start;
+  gap: var(--sheep-space-6);
+  min-width: 0;
+}
+
+/* The one section that pairs a list with its markup: the code column takes
+   whatever the list does not. */
+.list-coupled {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sheep-space-6);
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .list-coupled {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.list-echo {
+  margin: 0;
+  color: var(--sheep-color-text-muted);
+  font-family: var(--sheep-font-mono);
+  font-size: 11px;
+}
+
+/* A virtual viewport must have a height of its own — it is the scroll box. */
+.list-frame--tall {
+  max-width: 460px;
+}
+
+.list-viewport {
+  height: 320px;
+}
