@@ -33,11 +33,20 @@
   gap: var(--sheep-space-3);
 }
 
+/* The brand mark. Width and height are on the element too, so the bar reserves
+   its box before the file lands and the nav beside it does not jump on a cold
+   load.
+
+   21px, not 28: the artwork fills ~91% of its own canvas so that it survives
+   being rendered at 16px in a browser tab, which leaves the box almost equal
+   to the ink. The mark on screen is the size it always was; the padding that
+   used to be baked into the file is simply gone. The bar can carry up to 30px
+   before it grows — the theme switcher is the tallest thing in it. */
 .app__mark {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  background: var(--sheep-color-accent);
+  display: block;
+  flex: none;
+  width: 21px;
+  height: 21px;
 }
 
 .app__name {
@@ -94,6 +103,5 @@
 .app__main {
   flex: 1;
   width: 100%;
-  max-width: 1000px;
   padding: var(--sheep-space-12) var(--sheep-space-8);
 }

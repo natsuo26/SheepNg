@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="SheepNg"><title>SheepNg</title>
+<g transform="translate(32 32) scale(1.14) translate(-32 -32)" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M23 15h18a7 7 0 0 1 7 7v20a7 7 0 0 1-7 7H23a7 7 0 0 1-7-7V22a7 7 0 0 1 7-7z" stroke-width="3.4"></path>
+  <path d="M38 30.2C36 26.8 26.8 26.4 25.8 31.2 24.8 36 31.6 36.6 35 38 39.4 39.8 38.9 44.8 33.6 45.3 29.2 45.7 26.3 43.9 25.3 42" stroke-width="4.4"></path>
+  <circle cx="24.5" cy="23.5" r="2.6" fill="currentColor" stroke="none"></circle>
+</g>
+</svg>

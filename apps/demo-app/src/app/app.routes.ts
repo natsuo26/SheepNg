@@ -7,6 +7,10 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.ButtonDemo),
   },
   {
+    path: 'text-field',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.TextFieldDemo),
+  },
+  {
     path: 'list',
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.ListDemo),
   },

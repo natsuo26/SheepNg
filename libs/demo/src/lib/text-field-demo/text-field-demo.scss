@@ -1,0 +1,59 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* A field fills its column, so the page has to give it one. This is exactly
+   the seam the component leaves open: it ships no width of its own. */
+.field-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-6);
+  min-width: 0;
+  max-width: 360px;
+}
+
+/* The markup half of a coupled section: it takes whatever the specimen does
+   not, rather than being capped to a field's width. */
+.field-notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-6);
+  min-width: 0;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 300px));
+  align-items: start;
+  gap: var(--sheep-space-8) var(--sheep-space-6);
+  min-width: 0;
+}
+
+/* A specimen beside the markup that produced it. */
+.field-coupled {
+  display: grid;
+  grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sheep-space-6);
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .field-coupled {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.field-actions {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--sheep-space-4);
+}
+
+.field-echo {
+  margin: 0;
+  color: var(--sheep-color-text-muted);
+  font-family: var(--sheep-font-mono);
+  font-size: 11px;
+}

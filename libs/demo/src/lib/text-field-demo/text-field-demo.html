@@ -1,0 +1,271 @@
+<article class="demo-page">
+  <header class="demo-page__head">
+    <p class="demo-eyebrow">Component</p>
+    <h1 class="demo-title">sheep-text-field</h1>
+    <p class="demo-lede">
+      A real &lt;input&gt; with its label, hint and error wired to it. It
+      implements signal forms' FormValueControl&lt;string&gt;, so [formField]
+      binds it end to end &mdash; and everything past a value and a label is a
+      directive on the host element.
+    </p>
+  </header>
+
+  @for (section of sections; track section.id) {
+  <hr class="demo-rule" />
+
+  <section class="demo-section" [attr.aria-labelledby]="section.id + '-title'">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" [id]="section.id + '-title'">
+        {{ section.heading }}
+      </h2>
+      <p class="demo-note">{{ section.note }}</p>
+    </header>
+
+    @switch (section.id) { @case ('anatomy') {
+    <div class="field-coupled">
+      <div class="field-column">
+        <sheep-text-field [(value)]="displayName" required>
+          <span sheepTextFieldLabel>Display name</span>
+          <span sheepTextFieldHint>Shown on your profile.</span>
+        </sheep-text-field>
+
+        <sheep-text-field
+          [errors]="[{ kind: 'required' }]"
+          touched
+          placeholder="you@example.com"
+        >
+          <span sheepTextFieldLabel>Email</span>
+          <span sheepTextFieldHint>We only use it for receipts.</span>
+        </sheep-text-field>
+
+        <p class="field-echo">value(): {{ displayName() }}</p>
+      </div>
+
+      <pre class="demo-code">{{ anatomySnippet }}</pre>
+    </div>
+    } @case ('float') {
+    <div class="field-coupled">
+      <div class="field-grid">
+        <div class="demo-group">
+          <p class="demo-eyebrow">At rest</p>
+          <sheep-text-field [(value)]="emptyField">
+            <span sheepTextFieldLabel>County</span>
+          </sheep-text-field>
+        </div>
+
+        <div class="demo-group">
+          <p class="demo-eyebrow">Lifted, by a value</p>
+          <sheep-text-field [(value)]="filledField">
+            <span sheepTextFieldLabel>Breed</span>
+          </sheep-text-field>
+        </div>
+
+        <div class="demo-group">
+          <p class="demo-eyebrow">Lifted, by a placeholder</p>
+          <sheep-text-field placeholder="e.g. 250 head">
+            <span sheepTextFieldLabel>Flock size</span>
+          </sheep-text-field>
+        </div>
+
+        <div class="demo-group">
+          <p class="demo-eyebrow">Prefix waits its turn</p>
+          <sheep-text-field>
+            <span sheepTextFieldLabel>Rate</span>
+            <span sheepTextFieldPrefix>&pound;</span>
+          </sheep-text-field>
+        </div>
+      </div>
+
+      <pre class="demo-code">{{ floatSnippet }}</pre>
+    </div>
+    } @case ('sizes') {
+    <div class="field-grid">
+      @for (size of sizes; track size) {
+      <div class="demo-group">
+        <p class="demo-eyebrow">{{ size }}</p>
+        <sheep-text-field [size]="size" value="Merino" [maxLength]="24">
+          <span sheepTextFieldLabel>Breed</span>
+        </sheep-text-field>
+      </div>
+      }
+    </div>
+    } @case ('variants') {
+    <div class="field-grid">
+      @for (variant of variants; track variant) {
+      <div class="demo-group">
+        <p class="demo-eyebrow">{{ variant }}</p>
+        <sheep-text-field [variant]="variant" value="North Pennine">
+          <span sheepTextFieldLabel>Pasture</span>
+        </sheep-text-field>
+      </div>
+      }
+    </div>
+    } @case ('states') {
+    <div class="field-grid">
+      <div class="demo-group">
+        <p class="demo-eyebrow">disabled</p>
+        <sheep-text-field disabled value="Locked by your admin">
+          <span sheepTextFieldLabel>Region</span>
+        </sheep-text-field>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">readonly</p>
+        <sheep-text-field readonly [(value)]="readonlyValue">
+          <span sheepTextFieldLabel>Flock ID</span>
+          <span sheepTextFieldHint>Copyable, not editable.</span>
+        </sheep-text-field>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">pending</p>
+        <sheep-text-field pending [(value)]="pendingValue">
+          <span sheepTextFieldLabel>Username</span>
+          <span sheepTextFieldHint>Checking availability&hellip;</span>
+        </sheep-text-field>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">required, errored</p>
+        <sheep-text-field
+          required
+          touched
+          [errors]="[{ kind: 'required' }]"
+          variant="soft"
+        >
+          <span sheepTextFieldLabel>Farm name</span>
+        </sheep-text-field>
+      </div>
+    </div>
+    } @case ('affixes') {
+    <div class="field-grid">
+      <div class="demo-group">
+        <p class="demo-eyebrow">Text prefix</p>
+        <sheep-text-field value="sheep-ng" type="url">
+          <span sheepTextFieldLabel>Workspace</span>
+          <span sheepTextFieldPrefix>https://</span>
+          <span sheepTextFieldSuffix>.sheep.ng</span>
+        </sheep-text-field>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">Icon prefix</p>
+        <sheep-text-field type="search" placeholder="Search the flock">
+          <span sheepTextFieldLabel>Search</span>
+          <svg
+            sheepTextFieldPrefix
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+        </sheep-text-field>
+      </div>
+    </div>
+    } @case ('directives') {
+    <div class="field-coupled">
+      <div class="field-column">
+        <sheep-text-field
+          sheepPassword
+          autocomplete="new-password"
+          [(value)]="password"
+        >
+          <span sheepTextFieldLabel>Password</span>
+          <span sheepTextFieldHint>The toggle is a real focusable button.</span>
+        </sheep-text-field>
+
+        <sheep-text-field sheepEmail autocomplete="email" [(value)]="emailValue">
+          <span sheepTextFieldLabel>Email</span>
+          <span sheepTextFieldHint>Leave the field to see the check run.</span>
+        </sheep-text-field>
+
+        <sheep-text-field sheepCounter [maxLength]="120" [(value)]="bio">
+          <span sheepTextFieldLabel>Bio</span>
+        </sheep-text-field>
+      </div>
+
+      <pre class="demo-code">{{ directivesSnippet }}</pre>
+    </div>
+    } @case ('validation') {
+    <div class="field-coupled">
+      <div class="field-column">
+        <sheep-text-field [sheepValidate]="notTaken" [(value)]="handle">
+          <span sheepTextFieldLabel>Handle</span>
+          <span sheepTextFieldHint
+            >admin, root and sheep are taken. Leave the field to see.</span
+          >
+        </sheep-text-field>
+
+        <p class="demo-note">
+          A rule here is the field's, not a form's. On a field bound to a signal
+          form, write the same rule as
+          <code>validate()</code> in the schema &mdash; only the form can act on
+          it.
+        </p>
+      </div>
+
+      <div class="field-notes">
+        <pre class="demo-code">{{ validationSnippet }}</pre>
+        <pre class="demo-code">{{ validationTemplate }}</pre>
+      </div>
+    </div>
+    } @case ('forms') {
+    <div class="field-coupled">
+      <form class="field-column" (submit)="onSubmit($event)" novalidate>
+        <sheep-text-field [formField]="signUpForm.email" autocomplete="email">
+          <span sheepTextFieldLabel>Email</span>
+        </sheep-text-field>
+
+        <sheep-text-field
+          [formField]="signUpForm.password"
+          sheepPassword
+          sheepCounter
+          autocomplete="new-password"
+        >
+          <span sheepTextFieldLabel>Password</span>
+          <span sheepTextFieldHint>At least 10 characters.</span>
+        </sheep-text-field>
+
+        <sheep-text-field [formField]="signUpForm.workspace">
+          <span sheepTextFieldLabel>Workspace</span>
+          <span sheepTextFieldPrefix>sheep.ng/</span>
+        </sheep-text-field>
+
+        <div class="field-actions">
+          <sheep-button type="submit" variant="solid">Create account</sheep-button>
+          <span class="field-echo"
+            >valid(): {{ signUpForm().valid() }} &middot; touched():
+            {{ signUpForm().touched() }}</span
+          >
+        </div>
+
+        @if (submitted(); as payload) {
+        <pre class="demo-code">{{ payload }}</pre>
+        }
+      </form>
+
+      <pre class="demo-code">{{ formsSnippet }}
+{{ formsTemplate }}</pre>
+    </div>
+    } @case ('messages') {
+    <pre class="demo-code">{{ messagesSnippet }}</pre>
+    } @case ('api') {
+    <div class="demo-props">
+      @for (row of api; track row.name) {
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <span class="demo-prop__name">{{ row.name }}</span>
+          <span class="demo-prop__default">{{ row.default }}</span>
+        </div>
+        <span class="demo-prop__type">{{ row.type }}</span>
+      </div>
+      }
+    </div>
+    } }
+  </section>
+  }
+</article>

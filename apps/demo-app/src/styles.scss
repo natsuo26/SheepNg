@@ -2,3 +2,7 @@
    every @sheep-ng/ui component, and sets `color-scheme` per theme. Import it
    once, here — components read only from it. */
 @use 'sheep-theme';
+
+* {
+  box-sizing: border-box;
+}

@@ -1,0 +1,100 @@
+<div class="sheep-text-field__label-row">
+  <label class="sheep-text-field__label" [attr.for]="inputId">
+    <span class="sheep-text-field__label-text"
+      ><ng-content select="[sheepTextFieldLabel]"
+    /></span>
+    @if (required()) {
+    <span class="sheep-text-field__required" aria-hidden="true">*</span>
+    }
+  </label>
+</div>
+
+<div class="sheep-text-field__box">
+  <span class="sheep-text-field__affix sheep-text-field__affix--start"
+    ><ng-content select="[sheepTextFieldPrefix]"
+  /></span>
+
+  <input
+    #input
+    class="sheep-text-field__input"
+    [id]="inputId"
+    [attr.type]="resolvedType()"
+    [attr.name]="name() || null"
+    [attr.placeholder]="placeholder() || null"
+    [attr.autocomplete]="autocomplete()"
+    [attr.inputmode]="inputMode()"
+    [attr.autocapitalize]="autoCapitalize()"
+    [attr.autocorrect]="autoCorrect()"
+    [attr.spellcheck]="spellcheck()"
+    [attr.minlength]="minLength() ?? null"
+    [attr.maxlength]="maxLength() ?? null"
+    [attr.pattern]="nativePattern()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-describedby]="describedBy()"
+    [attr.aria-invalid]="showErrors() ? 'true' : null"
+    [attr.aria-errormessage]="showErrors() ? errorId : null"
+    [attr.aria-busy]="pending() ? 'true' : null"
+    [required]="required()"
+    [readOnly]="readonly()"
+    [disabled]="disabled()"
+    [value]="value()"
+    (input)="onInput($event)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+  />
+
+  @if (pending()) {
+  <span class="sheep-text-field__spinner" aria-hidden="true"></span>
+  }
+
+  <span class="sheep-text-field__affix sheep-text-field__affix--end"
+    ><ng-content select="[sheepTextFieldSuffix]"
+  /></span>
+
+  @for (action of actions(); track action.label) {
+  <button
+    type="button"
+    class="sheep-text-field__action"
+    [attr.aria-label]="action.label"
+    [attr.aria-pressed]="action.pressed === undefined ? null : action.pressed"
+    [attr.aria-controls]="inputId"
+    [disabled]="disabled()"
+    (mousedown)="$event.preventDefault()"
+    (click)="action.run()"
+  >
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.75"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      @for (path of action.icon; track $index) {
+      <path [attr.d]="path" />
+      }
+    </svg>
+  </button>
+  }
+</div>
+
+<div class="sheep-text-field__footer">
+  <div class="sheep-text-field__support">
+    <span class="sheep-text-field__hint" [id]="hintId"
+      ><ng-content select="[sheepTextFieldHint]"
+    /></span>
+
+    @if (showErrors()) {
+    <p class="sheep-text-field__error" [id]="errorId" role="alert">
+      @for (message of messagesToShow(); track $index) {
+      <span class="sheep-text-field__error-line">{{ message }}</span>
+      }
+    </p>
+    }
+  </div>
+
+  @if (status()) {
+  <span class="sheep-text-field__status" aria-hidden="true">{{ status() }}</span>
+  }
+</div>
