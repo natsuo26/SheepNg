@@ -1,0 +1,381 @@
+/* ==========================================================================
+   sheep-text-field
+
+   No public custom-property API. Every colour, metric, radius and timing
+   resolves from the theme layer (`--sheep-*`), so a field cannot be styled
+   into something that is not in the spec. Retheme in _sheep-theme-spec.scss.
+
+   Three stacked rows — label, box, footer — so a column of fields lines up
+   whether or not each one has a label, a hint or an error to show. The box is
+   the only part that carries a border, and it is the focus target: focus lands
+   on the input, and the ring is drawn on the box around it.
+   ========================================================================== */
+
+$sizes: sm, md, lg;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-1);
+
+  min-width: 0;
+  /* Fills its column. A field is laid out by whatever contains it — the
+     library ships components, not layout. */
+  width: 100%;
+
+  --_motion: var(--sheep-motion-duration) var(--sheep-motion-ease);
+  --_line: var(--sheep-color-line-strong);
+  --_ground: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Sizes — the same control metrics every other control in the library sits on.
+   -------------------------------------------------------------------------- */
+
+@each $size in $sizes {
+  :host(.sheep-text-field--#{$size}) {
+    --_h: var(--sheep-ctl-#{$size}-height);
+    --_px: var(--sheep-ctl-#{$size}-pad-x);
+    --_fs: var(--sheep-ctl-#{$size}-font);
+    --_icon: var(--sheep-ctl-#{$size}-icon);
+    --_gap: var(--sheep-ctl-#{$size}-gap);
+    --_radius: var(--sheep-ctl-#{$size}-radius);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Variants
+   -------------------------------------------------------------------------- */
+
+:host(.sheep-text-field--soft) {
+  --_ground: var(--sheep-color-surface-sunk);
+  --_line: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Label
+   -------------------------------------------------------------------------- */
+
+.sheep-text-field__label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25em;
+
+  color: var(--sheep-color-text-muted);
+  font-family: var(--sheep-font-body);
+  font-size: var(--_fs);
+  font-weight: var(--sheep-font-weight-label);
+  line-height: 1.35;
+
+  cursor: pointer;
+}
+
+/* Nothing projected: the row collapses instead of leaving a gap, so a labelled
+   field and an unlabelled one still start at the same y. */
+.sheep-text-field__label:has(> .sheep-text-field__label-text:empty) {
+  display: none;
+}
+
+.sheep-text-field__required {
+  color: var(--sheep-tone-danger-base);
+}
+
+:host(.sheep-text-field--disabled) .sheep-text-field__label {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* --------------------------------------------------------------------------
+   Box
+   -------------------------------------------------------------------------- */
+
+.sheep-text-field__box {
+  display: flex;
+  align-items: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: var(--_h);
+  padding: 0 var(--_px);
+
+  border: 1px solid var(--_line);
+  border-radius: var(--_radius);
+  background: var(--_ground);
+
+  cursor: text;
+
+  transition:
+    border-color var(--_motion),
+    background-color var(--_motion);
+}
+
+.sheep-text-field__box:hover {
+  border-color: var(--sheep-color-text-faint);
+}
+
+/* Focus is a 2px accent outline — never a soft glow, never the browser
+   default. It is drawn on the box because the input inside it is borderless:
+   the box is what the user sees as the control. */
+.sheep-text-field__box:has(.sheep-text-field__input:focus-visible) {
+  border-color: var(--sheep-color-accent);
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+}
+
+:host(.sheep-text-field--errored) .sheep-text-field__box,
+:host(.sheep-text-field--errored) .sheep-text-field__box:hover {
+  border-color: var(--sheep-tone-danger-base);
+}
+
+:host(.sheep-text-field--disabled) .sheep-text-field__box {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+:host(.sheep-text-field--disabled) .sheep-text-field__box:hover {
+  border-color: var(--_line);
+}
+
+:host(.sheep-text-field--readonly) .sheep-text-field__box {
+  background: var(--sheep-color-surface-sunk);
+}
+
+/* --------------------------------------------------------------------------
+   Input — chrome-free, because the box is the chrome.
+   -------------------------------------------------------------------------- */
+
+.sheep-text-field__input {
+  flex: 1 1 auto;
+
+  box-sizing: border-box;
+  min-width: 0;
+  /* One line short of the box, so the caret is not clipped at either edge. */
+  height: calc(var(--_h) - 2px);
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+  font-size: var(--_fs);
+  line-height: 1.2;
+
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheep-text-field__input:focus,
+.sheep-text-field__input:focus-visible {
+  outline: none;
+}
+
+.sheep-text-field__input::placeholder {
+  color: var(--sheep-color-text-faint);
+  opacity: 1;
+}
+
+.sheep-text-field__input:disabled {
+  cursor: not-allowed;
+  /* The box already dims; dimming twice reads as broken. */
+  opacity: 1;
+  -webkit-text-fill-color: currentcolor;
+}
+
+/* Chrome's own reveal and clear buttons duplicate ours and cannot be themed. */
+.sheep-text-field__input::-ms-reveal,
+.sheep-text-field__input::-ms-clear,
+.sheep-text-field__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Affixes — whatever the caller marked as prefix or suffix.
+   -------------------------------------------------------------------------- */
+
+.sheep-text-field__affix {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  color: var(--sheep-color-text-faint);
+  font-size: var(--_fs);
+  white-space: nowrap;
+}
+
+.sheep-text-field__affix:empty {
+  display: none;
+}
+
+/* Projected icons are compiled in the consumer's scope. Paint is left alone —
+   an icon declares its own fill/stroke, normally currentColor. */
+:host ::ng-deep .sheep-text-field__affix > :is(svg, img) {
+  display: block;
+  flex: none;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+
+/* --------------------------------------------------------------------------
+   Feature actions — the password toggle and anything else a directive adds.
+   -------------------------------------------------------------------------- */
+
+.sheep-text-field__action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: var(--_icon);
+  height: var(--_icon);
+  padding: 0;
+
+  border: 0;
+  border-radius: var(--sheep-radius-sm);
+  background: transparent;
+
+  color: var(--sheep-color-text-faint);
+  cursor: pointer;
+
+  transition: color var(--_motion);
+}
+
+.sheep-text-field__action:hover:not(:disabled) {
+  color: var(--sheep-color-text);
+}
+
+.sheep-text-field__action[aria-pressed='true'] {
+  color: var(--sheep-color-accent);
+}
+
+.sheep-text-field__action:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+}
+
+.sheep-text-field__action:disabled {
+  cursor: not-allowed;
+}
+
+.sheep-text-field__action > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Pending — an async validator is in flight.
+   -------------------------------------------------------------------------- */
+
+.sheep-text-field__spinner {
+  flex: none;
+  box-sizing: border-box;
+  width: var(--_icon);
+  height: var(--_icon);
+
+  border: 2px solid var(--sheep-color-text-faint);
+  border-top-color: transparent;
+  border-radius: 50%;
+
+  animation: sheep-text-field-spin 600ms linear infinite;
+}
+
+@keyframes sheep-text-field-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Footer — hint or error on the left, feature status on the right.
+   -------------------------------------------------------------------------- */
+
+/* Hidden until it has something to say, so a bare field is exactly a label and
+   a box tall and a column of fields does not jitter. */
+.sheep-text-field__footer {
+  display: none;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sheep-space-3);
+
+  min-width: 0;
+  font-family: var(--sheep-font-body);
+  font-size: max(11px, calc(var(--_fs) - 2px));
+  line-height: 1.45;
+}
+
+.sheep-text-field__footer:has(.sheep-text-field__hint:not(:empty)),
+.sheep-text-field__footer:has(.sheep-text-field__error),
+.sheep-text-field__footer:has(.sheep-text-field__status) {
+  display: flex;
+}
+
+.sheep-text-field__support {
+  min-width: 0;
+}
+
+.sheep-text-field__hint {
+  display: block;
+  color: var(--sheep-color-text-faint);
+}
+
+.sheep-text-field__hint:empty {
+  display: none;
+}
+
+/* The error replaces the hint rather than stacking under it: two lines of
+   guidance, one of which is now wrong, is worse than one. */
+:host(.sheep-text-field--errored) .sheep-text-field__hint {
+  display: none;
+}
+
+.sheep-text-field__error {
+  margin: 0;
+  color: var(--sheep-tone-danger-quiet);
+}
+
+.sheep-text-field__error-line {
+  display: block;
+}
+
+.sheep-text-field__status {
+  flex: none;
+  color: var(--sheep-color-text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Environment
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .sheep-text-field__box,
+  .sheep-text-field__action {
+    transition: none;
+  }
+  .sheep-text-field__spinner {
+    animation-duration: 1.6s;
+  }
+}
+
+@media (forced-colors: active) {
+  .sheep-text-field__box {
+    border-color: currentColor;
+  }
+  .sheep-text-field__box:has(.sheep-text-field__input:focus-visible) {
+    outline-color: Highlight;
+  }
+  :host(.sheep-text-field--disabled) .sheep-text-field__box {
+    border-color: GrayText;
+    opacity: 1;
+  }
+  :host(.sheep-text-field--disabled) .sheep-text-field__label,
+  :host(.sheep-text-field--disabled) .sheep-text-field__input {
+    color: GrayText;
+    opacity: 1;
+  }
+}

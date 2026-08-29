@@ -133,3 +133,137 @@ Icon-only buttons need an accessible name:
 Focus is a 2px accent outline, never the browser default and never a soft glow.
 `prefers-reduced-motion` drops the transitions and slows the spinner, and
 `forced-colors` hands the palette over to system colours.
+
+## `sheep-text-field`
+
+```ts
+import { SHEEP_TEXT_FIELD } from '@sheep-ng/ui';
+```
+
+```html
+<sheep-text-field [(value)]="name" required>
+  <span sheepTextFieldLabel>Display name</span>
+  <span sheepTextFieldHint>Shown on your profile.</span>
+</sheep-text-field>
+```
+
+It renders a real `<input>`, so typing, selection, autofill, IME composition and
+the password manager are the platform's. The component owns the label, the hint,
+the error line and the box around them, and wires the `id`, `for`,
+`aria-describedby`, `aria-invalid` and `aria-errormessage` between them — the
+call site never labels an input by hand.
+
+`SHEEP_TEXT_FIELD` is the field plus its eight directives, ready to drop into a
+component's `imports`. The pieces are standalone and importable one at a time,
+but a directive that is never written is never instantiated, so importing the
+set costs nothing.
+
+### Signal forms
+
+The field implements `FormValueControl<string>`, so `[formField]` binds it end
+to end and nothing else appears at the call site:
+
+```html
+<form (submit)="onSubmit($event)">
+  <sheep-text-field [formField]="f.email">
+    <span sheepTextFieldLabel>Email</span>
+  </sheep-text-field>
+</form>
+```
+
+`required`, `minLength`, `maxLength` and `pattern` come down from the schema and
+reach the native input as real attributes. `errors`, `disabled`, `readonly`,
+`invalid`, `pending` and `touched` come down too; blur goes back up as `touch`,
+which is what `submit()` and `debounce('blur')` are keyed on.
+
+Reactive forms bridge through `compatForm()` in `@angular/forms/signals/compat`.
+The field deliberately ships no `ControlValueAccessor`: `[formField]` picks the
+CVA path over the control contract when one is present, which would cost the
+errors, touched and constraint bindings above.
+
+### Errors
+
+An error is `{ kind, message? }` — the shape signal forms uses. Text resolves
+from the error's own `message` first, then from `SHEEP_TEXT_FIELD_MESSAGES`,
+which is where `required` and `email` get one sentence for the whole app.
+A `kind` with no text renders nothing rather than leaking the kind.
+
+```ts
+providers: [
+  provideSheepTextFieldMessages({
+    errors: { required: 'Bitte ausfüllen.' },
+    showPassword: 'Passwort anzeigen',
+  }),
+];
+```
+
+Errors stay hidden until `touched`, which signal forms sets on blur and on every
+field at `submit()`. A field raises its own on blur, so it behaves the same with
+no form behind it. Handing errors in directly — the ones a server sent back —
+means setting `touched` alongside them.
+
+### Directives
+
+Everything past a value and a label is a directive on the host element, so a
+plain field carries none of their weight.
+
+| Directive              | Adds                                                          |
+| ---------------------- | ------------------------------------------------------------- |
+| `sheepTextFieldLabel`  | The label. Projected into a real `<label for>`.               |
+| `sheepTextFieldHint`   | Guidance in the footer, referenced by `aria-describedby`.     |
+| `sheepTextFieldPrefix` | Content before the value, inside the box.                     |
+| `sheepTextFieldSuffix` | Content after the value, inside the box.                      |
+| `sheepPassword`        | `type="password"` plus a reveal toggle.                       |
+| `sheepEmail`           | `type="email"`, the mobile keyboard hints, and the check.     |
+| `sheepCounter`         | A count in the footer, against `maxLength` when there is one. |
+| `[sheepValidate]`      | A rule of your own: `(value: string) => string \| null`.      |
+
+`sheepPassword` and `sheepEmail` set the type themselves, so there is no
+`type="password"` beside them to drift out of sync.
+
+Write your own by implementing `SheepTextFieldFeature` and registering with the
+`SheepTextFieldFeatures` the field provides. Each hook is a plain function of
+the field's state called inside the field's own `computed`s, so a signal the
+feature reads on the way through is tracked as if the field had read it.
+
+**Who owns validity.** `sheepEmail` and `sheepValidate` raise errors the _field_
+renders. A signal form cannot see them, so a form-bound field would show the
+message while the form still thought itself valid. On a form-bound field, put
+the rule in the schema — `email()`, `validate()` — where the form can act on it.
+Reach for the directives on a field with no form behind it.
+
+### Inputs
+
+| Input                     | Type                                                | Default     | Notes                                        |
+| ------------------------- | --------------------------------------------------- | ----------- | -------------------------------------------- |
+| `value`                   | `model<string>`                                     | `''`        | Two-way, and bound by `[formField]`.         |
+| `variant`                 | `outline \| soft`                                   | `outline`   | Visual weight.                               |
+| `size`                    | `sm \| md \| lg`                                    | `md`        | Shared with every control in the library.    |
+| `type`                    | `text \| password \| email \| search \| tel \| url` | `text`      | A feature directive overrides it.            |
+| `placeholder`             | `string \| null`                                    | `null`      | Not a label — it is gone once typing starts. |
+| `autocomplete`            | `string \| null`                                    | `null`      | Worth setting on every real form field.      |
+| `ariaLabel`               | `string \| null`                                    | `null`      | Required when no label is projected.         |
+| `disabled`                | `boolean`                                           | `false`     | Bare attribute allowed. Blocks focus.        |
+| `readonly`                | `boolean`                                           | `false`     | Keeps the value selectable and focusable.    |
+| `required`                | `boolean`                                           | `false`     | Native, plus an asterisk on the label.       |
+| `pending`                 | `boolean`                                           | `false`     | Spinner, for an async rule in flight.        |
+| `touched`                 | `boolean`                                           | `false`     | The gate on showing errors.                  |
+| `invalid`                 | `boolean`                                           | `false`     | Invalid with nothing to say.                 |
+| `errors`                  | `ValidationError[]`                                 | `[]`        | Filled by `[formField]`.                     |
+| `name`                    | `string`                                            | `''`        | Empty means no attribute at all.             |
+| `minLength` / `maxLength` | `number \| undefined`                               | `undefined` | Reach the input as real attributes.          |
+| `pattern`                 | `RegExp[]`                                          | `[]`        | The first one reaches the DOM.               |
+
+There is no `value` output beside the model, and no `fullWidth`: the field fills
+its column, and the caller sizes the column.
+
+`focus()` on the component instance forwards to the native input. `reset()`
+forgets the blur it has seen, and so the errors it was showing.
+
+### Accessibility
+
+Focus is a 2px accent outline on the box, never the browser default and never a
+soft glow. The reveal toggle is a real focusable button, but takes no focus on a
+mouse click, so the caret stays where it was mid-word.
+`prefers-reduced-motion` drops the transitions and slows the spinner, and
+`forced-colors` hands the palette over to system colours.

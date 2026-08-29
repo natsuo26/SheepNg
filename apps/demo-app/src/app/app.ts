@@ -22,7 +22,7 @@ export class App {
   protected readonly components = [
     { path: 'button', label: 'Button', ready: true },
     { path: 'icon-button', label: 'Icon button', ready: false },
-    { path: 'text-field', label: 'Text field', ready: false },
+    { path: 'text-field', label: 'Text field', ready: true },
     { path: 'number-field', label: 'Number field', ready: false },
     { path: 'chips', label: 'Chips', ready: false },
     { path: 'badges', label: 'Badges', ready: false },
