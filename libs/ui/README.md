@@ -302,3 +302,90 @@ The reveal toggle is a real focusable button, but takes no focus on a mouse
 click, so the caret stays where it was mid-word.
 `prefers-reduced-motion` drops every transition, including the label's, and
 `forced-colors` hands the palette over to system colours.
+
+## `sheep-dialog`
+
+```ts
+import { SHEEP_DIALOG } from '@sheep-ng/ui';
+```
+
+```html
+<sheep-dialog [(open)]="confirming">
+  <sheep-dialog-header>Delete project</sheep-dialog-header>
+
+  <sheep-dialog-body>This cannot be undone.</sheep-dialog-body>
+
+  <sheep-dialog-footer>
+    <sheep-button (click)="confirming.set(false)">Cancel</sheep-button>
+    <sheep-button tone="danger" variant="solid" (click)="remove()"> Delete </sheep-button>
+  </sheep-dialog-footer>
+</sheep-dialog>
+```
+
+The dialog owns being open, being modal and being dismissed. It owns nothing
+about what is inside it: the three parts are slots, and the footer's buttons
+and what they do are the caller's.
+
+The parts are ordered by the component, not by the markup — the header is
+always the first row and the footer always the last, so a dialog cannot be
+assembled upside down. The body is the only part that scrolls: the panel stops
+growing at the viewport and the header and footer stay put.
+
+Underneath is a native `<dialog>` opened with `showModal()`, so the focus trap,
+the backdrop, the top-layer stacking and Escape are the platform's, not a
+reimplementation of them. It follows that an ancestor's `overflow` or
+`transform` cannot clip the panel, and that no `z-index` needs choosing.
+
+`SHEEP_DIALOG` is the dialog and its three parts, ready to drop into a
+component's `imports`.
+
+### State
+
+`open` is the state, and it is two-way — nothing opens or closes the dialog
+behind the caller's back. A dismissal writes `false` back and says why:
+
+```html
+<sheep-dialog [(open)]="editing" (closed)="track($event)">…</sheep-dialog>
+```
+
+`show()` and `close(reason?)` on the component instance are the same state,
+called instead of bound. Bind `[(open)]` rather than `[open]`: a one-way
+binding is re-applied on the next check, which would reopen a dialog the user
+just dismissed.
+
+Content is created with the caller's view, not when the dialog opens. Wrap an
+expensive body in `@if` at the call site if that matters.
+
+### Inputs and outputs
+
+| Input / output | Type                          | Default | Notes                                                         |
+| -------------- | ----------------------------- | ------- | ------------------------------------------------------------- |
+| `open`         | `boolean`                     | `false` | Two-way. The single source of truth for whether it shows.     |
+| `size`         | `sm \| md \| lg`              | `md`    | Panel width and interior density, together.                   |
+| `dismissible`  | `boolean`                     | `true`  | Escape, backdrop click and the header's close button, as one. |
+| `ariaLabel`    | `string \| null`              | `null`  | The name, when there is no header to take it from.            |
+| `(closed)`     | `close \| escape \| backdrop` | —       | Emits once closed, with what closed it.                       |
+| `align`        | `end \| start \| between`     | `end`   | On `sheep-dialog-footer`. Where the buttons sit on the row.   |
+
+Actions read left to right in rising commitment, so the one the dialog is for
+goes last. `align="between"` pushes a destructive or secondary action away from
+the pair the eye lands on.
+
+### Accessibility
+
+A modal needs an accessible name. `sheep-dialog-header` carries the id the
+dialog points `aria-labelledby` at, so it is announced by the words on screen;
+a dialog with no header wants `ariaLabel` instead.
+
+The close button in the header is the dismissal Escape and the backdrop already
+offer, made visible — it appears exactly when `dismissible` is set, so the
+three ways out cannot disagree. A dialog that must be answered turns it off and
+puts the answers in the footer.
+
+Clicking off the dialog is a pointer gesture with no keyboard counterpart, so
+the backdrop is not focusable; Escape is the keyboard's way out. A drag that
+starts inside the panel and ends outside it does not dismiss, so selecting text
+past the panel's edge cannot throw the dialog away.
+
+`prefers-reduced-motion` drops the entry animation, and `forced-colors` gives
+the panel a system-coloured border.

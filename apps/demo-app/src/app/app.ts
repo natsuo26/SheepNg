@@ -31,6 +31,6 @@ export class App {
     { path: 'list', label: 'List', ready: true },
     { path: 'tree', label: 'Tree', ready: false },
     { path: 'table', label: 'Table', ready: false },
-    { path: 'dialog', label: 'Dialog', ready: false },
+    { path: 'dialog', label: 'Dialog', ready: true },
   ];
 }

@@ -134,7 +134,11 @@ export class TextFieldDemo {
 
   // --- signal forms ---------------------------------------------------------
 
-  protected readonly signUp = signal({ email: '', password: '', workspace: '' });
+  protected readonly signUp = signal({
+    email: '',
+    password: '',
+    workspace: '',
+  });
 
   /**
    * The whole form. Every rule lives here — the template below carries three
@@ -169,6 +173,54 @@ export class TextFieldDemo {
 
   // --- reference ------------------------------------------------------------
 
+  /**
+   * The markup behind each specimen, keyed by section.
+   *
+   * Every example on the page is a few lines of HTML and nothing else, so the
+   * page shows those lines rather than describing them. A section with its own
+   * coupled code block is absent here — it already has one.
+   */
+  protected readonly snippets: Record<string, string> = {
+    sizes: `<sheep-text-field size="sm">
+  <span sheepTextFieldLabel>Breed</span>
+</sheep-text-field>
+
+<sheep-text-field size="lg">
+  <span sheepTextFieldLabel>Breed</span>
+</sheep-text-field>`,
+
+    variants: `<sheep-text-field>
+  <span sheepTextFieldLabel>Pasture</span>
+</sheep-text-field>
+
+<sheep-text-field variant="soft">
+  <span sheepTextFieldLabel>Pasture</span>
+</sheep-text-field>`,
+
+    states: `<sheep-text-field disabled value="Locked by your admin">...</sheep-text-field>
+<sheep-text-field readonly [(value)]="flockId">...</sheep-text-field>
+<sheep-text-field pending [(value)]="username">...</sheep-text-field>
+
+<sheep-text-field required touched [errors]="[{ kind: 'required' }]">
+  <span sheepTextFieldLabel>Farm name</span>
+</sheep-text-field>`,
+
+    affixes: `<sheep-text-field type="url" [(value)]="workspace">
+  <span sheepTextFieldLabel>Workspace</span>
+  <span sheepTextFieldPrefix>https://</span>
+  <span sheepTextFieldSuffix>.sheep.ng</span>
+</sheep-text-field>
+
+<sheep-text-field type="search" placeholder="Search the flock">
+  <span sheepTextFieldLabel>Search</span>
+  <svg sheepTextFieldPrefix viewBox="0 0 24 24">...</svg>
+</sheep-text-field>`,
+
+    api: `import { SHEEP_TEXT_FIELD } from '@sheep-ng/ui';
+
+@Component({ imports: [SHEEP_TEXT_FIELD], ... })`,
+  };
+
   /** The public API, rendered from one source so it cannot drift from the code. */
   protected readonly api: readonly {
     name: string;
@@ -185,26 +237,54 @@ export class TextFieldDemo {
     { name: 'value', default: "''", type: 'model<string> — two-way' },
     { name: 'placeholder', default: 'null', type: 'string | null' },
     { name: 'autocomplete', default: 'null', type: 'string | null' },
-    { name: 'ariaLabel', default: 'null', type: 'string | null — when unlabelled' },
+    {
+      name: 'ariaLabel',
+      default: 'null',
+      type: 'string | null — when unlabelled',
+    },
     { name: 'disabled', default: 'false', type: 'boolean attribute' },
     { name: 'readonly', default: 'false', type: 'boolean attribute' },
     { name: 'required', default: 'false', type: 'boolean attribute' },
     { name: 'pending', default: 'false', type: 'boolean attribute' },
-    { name: 'touched', default: 'false', type: 'boolean attribute — gates errors' },
+    {
+      name: 'touched',
+      default: 'false',
+      type: 'boolean attribute — gates errors',
+    },
     { name: 'invalid', default: 'false', type: 'boolean attribute' },
-    { name: 'errors', default: '[]', type: 'ValidationError[] — bound by [formField]' },
+    {
+      name: 'errors',
+      default: '[]',
+      type: 'ValidationError[] — bound by [formField]',
+    },
     { name: 'name', default: "''", type: 'string' },
     { name: 'minLength / maxLength', default: 'undefined', type: 'number' },
     { name: 'pattern', default: '[]', type: 'RegExp[]' },
     { name: '(touch)', default: '—', type: 'output<void> — emitted on blur' },
     { name: 'sheepTextFieldLabel', default: '—', type: 'the label' },
-    { name: 'sheepTextFieldHint', default: '—', type: 'guidance under the field' },
-    { name: 'sheepTextFieldPrefix', default: '—', type: 'content before the value' },
-    { name: 'sheepTextFieldSuffix', default: '—', type: 'content after the value' },
+    {
+      name: 'sheepTextFieldHint',
+      default: '—',
+      type: 'guidance under the field',
+    },
+    {
+      name: 'sheepTextFieldPrefix',
+      default: '—',
+      type: 'content before the value',
+    },
+    {
+      name: 'sheepTextFieldSuffix',
+      default: '—',
+      type: 'content after the value',
+    },
     { name: 'sheepPassword', default: '—', type: 'mask plus a reveal toggle' },
     { name: 'sheepEmail', default: '—', type: 'email type, hints and check' },
     { name: 'sheepCounter', default: '—', type: 'a count in the footer' },
-    { name: 'sheepValidate', default: '—', type: '(value: string) => string | null' },
+    {
+      name: 'sheepValidate',
+      default: '—',
+      type: '(value: string) => string | null',
+    },
     {
       name: 'SHEEP_TEXT_FIELD_MESSAGES',
       default: 'English',

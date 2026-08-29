@@ -1,0 +1,212 @@
+<article class="demo-page">
+  <header class="demo-page__head">
+    <p class="demo-eyebrow">Component</p>
+    <h1 class="demo-title">sheep-dialog</h1>
+    <p class="demo-lede">
+      A modal popup, and nothing about what is in it. Three slots &mdash;
+      header, body, footer &mdash; and a native &lt;dialog&gt; underneath, so
+      the focus trap, the backdrop, the top layer and Escape come from the
+      platform rather than from a reimplementation of it.
+    </p>
+  </header>
+
+  @for (section of sections; track section.id) {
+  <hr class="demo-rule" />
+
+  <section class="demo-section" [attr.aria-labelledby]="section.id + '-title'">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" [id]="section.id + '-title'">
+        {{ section.heading }}
+      </h2>
+      <p class="demo-note">{{ section.note }}</p>
+    </header>
+
+    @switch (section.id) { @case ('anatomy') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="anatomy.set(true)">Rename folder</sheep-button>
+      </div>
+
+      <sheep-dialog [(open)]="anatomy">
+        <sheep-dialog-header>Rename folder</sheep-dialog-header>
+        <sheep-dialog-body>
+          <p>
+            The body is the caller's content, untouched. It supplies the reading
+            measure and the padding, and takes the scroll once there is more
+            than the panel can show.
+          </p>
+        </sheep-dialog-body>
+        <sheep-dialog-footer>
+          <sheep-button (click)="anatomy.set(false)">Cancel</sheep-button>
+          <sheep-button variant="solid" (click)="anatomy.set(false)">
+            Save
+          </sheep-button>
+        </sheep-dialog-footer>
+      </sheep-dialog>
+    </div>
+    } @case ('sizes') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        @for (size of sizes; track size) {
+        <sheep-button (click)="sizeOpen[size].set(true)"
+          >{{ size }}</sheep-button
+        >
+        }
+      </div>
+
+      @for (size of sizes; track size) {
+      <sheep-dialog [size]="size" [(open)]="sizeOpen[size]">
+        <sheep-dialog-header>Size {{ size }}</sheep-dialog-header>
+        <sheep-dialog-body>
+          <p>
+            Width and interior density move together, so the padding around a
+            short confirmation is never the padding around a page of detail.
+          </p>
+        </sheep-dialog-body>
+        <sheep-dialog-footer>
+          <sheep-button (click)="sizeOpen[size].set(false)">Close</sheep-button>
+        </sheep-dialog-footer>
+      </sheep-dialog>
+      }
+    </div>
+    } @case ('dismissal') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="dismissible.set(true)">Dismissible</sheep-button>
+        <sheep-button tone="danger" (click)="locked.set(true)">
+          Must be answered
+        </sheep-button>
+      </div>
+
+      <p class="demo-note">
+        last closed by: {{ lastReason() ?? 'nothing yet' }}
+      </p>
+
+      <sheep-dialog [(open)]="dismissible" (closed)="lastReason.set($event)">
+        <sheep-dialog-header>Leave any way you like</sheep-dialog-header>
+        <sheep-dialog-body>
+          <p>
+            Escape, a click on the backdrop, or the close button in the corner.
+            Each one writes open back to false and says which it was through the
+            closed output.
+          </p>
+        </sheep-dialog-body>
+        <sheep-dialog-footer>
+          <sheep-button (click)="dismissible.set(false)">Close</sheep-button>
+        </sheep-dialog-footer>
+      </sheep-dialog>
+
+      <sheep-dialog size="sm" dismissible="false" [(open)]="locked">
+        <sheep-dialog-header>Discard 3 unsaved edits?</sheep-dialog-header>
+        <sheep-dialog-body>
+          <p>
+            No close button, and Escape does nothing. The only way out is one of
+            the two answers below.
+          </p>
+        </sheep-dialog-body>
+        <sheep-dialog-footer>
+          <sheep-button (click)="locked.set(false)">Keep editing</sheep-button>
+          <sheep-button
+            tone="danger"
+            variant="solid"
+            (click)="locked.set(false)"
+          >
+            Discard
+          </sheep-button>
+        </sheep-dialog-footer>
+      </sheep-dialog>
+    </div>
+    } @case ('footer') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        @for (align of aligns; track align) {
+        <sheep-button (click)="alignOpen[align].set(true)">
+          {{ align }}
+        </sheep-button>
+        }
+      </div>
+
+      @for (align of aligns; track align) {
+      <sheep-dialog [(open)]="alignOpen[align]">
+        <sheep-dialog-header>align="{{ align }}"</sheep-dialog-header>
+        <sheep-dialog-body>
+          <p>The footer lays the buttons out. What they do is the caller's.</p>
+        </sheep-dialog-body>
+        <sheep-dialog-footer [align]="align">
+          <sheep-button
+            tone="danger"
+            variant="ghost"
+            (click)="alignOpen[align].set(false)"
+          >
+            Delete
+          </sheep-button>
+          <sheep-button variant="solid" (click)="alignOpen[align].set(false)">
+            Done
+          </sheep-button>
+        </sheep-dialog-footer>
+      </sheep-dialog>
+      }
+    </div>
+    } @case ('scroll') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="scrolling.set(true)"
+          >Read the terms</sheep-button
+        >
+      </div>
+
+      <sheep-dialog size="lg" [(open)]="scrolling">
+        <sheep-dialog-header>Terms of service</sheep-dialog-header>
+        <sheep-dialog-body>
+          @for (paragraph of paragraphs; track $index) {
+          <p>{{ paragraph }}</p>
+          }
+        </sheep-dialog-body>
+        <sheep-dialog-footer align="between">
+          <sheep-button variant="link" (click)="scrolling.set(false)">
+            Not now
+          </sheep-button>
+          <sheep-button variant="solid" (click)="scrolling.set(false)">
+            Accept
+          </sheep-button>
+        </sheep-dialog-footer>
+      </sheep-dialog>
+    </div>
+    } @case ('coupled') {
+    <div class="dialog-coupled">
+      <div class="demo-cluster">
+        <sheep-button (click)="coupled.set(true)">Open it</sheep-button>
+      </div>
+      <pre class="demo-code"><code>{{ snippet }}</code></pre>
+
+      <sheep-dialog [(open)]="coupled">
+        <sheep-dialog-header>Rename folder</sheep-dialog-header>
+        <sheep-dialog-body>
+          <p>The markup beside this is all there is to it.</p>
+        </sheep-dialog-body>
+        <sheep-dialog-footer>
+          <sheep-button (click)="coupled.set(false)">Cancel</sheep-button>
+          <sheep-button variant="solid" (click)="coupled.set(false)">
+            Save
+          </sheep-button>
+        </sheep-dialog-footer>
+      </sheep-dialog>
+    </div>
+    } @case ('api') {
+    <div class="demo-props">
+      @for (row of api; track row.name) {
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <span class="demo-prop__name">{{ row.name }}</span>
+          <span class="demo-prop__default">{{ row.default }}</span>
+        </div>
+        <span class="demo-prop__type">{{ row.type }}</span>
+      </div>
+      }
+    </div>
+    } } @if (snippets[section.id]; as code) {
+    <pre class="demo-code"><code>{{ code }}</code></pre>
+    }
+  </section>
+  }
+</article>
