@@ -1,66 +1,54 @@
-<div class="demo">
-  <header class="demo__header">
-    <div class="demo__intro">
-      <span class="demo__kicker">Component</span>
-      <h1 class="demo__title">sheep-button</h1>
-      <p class="demo__lede">
-        Outline by default. Five variants, five tones, three shared control
-        sizes &mdash; and no per-instance style API: the theme decides.
-      </p>
-    </div>
-    <div class="demo__pills">
-      <span class="demo__pill">v0.1.0</span>
-      <span class="demo__pill">native &lt;button&gt;</span>
-    </div>
-  </header>
+<sheep-stack gap="12">
+  <sheep-stack gap="2">
+    <sheep-text size="xs" tone="faint" uppercase>Component</sheep-text>
+    <sheep-heading level="1">sheep-button</sheep-heading>
+    <sheep-text tone="muted" measure>
+      A native &lt;button&gt;, outline by default. Five variants, five tones,
+      three shared control sizes &mdash; and no per-instance style API: the
+      theme decides.
+    </sheep-text>
+  </sheep-stack>
 
-  <section class="demo__section">
-    <h2 class="demo__heading">Variants &times; tones</h2>
-    <p class="demo__note">
-      Outline is the default. Solid is the exception, spent once per view.
-    </p>
-    <div class="demo__matrix">
+  @for (section of sections; track section.heading) {
+  <sheep-divider />
+
+  <sheep-stack gap="6">
+    <sheep-stack gap="1">
+      <sheep-heading level="2">{{ section.heading }}</sheep-heading>
+      <sheep-text size="sm" tone="muted">{{ section.note }}</sheep-text>
+    </sheep-stack>
+
+    @switch (section.id) { @case ('matrix') {
+    <sheep-stack gap="6" data-testid="matrix">
       @for (variant of variants; track variant) {
-      <div class="demo__row">
-        <span class="demo__label">{{ variant }}</span>
-        <div class="demo__group">
+      <sheep-stack gap="2">
+        <sheep-text size="xs" tone="faint" uppercase>
+          {{ variant }}
+        </sheep-text>
+        <sheep-row gap="3">
           @for (tone of tones; track tone) {
-          <sheep-button [variant]="variant" [tone]="tone"
-            >{{ tone }}</sheep-button
-          >
+          <sheep-button [variant]="variant" [tone]="tone">
+            {{ tone }}
+          </sheep-button>
           }
-        </div>
-      </div>
+        </sheep-row>
+      </sheep-stack>
       }
-    </div>
-  </section>
-
-  <section class="demo__section">
-    <h2 class="demo__heading">Sizes</h2>
-    <p class="demo__note">
-      Three heights shared by every control in the library, so a button, a text
-      field and a select land on the same row.
-    </p>
-    <div class="demo__group demo__group--baseline">
+    </sheep-stack>
+    } @case ('sizes') {
+    <sheep-row gap="3">
       @for (size of sizes; track size) {
       <sheep-button [size]="size">Size {{ size }}</sheep-button>
       }
-      <span class="demo__divider" aria-hidden="true"></span>
+      <sheep-divider orientation="vertical" />
       @for (size of sizes; track size) {
-      <sheep-button variant="solid" [size]="size"
-        >Commit {{ size }}</sheep-button
-      >
+      <sheep-button variant="solid" [size]="size">
+        Commit {{ size }}
+      </sheep-button>
       }
-    </div>
-  </section>
-
-  <section class="demo__section">
-    <h2 class="demo__heading">Icons and icon-only</h2>
-    <p class="demo__note">
-      <code>shape="square"</code> is a 1:1 box at the control height;
-      <code>ariaLabel</code> is required.
-    </p>
-    <div class="demo__group demo__group--baseline">
+    </sheep-row>
+    } @case ('icons') {
+    <sheep-row gap="3">
       <sheep-button tone="success">
         <svg
           sheepButtonStart
@@ -175,19 +163,12 @@
           />
         </svg>
       </sheep-button>
-    </div>
-  </section>
-
-  <section class="demo__section">
-    <h2 class="demo__heading">States</h2>
-    <p class="demo__note">
-      Focus is a 2px accent outline. Loading stays at full strength &mdash; busy
-      is not dead.
-    </p>
-    <div class="demo__group demo__group--baseline">
-      <sheep-button (click)="count()"
-        >Clicked {{ clicks() }}&times;</sheep-button
-      >
+    </sheep-row>
+    } @case ('states') {
+    <sheep-row gap="3">
+      <sheep-button (click)="count()">
+        Clicked {{ clicks() }}&times;
+      </sheep-button>
       <sheep-button variant="solid" [loading]="saving()" (click)="save()">
         Save changes
       </sheep-button>
@@ -201,54 +182,37 @@
       </sheep-button>
       <sheep-button disabled>Disabled</sheep-button>
       <sheep-button variant="link">Read the spec</sheep-button>
-    </div>
-  </section>
-
-  <section class="demo__section">
-    <h2 class="demo__heading">In a column</h2>
-    <p class="demo__note">
-      No <code>fullWidth</code> input &mdash; the caller sizes the wrapper.
-    </p>
-    <div class="demo__stack">
+    </sheep-row>
+    } @case ('column') {
+    <sheep-stack gap="3" align="start">
       <sheep-button variant="solid" size="lg">Create account</sheep-button>
       <sheep-button variant="ghost" tone="neutral">Maybe later</sheep-button>
-    </div>
-  </section>
-
-  <section class="demo__section">
-    <h2 class="demo__heading">Tightly coupled</h2>
-    <p class="demo__note">
-      The same two buttons, in code and rendered. No style hooks pass through.
-    </p>
-    <pre class="demo__code">
-&lt;sheep-button&gt;Cancel&lt;/sheep-button&gt;
-&lt;sheep-button variant="solid"&gt;Publish&lt;/sheep-button&gt;
-
-/* There is no third line. Appearance is not a
-   call-site concern &mdash; retheme in _sheep-theme-spec.scss. */</pre
-    >
-    <div class="demo__group demo__group--baseline">
-      <sheep-button>Cancel</sheep-button>
-      <sheep-button variant="solid">Publish</sheep-button>
-    </div>
-  </section>
-
-  <section class="demo__section">
-    <h2 class="demo__heading">API</h2>
-    <p class="demo__note">
-      Four appearance inputs, three behaviour inputs. Nothing else is styleable
-      from the call site.
-    </p>
-    <div class="demo__api">
+    </sheep-stack>
+    } @case ('coupled') {
+    <sheep-stack gap="6">
+      <sheep-code [code]="snippet" />
+      <sheep-row gap="3">
+        <sheep-button>Cancel</sheep-button>
+        <sheep-button variant="solid">Publish</sheep-button>
+      </sheep-row>
+    </sheep-stack>
+    } @case ('api') {
+    <sheep-grid min="md" gap="2">
       @for (row of api; track row.name) {
-      <div class="demo__api-row">
-        <div class="demo__api-head">
-          <span class="demo__api-name">{{ row.name }}</span>
-          <span class="demo__api-default">{{ row.default }}</span>
-        </div>
-        <span class="demo__api-type">{{ row.type }}</span>
-      </div>
+      <sheep-panel padding="4" sunk>
+        <sheep-stack gap="1">
+          <sheep-row gap="3" align="baseline">
+            <sheep-text mono size="sm">{{ row.name }}</sheep-text>
+            <sheep-text mono size="xs" tone="accent">
+              {{ row.default }}
+            </sheep-text>
+          </sheep-row>
+          <sheep-text mono size="xs" tone="faint"> {{ row.type }} </sheep-text>
+        </sheep-stack>
+      </sheep-panel>
       }
-    </div>
-  </section>
-</div>
+    </sheep-grid>
+    } }
+  </sheep-stack>
+  }
+</sheep-stack>

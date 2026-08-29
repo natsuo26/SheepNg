@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  flex: none;
+  background: var(--sheep-color-line);
+}
+
+:host([data-orientation='horizontal']) {
+  height: 1px;
+  width: 100%;
+}
+
+:host([data-orientation='vertical']) {
+  width: 1px;
+  align-self: stretch;
+}

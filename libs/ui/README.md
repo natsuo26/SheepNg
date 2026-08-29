@@ -52,6 +52,48 @@ the source of truth for paint. It exposes `preference()` (including `system`),
 To avoid a flash of the wrong theme, paint the remembered value before boot —
 see the inline script in `apps/demo-app/src/index.html`.
 
+## Layout primitives
+
+A page assembled from these needs no stylesheet of its own — which is the point.
+Spacing is a closed set (`gap`/`padding` take a step from the theme's space
+scale, never a raw length), so composed pages inherit the theme's rhythm
+instead of inventing their own. `libs/demo` is the proof: its button showcase
+has **zero** CSS files.
+
+| Component       | What it does                                       | Key inputs                                              |
+| --------------- | -------------------------------------------------- | ------------------------------------------------------- |
+| `sheep-stack`   | Children in a column, one gap between them.        | `gap`, `align`                                          |
+| `sheep-row`     | Children in a row, wrapping by default.            | `gap`, `align`, `justify`, `wrap`                       |
+| `sheep-grid`    | Responsive grid that picks its own column count.   | `gap`, `min`                                            |
+| `sheep-panel`   | A bounded surface: theme colour, hairline, radius. | `padding`, `sunk`                                       |
+| `sheep-divider` | A hairline rule. Presentational, `aria-hidden`.    | `orientation`                                           |
+| `sheep-heading` | Display type; `level` drives semantics _and_ size. | `level` (1–4)                                           |
+| `sheep-text`    | Body copy, labels, inline code.                    | `tone`, `size`, `mono`, `uppercase`, `measure`, `block` |
+| `sheep-code`    | A code block on the recessed surface.              | `code` (required)                                       |
+
+```html
+<sheep-stack gap="8">
+  <sheep-heading level="1">Title</sheep-heading>
+  <sheep-text tone="muted" measure>Supporting copy.</sheep-text>
+
+  <sheep-row gap="3">
+    <sheep-button>Cancel</sheep-button>
+    <sheep-button variant="solid">Publish</sheep-button>
+  </sheep-row>
+</sheep-stack>
+```
+
+Two things worth knowing:
+
+- `sheep-heading` puts `role="heading"` and `aria-level` on the host rather
+  than rendering an `h1`–`h4`, because one `<ng-content>` cannot be projected
+  into several branches. Screen readers treat the two as equivalent. It accepts
+  `level="1"` as well as `[level]="1"`.
+- `sheep-code` takes its snippet as a **bound string**, not projected content.
+  Angular collapses whitespace in templates, so projected code arrives with its
+  newlines already stripped. A bound string keeps them, and skips HTML-escaping
+  every `<`.
+
 ## `sheep-button`
 
 ```ts

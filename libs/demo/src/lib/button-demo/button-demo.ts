@@ -1,6 +1,14 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import {
   SheepButtonComponent,
+  SheepCodeComponent,
+  SheepDividerComponent,
+  SheepGridComponent,
+  SheepHeadingComponent,
+  SheepPanelComponent,
+  SheepRowComponent,
+  SheepStackComponent,
+  SheepTextComponent,
   type SheepButtonSize,
   type SheepButtonTone,
   type SheepButtonVariant,
@@ -9,14 +17,25 @@ import {
 /**
  * Showcase for every axis of `sheep-button`.
  *
- * The demo owns no theme state — the app shell's `sheep-theme-switcher` moves
- * `data-sheep-theme` on the document, and everything here follows.
+ * The demo owns no stylesheet. The page is assembled entirely from library
+ * primitives — stack, row, panel, divider, heading, text, code — which is the
+ * claim being demonstrated: drop the components in and the theme handles
+ * rhythm, surface and type without a line of CSS at the call site.
  */
 @Component({
   selector: 'sheep-demo-button',
-  imports: [SheepButtonComponent],
+  imports: [
+    SheepButtonComponent,
+    SheepCodeComponent,
+    SheepDividerComponent,
+    SheepGridComponent,
+    SheepHeadingComponent,
+    SheepPanelComponent,
+    SheepRowComponent,
+    SheepStackComponent,
+    SheepTextComponent,
+  ],
   templateUrl: './button-demo.html',
-  styleUrl: './button-demo.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonDemo {
@@ -37,6 +56,49 @@ export class ButtonDemo {
   ];
 
   protected readonly sizes: readonly SheepButtonSize[] = ['sm', 'md', 'lg'];
+
+  /** Section order and copy, so the template stays structural. */
+  protected readonly sections: readonly {
+    id: string;
+    heading: string;
+    note: string;
+  }[] = [
+    {
+      id: 'matrix',
+      heading: 'Variants × tones',
+      note: 'Outline is the default. Solid is the exception, spent once per view.',
+    },
+    {
+      id: 'sizes',
+      heading: 'Sizes',
+      note: 'Three heights shared by every control in the library, so a button, a text field and a select land on the same row.',
+    },
+    {
+      id: 'icons',
+      heading: 'Icons and icon-only',
+      note: 'shape="square" is a 1:1 box at the control height; ariaLabel is required.',
+    },
+    {
+      id: 'states',
+      heading: 'States',
+      note: 'Focus is a 2px accent outline. Loading stays at full strength — busy is not dead.',
+    },
+    {
+      id: 'column',
+      heading: 'In a column',
+      note: 'No fullWidth input — the caller sizes the wrapper.',
+    },
+    {
+      id: 'coupled',
+      heading: 'Tightly coupled',
+      note: 'The same two buttons, in code and rendered. No style hooks pass through.',
+    },
+    {
+      id: 'api',
+      heading: 'API',
+      note: 'Four appearance inputs, three behaviour inputs. Nothing else is styleable from the call site.',
+    },
+  ];
 
   /** The public API, rendered from one source so it cannot drift from the code. */
   protected readonly api: readonly {
@@ -60,6 +122,13 @@ export class ButtonDemo {
     { name: 'loading', default: 'false', type: 'boolean attribute' },
     { name: 'ariaLabel', default: 'null', type: 'string | null' },
   ];
+
+  /** Rendered verbatim next to the buttons it describes. */
+  protected readonly snippet = `<sheep-button>Cancel</sheep-button>
+<sheep-button variant="solid">Publish</sheep-button>
+
+/* There is no third line. Appearance is not a
+   call-site concern - retheme in _sheep-theme-spec.scss. */`;
 
   protected readonly saving = signal(false);
   protected readonly clicks = signal(0);

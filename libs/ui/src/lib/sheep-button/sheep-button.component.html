@@ -6,6 +6,7 @@
   [attr.type]="type()"
   [attr.aria-label]="ariaLabel()"
   [attr.aria-busy]="loading() ? 'true' : null"
+  [attr.aria-disabled]="isDisabled() ? 'true' : null"
   [disabled]="isDisabled()"
 >
   <span class="sheep-button__spinner" aria-hidden="true"></span>
