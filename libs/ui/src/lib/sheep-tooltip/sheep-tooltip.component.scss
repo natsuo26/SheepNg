@@ -1,0 +1,155 @@
+/* ==========================================================================
+   sheep-tooltip
+
+   No public custom-property API. Retheme in _sheep-theme-spec.scss.
+
+   The surface is inverted rather than framed: the page's text colour becomes
+   the ground and the page's ground becomes the text. That reads as a tooltip
+   at a glance in either theme, and it is built out of two roles every theme
+   already defines, so a new theme gets a correct tooltip for free.
+
+   No arrow. A tooltip opens a few pixels off the thing it describes, under a
+   pointer that is already resting on it — which side it came from is not in
+   doubt, and a notch pointing back at the obvious costs a shape that has to
+   be kept square with four placements and clipped corners. The entry moves it
+   away from its anchor instead: the same information, in the motion, for
+   nothing.
+   ========================================================================== */
+
+/* No `display` on the bare host. A closed popover is hidden by a UA rule, and
+   an author `display` here would beat it — leaving the tooltip painted at the
+   top of the page from the moment it is created. Layout belongs to the open
+   state. */
+:host {
+  position: fixed;
+  /* The browser centres a popover in the viewport; the component places it. */
+  inset: auto;
+  margin: 0;
+  border: 0;
+  padding: 7px 10px;
+
+  box-sizing: border-box;
+  max-width: min(280px, calc(100vw - 2 * var(--sheep-space-4)));
+  width: max-content;
+  /* The UA stylesheet gives every popover `overflow: auto`. There is nothing
+     here to scroll, and `auto` on a box sized by its own text is one rounded
+     line-height away from growing a scrollbar for no reason. */
+  overflow: visible;
+
+  border-radius: 7px;
+  /* Translucent over a blur, so the tooltip sits *above* the page rather than
+     being pasted onto it — what is underneath stays faintly legible through
+     it. The solid colour is the fallback: `background-color` is declared
+     first, so a browser without `backdrop-filter` keeps an opaque surface
+     rather than a see-through one. */
+  background-color: var(--sheep-color-text);
+  color: var(--sheep-color-bg);
+
+  /* Two shadows: a tight one to seat the edge, a wide soft one for the lift.
+     Plus a hairline of the tooltip's own colour, lightened, so the edge stays
+     defined against a dark page where the shadow does nothing. */
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--sheep-color-bg) 12%, transparent),
+    0 1px 2px rgba(0, 0, 0, 0.18),
+    0 8px 24px -6px rgba(0, 0, 0, 0.3);
+
+  font-family: var(--sheep-font-body);
+  font-size: 12px;
+  font-weight: 450;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+  text-align: start;
+  text-transform: none;
+
+  /* A tooltip is never a target. Letting the pointer through means it cannot
+     interrupt the hover that opened it, cannot swallow a click meant for what
+     is under it, and cannot flicker by covering its own anchor. */
+  pointer-events: none;
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  :host {
+    background-color: color-mix(
+      in srgb,
+      var(--sheep-color-text) 92%,
+      transparent
+    );
+    -webkit-backdrop-filter: blur(8px) saturate(1.6);
+    backdrop-filter: blur(8px) saturate(1.6);
+  }
+}
+
+:host(:popover-open) {
+  display: block;
+  animation: sheep-tooltip-in 140ms var(--sheep-motion-ease) both;
+}
+
+/* A popover gets a backdrop whether or not anyone wants one. */
+:host::backdrop {
+  background: none;
+}
+
+.sheep-tooltip__label {
+  display: block;
+  /* Long text wraps rather than running off; deliberate breaks are kept. */
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  /* Balanced so a two-line tooltip does not leave one word on the second
+     line, which is most of what makes a small floating box look untidy. */
+  text-wrap: balance;
+}
+
+/* --------------------------------------------------------------------------
+   Entry
+
+   Away from the anchor, on the axis it was placed on — `data-side` is the side
+   the component settled on after any flip, so the motion agrees with where the
+   tooltip actually is — which is what tells the eye where it came from.
+   -------------------------------------------------------------------------- */
+
+@keyframes sheep-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--_tip-from-x, 0), var(--_tip-from-y, -3px))
+      scale(0.96);
+  }
+}
+
+:host([data-side='top']) {
+  --_tip-from-y: 3px;
+}
+
+:host([data-side='bottom']) {
+  --_tip-from-y: -3px;
+}
+
+:host([data-side='left']) {
+  --_tip-from-x: 3px;
+  --_tip-from-y: 0;
+}
+
+:host([data-side='right']) {
+  --_tip-from-x: -3px;
+  --_tip-from-y: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(:popover-open) {
+    animation: sheep-tooltip-fade var(--sheep-motion-duration)
+      var(--sheep-motion-ease) both;
+  }
+
+  @keyframes sheep-tooltip-fade {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  :host {
+    border: 1px solid CanvasText;
+    background-color: Canvas;
+    color: CanvasText;
+  }
+}

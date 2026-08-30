@@ -32,5 +32,6 @@ export class App {
     { path: 'tree', label: 'Tree', ready: false },
     { path: 'table', label: 'Table', ready: true },
     { path: 'dialog', label: 'Dialog', ready: true },
+    { path: 'tooltip', label: 'Tooltip', ready: true },
   ];
 }

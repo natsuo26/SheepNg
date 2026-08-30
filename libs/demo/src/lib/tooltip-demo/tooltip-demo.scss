@@ -1,0 +1,41 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* The frame clips its own content, which is the point of the section it is in:
+   the tooltip is in the top layer and is not inside this box to be clipped. */
+.tooltip-frame {
+  min-width: 0;
+  max-width: 460px;
+  padding: var(--sheep-space-2) 0;
+  border-radius: var(--sheep-radius-md);
+  overflow: hidden;
+  background: var(--sheep-color-surface);
+  box-shadow: 0 0 0 1px var(--sheep-color-line);
+}
+
+/* A virtual viewport must have a height of its own — it is the scroll box. */
+.tooltip-viewport {
+  height: 320px;
+}
+
+/* Holds its anchor hard against the start edge of the page, so the side the
+   tooltip asks for genuinely has no room and the flip is a demonstration
+   rather than an assertion. Independent of where the page is scrolled. */
+.tooltip-edge {
+  display: flex;
+  justify-content: flex-start;
+  margin-inline-start: calc(-1 * var(--sheep-space-8));
+  padding-inline-start: var(--sheep-space-2);
+}
+
+.tooltip-tick {
+  color: var(--sheep-color-text-faint);
+  font-family: var(--sheep-font-mono);
+  font-size: 11px;
+}
+
+.tooltip-icon {
+  width: 16px;
+  height: 16px;
+}

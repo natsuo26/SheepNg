@@ -1,0 +1,169 @@
+<article class="demo-page">
+  <header class="demo-page__head">
+    <p class="demo-eyebrow">Component</p>
+    <h1 class="demo-title">sheepTooltip</h1>
+    <p class="demo-lede">
+      A short label explaining the element it is put on. An attribute, so
+      nothing about the layout changes by describing something &mdash; and a
+      native popover underneath, so the top layer is the platform's rather than
+      a z-index this library had to pick.
+    </p>
+  </header>
+
+  @for (section of sections; track section.id) {
+  <hr class="demo-rule" />
+
+  <section class="demo-section" [attr.aria-labelledby]="section.id + '-title'">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" [id]="section.id + '-title'">
+        {{ section.heading }}
+      </h2>
+      <p class="demo-note">{{ section.note }}</p>
+    </header>
+
+    @switch (section.id) { @case ('anatomy') {
+    <div class="demo-cluster">
+      <sheep-button sheepTooltip="Move to the archive">Archive</sheep-button>
+      <sheep-button variant="solid" sheepTooltip="Publishes to everyone">
+        Publish
+      </sheep-button>
+      <sheep-button
+        tone="danger"
+        variant="ghost"
+        sheepTooltip="Deletes the project and everything in it. This cannot be undone."
+      >
+        Delete
+      </sheep-button>
+    </div>
+    } @case ('placement') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        @for (placement of placements; track placement) {
+        <sheep-button
+          [sheepTooltip]="'Opened from the ' + placement"
+          [sheepTooltipPlacement]="placement"
+        >
+          {{ placement }}
+        </sheep-button>
+        }
+      </div>
+
+      <div class="tooltip-edge">
+        <sheep-button
+          sheepTooltip="This one asked to open on the left. There is not 280 pixels of room between it and the edge of the window, so it opened on the right instead — and the entry animation comes from the right to match."
+          sheepTooltipPlacement="left"
+        >
+          Asks for left, has no room
+        </sheep-button>
+      </div>
+    </div>
+    } @case ('live') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button [sheepTooltip]="'Synced ' + ticks() + 's ago'">
+          Sync status
+        </sheep-button>
+        <span class="tooltip-tick">ticks() = {{ ticks() }}</span>
+      </div>
+    </div>
+    } @case ('virtual') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="relabel()">Re-label every row</sheep-button>
+        <span class="tooltip-tick">rev {{ generation() }}</span>
+      </div>
+
+      <div class="tooltip-frame">
+        <cdk-virtual-scroll-viewport
+          class="tooltip-viewport"
+          [itemSize]="rowHeight"
+        >
+          <sheep-list divided>
+            <sheep-list-item
+              *cdkVirtualFor="
+                let row of rows();
+                let i = index;
+                trackBy: trackById
+              "
+              [sheepTooltip]="
+                row.name + ' — ' + row.owner + ', ' + row.size
+              "
+              sheepTooltipPlacement="right"
+              [attr.aria-posinset]="i + 1"
+              [attr.aria-setsize]="rows().length"
+            >
+              <div sheepListItemTitle>{{ row.name }}</div>
+              <span sheepListItemMeta>{{ row.owner }}</span>
+            </sheep-list-item>
+          </sheep-list>
+        </cdk-virtual-scroll-viewport>
+      </div>
+
+      <p class="demo-note">
+        {{ rows().length | number }} rows, about twenty of them in the DOM at a
+        time. The frame around the viewport clips its own content &mdash;
+        overflow: hidden &mdash; and the tooltip is in the top layer, not
+        inside it to be clipped. Rest on a row and press re-label: the row
+        keeps its element and gets new data, and the open tooltip follows the
+        data rather than the element. Scrolling the list under a still pointer
+        does the same thing, because that is also a row being recycled.
+      </p>
+    </div>
+    } @case ('disabled') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button
+          sheepTooltip="This one still explains itself"
+          [sheepTooltipDisabled]="disabled()"
+        >
+          {{ disabled() ? 'Tooltip off' : 'Tooltip on' }}
+        </sheep-button>
+        <sheep-button
+          variant="ghost"
+          (click)="disabled.set(!disabled())"
+        >
+          Toggle
+        </sheep-button>
+      </div>
+    </div>
+    } @case ('naming') {
+    <div class="demo-cluster">
+      <sheep-button
+        aria-label="Delete project"
+        tone="danger"
+        variant="ghost"
+        sheepTooltip="Delete project"
+      >
+        <svg
+          class="tooltip-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12h10l1-12M9 7V4h6v3" />
+        </svg>
+      </sheep-button>
+      <span class="tooltip-tick">aria-label names it, the tooltip describes it</span>
+    </div>
+    } @case ('api') {
+    <div class="demo-props">
+      @for (row of api; track row.name) {
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <span class="demo-prop__name">{{ row.name }}</span>
+          <span class="demo-prop__default">{{ row.default }}</span>
+        </div>
+        <span class="demo-prop__type">{{ row.type }}</span>
+      </div>
+      }
+    </div>
+    } } @if (snippets[section.id]; as code) {
+    <pre class="demo-code"><code>{{ code }}</code></pre>
+    }
+  </section>
+  }
+</article>
