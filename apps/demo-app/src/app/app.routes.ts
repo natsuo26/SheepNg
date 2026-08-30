@@ -22,4 +22,8 @@ export const appRoutes: Route[] = [
     path: 'dialog',
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.DialogDemo),
   },
+  {
+    path: 'tooltip',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.TooltipDemo),
+  },
 ];

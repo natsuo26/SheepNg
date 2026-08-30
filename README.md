@@ -8,12 +8,12 @@ An Nx monorepo for the **`@sheep-ng`** Angular UI component library, its demos, 
 
 ## Structure
 
-| Project | Path | Import path | Purpose |
-| --- | --- | --- | --- |
-| `ui` | `libs/ui` | `@sheep-ng/ui` | The component library. Publishable (ng-packagr). |
-| `demo` | `libs/demo` | `@sheep-ng/demo` | One demo component per UI component. Buildable, not published. |
-| `demo-app` | `apps/demo-app` | — | The single app that renders the demos. |
-| `demo-app-e2e` | `apps/demo-app-e2e` | — | Playwright e2e tests for `demo-app`. |
+| Project        | Path                | Import path      | Purpose                                                        |
+| -------------- | ------------------- | ---------------- | -------------------------------------------------------------- |
+| `ui`           | `libs/ui`           | `@sheep-ng/ui`   | The component library. Publishable (ng-packagr).               |
+| `demo`         | `libs/demo`         | `@sheep-ng/demo` | One demo component per UI component. Buildable, not published. |
+| `demo-app`     | `apps/demo-app`     | —                | The single app that renders the demos.                         |
+| `demo-app-e2e` | `apps/demo-app-e2e` | —                | Playwright e2e tests for `demo-app`.                           |
 
 Dependencies flow one way:
 
@@ -74,10 +74,10 @@ Both libraries default to SCSS and standalone components — see `generators` in
 
 ## Conventions
 
-| | `ui` | `demo` | `demo-app` |
-| --- | --- | --- | --- |
-| Selector prefix | `sheep-` | `sheep-demo-` | `sheep-app-` |
-| Tags | `type:ui`, `scope:shared` | `type:demo`, `scope:shared` | `type:app`, `scope:demo` |
+|                 | `ui`                      | `demo`                      | `demo-app`               |
+| --------------- | ------------------------- | --------------------------- | ------------------------ |
+| Selector prefix | `sheep-`                  | `sheep-demo-`               | `sheep-app-`             |
+| Tags            | `type:ui`, `scope:shared` | `type:demo`, `scope:shared` | `type:app`, `scope:demo` |
 
 Anything exported from `libs/ui/src/index.ts` is public API — treat changes there as breaking.
 
@@ -107,3 +107,39 @@ npx nx local-registry         # http://localhost:4873
   Nx 24. Migrate with `npx nx g @nx/eslint:convert-to-inferred`.
 - `@nx/enforce-module-boundaries` is configured with the default permissive constraint
   (`*` may depend on `*`), so the project tags above are documentation, not enforcement.
+
+# SheepNg — Lines of Code
+
+**Command**
+
+```bash
+npx cloc . \
+  --exclude-dir=node_modules,dist,.angular,coverage,.git,.nx,tmp,.vscode \
+  --not-match-f='package-lock\.json'
+```
+
+**Scan summary**
+
+| Metric | Value |
+|---|---|
+| Text files found | 174 |
+| Unique files counted | 167 |
+| Files ignored | 10 |
+| Tool | cloc v2.06 |
+| Duration | 0.06 s |
+| Throughput | 2,613 files/s, 220,490 lines/s |
+
+## Results
+
+| Language | Files | Blank | Comment | Code |
+|---|---:|---:|---:|---:|
+| TypeScript | 84 | 965 | 2,100 | 4,513 |
+| SCSS | 26 | 446 | 520 | 2,157 |
+| HTML | 19 | 107 | 49 | 1,788 |
+| JSON | 22 | 0 | 0 | 561 |
+| Markdown | 3 | 145 | 0 | 449 |
+| JavaScript | 5 | 5 | 64 | 135 |
+| SVG | 6 | 0 | 0 | 45 |
+| YAML | 1 | 5 | 6 | 17 |
+| INI | 1 | 2 | 0 | 11 |
+| **SUM** | **167** | **1,675** | **2,739** | **9,676** |
