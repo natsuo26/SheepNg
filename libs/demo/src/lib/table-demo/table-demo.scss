@@ -1,0 +1,127 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* The controls that drive the one big table. Documentation chrome, not part of
+   the component: the table has no notion of a row-count switch. */
+.table-controls {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-end;
+  gap: var(--sheep-space-8);
+  min-width: 0;
+}
+
+.table-switch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.table-switch__option {
+  display: flex;
+  align-items: center;
+  gap: var(--sheep-space-2);
+  color: var(--sheep-color-text-muted);
+  font-size: 12.5px;
+}
+
+.table-readout {
+  margin: 0;
+  color: var(--sheep-color-text-faint);
+  font-size: 12px;
+}
+
+.table-readout code,
+.demo-note code {
+  color: var(--sheep-color-accent);
+  font-family: var(--sheep-font-mono);
+  font-size: 11.5px;
+}
+
+.table-caption {
+  margin: 0;
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-heading);
+  font-weight: var(--sheep-font-weight-heading);
+  font-size: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   Cell content
+
+   All of this is the call site's, which is the point: the table styles the
+   column, never what the caller puts in it.
+   -------------------------------------------------------------------------- */
+
+.table-person {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.table-person__name {
+  overflow: hidden;
+  color: var(--sheep-color-text);
+  text-overflow: ellipsis;
+}
+
+.table-person__email {
+  overflow: hidden;
+  color: var(--sheep-color-text-faint);
+  font-size: 11px;
+  text-overflow: ellipsis;
+}
+
+.table-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--sheep-space-2);
+  border-radius: var(--sheep-radius-sm);
+  height: 18px;
+  font-size: 11px;
+  font-weight: var(--sheep-font-weight-label);
+  white-space: nowrap;
+}
+
+.table-status--active {
+  background: color-mix(in srgb, var(--sheep-tone-success-base) 16%, transparent);
+  color: var(--sheep-tone-success-quiet);
+}
+
+.table-status--onboarding {
+  background: color-mix(in srgb, var(--sheep-tone-primary-base) 16%, transparent);
+  color: var(--sheep-tone-primary-quiet);
+}
+
+.table-status--leave {
+  background: color-mix(in srgb, var(--sheep-tone-warning-base) 18%, transparent);
+  color: var(--sheep-tone-warning-quiet);
+}
+
+.table-action {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sheep-color-accent);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.table-action:hover {
+  text-decoration: underline;
+}
+
+.table-action:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+  border-radius: var(--sheep-radius-sm);
+}

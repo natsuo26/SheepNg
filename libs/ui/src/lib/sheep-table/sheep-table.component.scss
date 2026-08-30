@@ -1,0 +1,246 @@
+@use 'sass:map';
+
+/* ==========================================================================
+   sheep-table
+
+   No public custom-property API. The `--_table-*` values below are the
+   contract between a table and the cells the caller writes: they are declared
+   here and read by `sheep-cell` and `sheep-header-cell` through ordinary
+   inheritance, which is what keeps one table's cells on one density across an
+   encapsulation boundary this component cannot reach across any other way.
+   They are private — a caller setting them is reaching past the spec.
+
+   The frame is the table's own: a surface, a hairline, a radius. Unlike
+   `sheep-list` a table is not a run of rows in a page's own container — the
+   header, the scroll region and the paginator are one object, and the object
+   has edges.
+   ========================================================================== */
+
+$sizes: (
+  sm: (
+    row-h: 30px,
+    head-h: 34px,
+    pad-x: 3,
+    gap: 2,
+    font: 12px,
+    head-font: 10.5px,
+    icon: 13px,
+    control-h: 20px,
+    col-min: 72px,
+    step: 22px,
+  ),
+  md: (
+    row-h: 36px,
+    head-h: 40px,
+    pad-x: 4,
+    gap: 3,
+    font: 13px,
+    head-font: 11px,
+    icon: 15px,
+    control-h: 24px,
+    col-min: 88px,
+    step: 26px,
+  ),
+  lg: (
+    row-h: 44px,
+    head-h: 48px,
+    pad-x: 6,
+    gap: 3,
+    font: 15px,
+    head-font: 12px,
+    icon: 17px,
+    control-h: 28px,
+    col-min: 104px,
+    step: 30px,
+  ),
+);
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sheep-space-3);
+  min-width: 0;
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+
+  /* Cells paint this behind themselves when they are sticky, so a frozen
+     column does not show the rows sliding under it. */
+  --_table-bg: var(--sheep-color-surface);
+}
+
+@each $size, $m in $sizes {
+  :host(.sheep-table--#{$size}) {
+    --_table-row-h: #{map.get($m, row-h)};
+    --_table-head-h: #{map.get($m, head-h)};
+    --_table-pad-x: var(--sheep-space-#{map.get($m, pad-x)});
+    --_table-gap: var(--sheep-space-#{map.get($m, gap)});
+    --_table-font: #{map.get($m, font)};
+    --_table-head-font: #{map.get($m, head-font)};
+    --_table-icon: #{map.get($m, icon)};
+    --_table-control-h: #{map.get($m, control-h)};
+    --_table-col-min: #{map.get($m, col-min)};
+    --_table-step: #{map.get($m, step)};
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Frame and scroll region
+   -------------------------------------------------------------------------- */
+
+.sheep-table__toolbar {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--sheep-space-3);
+  min-width: 0;
+}
+
+.sheep-table__frame {
+  position: relative;
+  min-width: 0;
+  border-radius: var(--sheep-radius-md);
+  /* Clips the sticky header and a hovered row to the frame's corners. */
+  overflow: hidden;
+  background: var(--sheep-color-surface);
+  box-shadow: 0 0 0 1px var(--sheep-color-line);
+}
+
+/* The scroll box, in both modes. `cdk-virtual-scroll-viewport` is the same
+   element with a height it insists on, so one class covers both. */
+.sheep-table__scroll {
+  display: block;
+  overflow: auto;
+  max-width: 100%;
+}
+
+/* Wide enough for every column's floor, which is what makes the frame scroll
+   sideways rather than crushing eight columns into a phone. Sticky columns
+   exist for exactly that scroll. */
+.sheep-table__grid {
+  display: block;
+  min-width: max-content;
+}
+
+/* CDK's viewport puts the scrolled content in an absolutely positioned
+   wrapper, which shrinks to its contents — so without this the columns of a
+   virtualised table stop short of the frame's right edge instead of filling
+   it. At least the width of the box, and wider when the columns need it. */
+.sheep-table__scroll ::ng-deep .cdk-virtual-scroll-content-wrapper {
+  width: max-content;
+  min-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   Rows
+
+   A data row is given an exact height rather than being left to its content.
+   That is what `cdk-virtual-scroll-viewport` measures against, and a row that
+   grew by a pixel under a longer value would put the whole scrollbar out.
+   -------------------------------------------------------------------------- */
+
+.sheep-table__row {
+  display: flex;
+  box-sizing: border-box;
+  align-items: stretch;
+  height: var(--_table-row-h);
+  border-top: 1px solid var(--sheep-color-line);
+  transition: background var(--sheep-motion-duration) var(--sheep-motion-ease);
+}
+
+.sheep-table__row:hover {
+  background: var(--sheep-color-surface-sunk);
+  --_table-bg: var(--sheep-color-surface-sunk);
+}
+
+.sheep-table__row--head {
+  height: var(--_table-head-h);
+  border-top: 0;
+  background: var(--sheep-color-surface);
+  /* Above the rows that scroll under it, and above a sticky column's cells. */
+  z-index: 2;
+}
+
+/* The header is not a row of data and does not respond to being pointed at. */
+.sheep-table__row--head:hover {
+  background: var(--sheep-color-surface);
+  --_table-bg: var(--sheep-color-surface);
+}
+
+/* The first data row sits directly under the header's own rule, which each
+   header cell draws for itself — see sheep-header-cell. */
+.sheep-table__row--head + .sheep-table__row {
+  border-top: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Empty state
+   -------------------------------------------------------------------------- */
+
+/* `[hidden]` is a UA rule, and any author `display` would beat it — which
+   would leave the empty state printed under a full table. */
+.sheep-table__empty[hidden] {
+  display: none;
+}
+
+.sheep-table__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sheep-space-12) var(--sheep-space-6);
+  color: var(--sheep-color-text-muted);
+  font-size: var(--_table-font);
+  text-align: center;
+}
+
+.sheep-table__empty-text {
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   The bar under the table
+   -------------------------------------------------------------------------- */
+
+.sheep-table__bar {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sheep-space-4);
+  min-width: 0;
+  padding: 0 var(--sheep-space-1);
+}
+
+.sheep-table__bar-start {
+  display: flex;
+  align-items: center;
+  gap: var(--sheep-space-3);
+  min-width: 0;
+}
+
+.sheep-table__count {
+  margin: 0;
+  color: var(--sheep-color-text-muted);
+  font-size: var(--_table-font);
+  font-variant-numeric: tabular-nums;
+}
+
+.sheep-table__clear {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sheep-color-accent);
+  font-family: inherit;
+  font-size: var(--_table-font);
+  cursor: pointer;
+}
+
+.sheep-table__clear:hover {
+  text-decoration: underline;
+}
+
+.sheep-table__clear:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+  border-radius: var(--sheep-radius-sm);
+}

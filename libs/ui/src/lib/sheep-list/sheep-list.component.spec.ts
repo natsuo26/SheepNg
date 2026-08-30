@@ -115,6 +115,12 @@ describe('SheepListComponent in a virtual viewport', () => {
 
     fixture = TestBed.createComponent(VirtualHostComponent);
     await fixture.whenStable();
+    // The viewport measures itself and computes its first range in a bare
+    // microtask outside the scheduler, which `whenStable` does not wait for.
+    // Left undrained it lands *after* a test has set a range of its own and
+    // puts the original back — so drain it here, before any test acts.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await fixture.whenStable();
     host = fixture.nativeElement;
   });
 

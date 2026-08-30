@@ -1,0 +1,13 @@
+@use '../sheep-table-cell' as cell;
+
+@include cell.cell-base;
+
+// One line, clipped rather than wrapped: a row is a fixed height so that the
+// table can virtualise, and text that wrapped would run out of it.
+:host {
+  overflow: hidden;
+  height: 100%;
+  color: var(--sheep-color-text);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

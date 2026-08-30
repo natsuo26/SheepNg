@@ -1,0 +1,170 @@
+@use '../sheep-table-cell' as cell;
+
+@include cell.cell-base;
+
+/* ==========================================================================
+   sheep-header-cell
+
+   One line: a label, and the two controls a column can ask for. The filter
+   lives in a panel rather than in the row, so a table with filters is the same
+   height as one without.
+   ========================================================================== */
+
+:host {
+  min-height: var(--_table-head-h);
+  color: var(--sheep-color-text-faint);
+  font-size: var(--_table-head-font);
+  font-weight: var(--sheep-font-weight-label);
+  line-height: 1.45;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  user-select: none;
+  /* The header's own rule, drawn per cell rather than across the row: a sticky
+     column is lifted above the row and would otherwise paint over it. */
+  box-shadow: inset 0 -1px 0 var(--sheep-color-line-strong);
+}
+
+:host(.sheep-table__hcell--sortable) {
+  cursor: pointer;
+}
+
+:host(.sheep-table__hcell--sortable:hover),
+:host(.sheep-table__hcell--sorted) {
+  color: var(--sheep-color-text);
+}
+
+.sheep-table__hcell-label {
+  overflow: hidden;
+  min-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* --------------------------------------------------------------------------
+   The two controls
+
+   Both are real buttons, so Enter, Space and focus come from the platform.
+   The sort button carries no click handler of its own — the press bubbles to
+   the cell, which is the one place the sort is toggled — while the filter
+   button stops its own press there, so opening a filter never also sorts.
+   -------------------------------------------------------------------------- */
+
+.sheep-table__sort,
+.sheep-table__filter-toggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sheep-radius-sm);
+  width: var(--_table-icon);
+  height: var(--_table-icon);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.sheep-table__sort:focus-visible,
+.sheep-table__filter-toggle:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+}
+
+.sheep-table__sort-icon,
+.sheep-table__filter-icon {
+  width: var(--_table-icon);
+  height: var(--_table-icon);
+}
+
+/* Unsorted shows both chevrons, faintly: the control says what it does before
+   it has been used. Sorting resolves it to the one direction in force — and
+   slides that one to the middle, since a lone chevron parked where it sat as
+   half of a pair reads as misaligned. Four user units is half the gap. */
+.sheep-table__sort-up,
+.sheep-table__sort-down {
+  opacity: 0.35;
+  transition:
+    opacity var(--sheep-motion-duration) var(--sheep-motion-ease),
+    transform var(--sheep-motion-duration) var(--sheep-motion-ease);
+}
+
+:host(.sheep-table__hcell--asc) .sheep-table__sort-up,
+:host(.sheep-table__hcell--desc) .sheep-table__sort-down {
+  opacity: 1;
+  color: var(--sheep-color-accent);
+}
+
+:host(.sheep-table__hcell--asc) .sheep-table__sort-up {
+  transform: translateY(4px);
+}
+
+:host(.sheep-table__hcell--desc) .sheep-table__sort-down {
+  transform: translateY(-4px);
+}
+
+:host(.sheep-table__hcell--asc) .sheep-table__sort-down,
+:host(.sheep-table__hcell--desc) .sheep-table__sort-up {
+  opacity: 0;
+}
+
+.sheep-table__filter-icon {
+  opacity: 0.4;
+  transition: opacity var(--sheep-motion-duration) var(--sheep-motion-ease);
+}
+
+:host(:hover) .sheep-table__filter-icon {
+  opacity: 0.7;
+}
+
+/* A column that is filtering says so from across the table — otherwise a count
+   that looks wrong has no visible cause. */
+.sheep-table__filter-toggle--on .sheep-table__filter-icon {
+  opacity: 1;
+  fill: color-mix(in srgb, var(--sheep-color-accent) 22%, transparent);
+  color: var(--sheep-color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   The filter panel
+
+   A native popover, so it is in the top layer: nothing the table is nested in
+   can clip it and no z-index has to be chosen. The browser's default centring
+   is undone here — the component places it against its button on open.
+   -------------------------------------------------------------------------- */
+
+/* No `display` here. A closed popover is hidden by a UA rule, and any author
+   `display` on the base selector would beat it — leaving every column's panel
+   painted on the table at once. The layout belongs to the open state. */
+.sheep-table__filter-panel {
+  position: fixed;
+  inset: auto;
+  flex-direction: column;
+  gap: var(--sheep-space-2);
+  margin: 0;
+  padding: var(--sheep-space-3);
+  border: 0;
+  border-radius: var(--sheep-radius-md);
+  width: 220px;
+  background: var(--sheep-color-surface);
+  box-shadow: var(--sheep-shadow-md);
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+  font-size: var(--_table-font);
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.sheep-table__filter-panel:popover-open {
+  display: flex;
+}
+
+.sheep-table__filter-panel::backdrop {
+  background: none;
+}
+
+.sheep-table__filter-panel sheep-button {
+  align-self: flex-start;
+}

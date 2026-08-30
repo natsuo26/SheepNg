@@ -30,7 +30,7 @@ export class App {
     { path: 'side-sheet', label: 'Side sheet', ready: false },
     { path: 'list', label: 'List', ready: true },
     { path: 'tree', label: 'Tree', ready: false },
-    { path: 'table', label: 'Table', ready: false },
+    { path: 'table', label: 'Table', ready: true },
     { path: 'dialog', label: 'Dialog', ready: true },
   ];
 }
