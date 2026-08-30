@@ -168,9 +168,17 @@ export class TooltipDemo {
   [sheepTooltipDisabled]="!truncated()"
 >{{ cell.short }}</span>`,
 
-    naming: `<sheep-button aria-label="Delete project" sheepTooltip="Delete project">
+    naming: `<sheep-button
+  shape="square"
+  ariaLabel="Delete project"
+  sheepTooltip="Delete project"
+>
   <svg>...</svg>
-</sheep-button>`,
+</sheep-button>
+
+/* ariaLabel is the input, not a bare aria-label
+   attribute - the input reaches the real button,
+   an attribute stops at the wrapper. */`,
 
     api: `import { SheepTooltipDirective } from '@sheep-ng/ui';
 

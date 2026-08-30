@@ -161,3 +161,79 @@ describe('SheepButtonComponent (projection and events)', () => {
     expect(fixture.componentInstance.clicks).toBe(0);
   });
 });
+
+/**
+ * The dev-mode accessible-name check.
+ *
+ * `shape="square"` is the library's icon-only button — there is no separate
+ * icon-button component — and an icon carries no text for a screen reader to
+ * fall back on. The warning is the only thing standing between that and a
+ * control announced as nothing but "button", so it is worth a test of its own:
+ * it has to fire on the mistake, and stay quiet on every shape of correct.
+ */
+@Component({
+  imports: [SheepButtonComponent],
+  template: `
+    <sheep-button [shape]="shape()" [ariaLabel]="label()">
+      {{ text() }}
+    </sheep-button>
+  `,
+})
+class NamingHost {
+  readonly shape = signal<'rounded' | 'square'>('square');
+  readonly label = signal<string | null>(null);
+  readonly text = signal('');
+}
+
+describe('SheepButtonComponent icon-only naming check', () => {
+  let fixture: ComponentFixture<NamingHost>;
+  let warn: ReturnType<typeof vi.spyOn>;
+
+  const render = async () => {
+    warn.mockClear();
+    fixture.detectChanges();
+    await fixture.whenStable();
+  };
+
+  beforeEach(async () => {
+    warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    await TestBed.configureTestingModule({
+      imports: [NamingHost],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(NamingHost);
+  });
+
+  afterEach(() => warn.mockRestore());
+
+  it('warns on an icon-only button with no accessible name', async () => {
+    await render();
+
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('shape="square" with no accessible name'),
+      expect.anything(),
+    );
+  });
+
+  it('stays quiet once ariaLabel is given', async () => {
+    fixture.componentInstance.label.set('Add item');
+    await render();
+
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('stays quiet when the button has text of its own', async () => {
+    fixture.componentInstance.text.set('Add');
+    await render();
+
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('says nothing about a normal button with no label', async () => {
+    fixture.componentInstance.shape.set('rounded');
+    await render();
+
+    expect(warn).not.toHaveBeenCalled();
+  });
+});

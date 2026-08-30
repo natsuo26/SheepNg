@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  afterRenderEffect,
   booleanAttribute,
   computed,
   input,
@@ -27,6 +28,13 @@ import type {
  *   Delete project
  * </sheep-button>
  * ```
+ *
+ * `shape="square"` is the icon-only form: a 1:1 box at the control height,
+ * which is the whole of what an icon button is. There is no separate
+ * `sheep-icon-button`, and deliberately so — a second component would have to
+ * re-expose these same variants, tones and sizes, and the two would drift.
+ * An icon-only button carries no text, so it needs `ariaLabel` to have a name
+ * at all; a dev-mode check below says so out loud when it is missing.
  *
  * Deliberately NOT themeable per instance. Every colour and metric comes from
  * the `--sheep-*` theme layer, so two buttons in one app cannot drift apart.
@@ -77,6 +85,38 @@ export class SheepButtonComponent {
       `sheep-button--${this.variant()} sheep-button--${this.tone()} ` +
       `sheep-button--${this.size()} sheep-button--${this.shape()}`,
   );
+
+  constructor() {
+    // Development only, and compiled out of production builds: `ngDevMode` is
+    // a global the Angular compiler folds to false when optimising, so the
+    // whole block — closure, message and all — is dropped rather than shipped
+    // and skipped.
+    //
+    // An icon-only button has no text for a screen reader to fall back on, so
+    // without `ariaLabel` it is announced as nothing but "button". That is
+    // invisible on screen and silent in tests, which is exactly the kind of
+    // mistake worth spending a warning on. Checked against the rendered
+    // element rather than the inputs, because the label would come from
+    // projected content this component never sees.
+    if (typeof ngDevMode === 'undefined' || ngDevMode) {
+      afterRenderEffect(() => {
+        if (this.shape() !== 'square' || this.ariaLabel()) return;
+
+        const button = this.buttonRef().nativeElement;
+        const named =
+          !!button.textContent?.trim() || button.hasAttribute('aria-labelledby');
+
+        if (!named) {
+          console.warn(
+            'sheep-button: shape="square" with no accessible name. An ' +
+              'icon-only button announces as just "button" — give it ' +
+              '[ariaLabel]. See:',
+            button,
+          );
+        }
+      });
+    }
+  }
 
   /** Moves focus to the underlying native button. */
   focus(options?: FocusOptions): void {
