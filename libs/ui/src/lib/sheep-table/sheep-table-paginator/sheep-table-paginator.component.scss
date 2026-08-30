@@ -1,0 +1,99 @@
+/* ==========================================================================
+   sheep-table-paginator
+
+   A page size, a read-out and four steps, on one line. Reads the same
+   `--_table-*` density properties `sheep-table` sets, so a paginator inside a
+   table inherits the table's scale; standing alone it falls back to `md`.
+   ========================================================================== */
+
+:host {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--sheep-space-4);
+  min-width: 0;
+  color: var(--sheep-color-text-muted);
+  font-family: var(--sheep-font-body);
+  font-size: var(--_table-font, 13px);
+}
+
+.sheep-paginator__sizes {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sheep-space-2);
+}
+
+.sheep-paginator__sizes-label {
+  color: var(--sheep-color-text-faint);
+  white-space: nowrap;
+}
+
+.sheep-paginator__select {
+  box-sizing: border-box;
+  padding: 0 var(--sheep-space-2);
+  border: 0;
+  border-radius: var(--sheep-radius-sm);
+  height: var(--_table-control-h, 22px);
+  background: var(--sheep-color-surface-sunk);
+  box-shadow: inset 0 0 0 1px var(--sheep-color-line);
+  color: var(--sheep-color-text);
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.sheep-paginator__select:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+}
+
+.sheep-paginator__range {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.sheep-paginator__steps {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sheep-space-1);
+}
+
+.sheep-paginator__step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sheep-radius-sm);
+  width: var(--_table-step, 26px);
+  height: var(--_table-step, 26px);
+  background: none;
+  color: var(--sheep-color-text-muted);
+  cursor: pointer;
+  transition: color var(--sheep-motion-duration) var(--sheep-motion-ease),
+    background var(--sheep-motion-duration) var(--sheep-motion-ease);
+}
+
+.sheep-paginator__step:hover:not(:disabled) {
+  background: var(--sheep-color-surface-sunk);
+  color: var(--sheep-color-text);
+}
+
+.sheep-paginator__step:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+}
+
+/* Kept in place rather than hidden: the row of steps must not reflow at the
+   ends of the range. */
+.sheep-paginator__step:disabled {
+  color: var(--sheep-color-text-faint);
+  cursor: default;
+  opacity: 0.4;
+}
+
+.sheep-paginator__icon {
+  width: var(--_table-icon, 16px);
+  height: var(--_table-icon, 16px);
+}

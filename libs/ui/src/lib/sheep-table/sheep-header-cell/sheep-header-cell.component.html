@@ -1,0 +1,81 @@
+<span class="sheep-table__hcell-label"><ng-content /></span>
+
+@if (sortable()) {
+  <button
+    class="sheep-table__sort"
+    type="button"
+    [attr.aria-label]="sortLabel()"
+    [attr.aria-pressed]="direction() ? 'true' : 'false'"
+  >
+    <svg
+      class="sheep-table__sort-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path class="sheep-table__sort-up" d="m7 10.5 5-5 5 5" />
+      <path class="sheep-table__sort-down" d="m7 13.5 5 5 5-5" />
+    </svg>
+  </button>
+}
+
+@if (filterable()) {
+  <button
+    #trigger
+    class="sheep-table__filter-toggle"
+    type="button"
+    [class.sheep-table__filter-toggle--on]="active()"
+    [attr.popovertarget]="panelId"
+    [attr.aria-label]="filterLabel()"
+    [attr.aria-expanded]="isOpen()"
+  >
+    <svg
+      class="sheep-table__filter-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M21 4H3l7.2 8.5V19l3.6 2v-8.5L21 4Z" />
+    </svg>
+  </button>
+
+  <!--
+    In the top layer, so it is not clipped by the table's own scroll box or its
+    rounded frame, and so Escape and a click elsewhere dismiss it without this
+    component owning either behaviour.
+  -->
+  <div
+    #panel
+    class="sheep-table__filter-panel"
+    popover
+    [attr.id]="panelId"
+    (toggle)="onToggle($event)"
+  >
+    <sheep-text-field
+      variant="soft"
+      [size]="fieldSize()"
+      [value]="term()"
+      (valueChange)="setTerm($event)"
+    >
+      <span sheepTextFieldLabel>{{ filterLabel() }}</span>
+    </sheep-text-field>
+
+    <sheep-button
+      size="sm"
+      variant="ghost"
+      tone="neutral"
+      [disabled]="!active()"
+      (click)="clear()"
+    >
+      {{ messages.clearFilter }}
+    </sheep-button>
+  </div>
+}

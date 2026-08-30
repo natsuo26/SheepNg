@@ -1,0 +1,102 @@
+<ng-content select="[sheepTableToolbar]" />
+
+<div class="sheep-table__frame">
+  <!--
+    The grid is written out twice on purpose.
+
+    `cdkTable` finds its virtual-scroll viewport with a host-scoped injection,
+    which walks the element injectors of the view the table is *declared* in and
+    stops at that view's host. A shared `<ng-template>` reached by
+    `ngTemplateOutlet` is declared out here, so a table inside one would look up
+    past the viewport to this component and find nothing — it would render every
+    row and virtualise none of them, silently. A `@if` branch is part of this
+    same view, so a table declared inside one really does sit under the
+    viewport.
+
+    Keep the two in step. The alternative is a table that quietly puts four
+    thousand rows in the DOM.
+  -->
+  @if (virtual()) {
+    <cdk-virtual-scroll-viewport
+      class="sheep-table__scroll"
+      [itemSize]="rowHeight()"
+      [style.height.px]="scrollHeight()"
+    >
+      <cdk-table
+        class="sheep-table__grid"
+        role="table"
+        recycleRows
+        [dataSource]="rendered()"
+        [trackBy]="trackRow"
+        [sheepTableColumns]="columnDefs()"
+      >
+        <cdk-header-row
+          class="sheep-table__row sheep-table__row--head"
+          *cdkHeaderRowDef="columnNames(); sticky: stickyHeader()"
+        />
+        <cdk-row
+          class="sheep-table__row"
+          *cdkRowDef="let row; columns: columnNames()"
+        />
+      </cdk-table>
+    </cdk-virtual-scroll-viewport>
+  } @else {
+    <div class="sheep-table__scroll" [style.height.px]="scrollHeight()">
+      <cdk-table
+        class="sheep-table__grid"
+        role="table"
+        recycleRows
+        [dataSource]="rendered()"
+        [trackBy]="trackRow"
+        [sheepTableColumns]="columnDefs()"
+      >
+        <cdk-header-row
+          class="sheep-table__row sheep-table__row--head"
+          *cdkHeaderRowDef="columnNames(); sticky: stickyHeader()"
+        />
+        <cdk-row
+          class="sheep-table__row"
+          *cdkRowDef="let row; columns: columnNames()"
+        />
+      </cdk-table>
+    </div>
+  }
+
+  <div class="sheep-table__empty" [hidden]="!isEmpty()">
+    <ng-content select="[sheepTableEmpty]" />
+    @if (!emptySlot()) {
+      <p class="sheep-table__empty-text">{{ messages.empty }}</p>
+    }
+  </div>
+</div>
+
+<div class="sheep-table__bar">
+  <div class="sheep-table__bar-start">
+    @if (isFiltered()) {
+      <button class="sheep-table__clear" type="button" (click)="clearFilters()">
+        {{ messages.clearFilters }}
+      </button>
+    }
+  </div>
+
+  @if (virtual()) {
+    <p class="sheep-table__count">{{ messages.virtualised(sorted().length) }}</p>
+  } @else {
+    <sheep-table-paginator
+      [length]="sorted().length"
+      [pageSizeOptions]="pageSizeOptions()"
+      [pageIndex]="page()"
+      [pageSize]="pageSize()"
+      (pageIndexChange)="pageIndex.set($event)"
+      (pageSizeChange)="pageSize.set($event)"
+    />
+  }
+</div>
+
+<!--
+  The column definitions. Every one is an `ng-container` that renders nothing,
+  so where they land in the layout does not matter — only that they land
+  somewhere, once, outside the branch that is rebuilt when the table
+  virtualises.
+-->
+<ng-content />

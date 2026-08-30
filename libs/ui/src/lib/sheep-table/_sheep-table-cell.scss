@@ -1,0 +1,52 @@
+// =============================================================================
+// The metrics shared by a header cell and a body cell.
+//
+// The two are separate components — they are written in the caller's template,
+// so each has to carry its own styles — but they are one column, and a column
+// whose header and body disagreed about padding would be visibly broken. The
+// shared half lives here; each component adds only what is its own.
+//
+// Every value read here is a `--_table-*` custom property set by
+// `sheep-table` and inherited down. A cell has no density of its own.
+// =============================================================================
+
+@mixin cell-base {
+  :host {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    // Overridden per instance from the column definition's width / grow.
+    flex: 1 1 0%;
+    gap: var(--_table-gap);
+    // A floor, not zero. Flex items with a `0%` basis will shrink to nothing
+    // given the chance, and eight columns sharing a narrow frame would each
+    // become an ellipsis. Below this the frame scrolls instead. A column with
+    // a named `width` opts out — it said what it wanted.
+    min-width: var(--_table-col-min);
+    padding: 0 var(--_table-pad-x);
+    font-family: var(--sheep-font-body);
+    font-size: var(--_table-font);
+    line-height: 1.4;
+  }
+
+  :host(.sheep-table__cell--center) {
+    justify-content: center;
+    text-align: center;
+  }
+
+  :host(.sheep-table__cell--end) {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  // A sticky column is lifted out of the row's paint order by CDK, so it has to
+  // bring the ground the row would have given it — and has to change that
+  // ground on exactly the same curve, or a hover visibly sweeps across the row
+  // in two steps. The custom property it reads cannot itself be transitioned;
+  // the `background` that resolves from it can.
+  :host(.cdk-table-sticky) {
+    z-index: 1;
+    background: var(--_table-bg);
+    transition: background var(--sheep-motion-duration) var(--sheep-motion-ease);
+  }
+}

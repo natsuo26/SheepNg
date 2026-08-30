@@ -1,0 +1,102 @@
+@if (pageSizeOptions().length > 1) {
+  <label class="sheep-paginator__sizes">
+    <span class="sheep-paginator__sizes-label">{{ messages.rowsPerPage }}</span>
+    <select
+      class="sheep-paginator__select"
+      [value]="pageSize()"
+      (change)="onPageSize($event)"
+    >
+      @for (option of pageSizeOptions(); track option) {
+        <option [value]="option">{{ option }}</option>
+      }
+    </select>
+  </label>
+}
+
+<p class="sheep-paginator__range" aria-live="polite">{{ range() }}</p>
+
+<div class="sheep-paginator__steps">
+  <button
+    class="sheep-paginator__step"
+    type="button"
+    [attr.aria-label]="messages.firstPage"
+    [disabled]="isFirst()"
+    (click)="goTo(0)"
+  >
+    <svg
+      class="sheep-paginator__icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m17 18-6-6 6-6M8 6v12" />
+    </svg>
+  </button>
+
+  <button
+    class="sheep-paginator__step"
+    type="button"
+    [attr.aria-label]="messages.previousPage"
+    [disabled]="isFirst()"
+    (click)="goTo(page() - 1)"
+  >
+    <svg
+      class="sheep-paginator__icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  </button>
+
+  <button
+    class="sheep-paginator__step"
+    type="button"
+    [attr.aria-label]="messages.nextPage"
+    [disabled]="isLast()"
+    (click)="goTo(page() + 1)"
+  >
+    <svg
+      class="sheep-paginator__icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  </button>
+
+  <button
+    class="sheep-paginator__step"
+    type="button"
+    [attr.aria-label]="messages.lastPage"
+    [disabled]="isLast()"
+    (click)="goTo(pageCount() - 1)"
+  >
+    <svg
+      class="sheep-paginator__icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m7 18 6-6-6-6M16 6v12" />
+    </svg>
+  </button>
+</div>
