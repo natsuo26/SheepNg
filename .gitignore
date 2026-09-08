@@ -19,7 +19,8 @@ node_modules
 
 # IDE - VSCode
 .vscode/*
-!.vscode/settings.json
+# settings.json holds a machine-specific NX_WORKSPACE_ROOT_PATH pin - keep it local
+# !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
