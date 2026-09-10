@@ -1,0 +1,324 @@
+/* ==========================================================================
+   sheep-chip
+
+   No public custom-property API. Every colour, metric, radius and timing
+   resolves from the theme layer (`--sheep-*`), so a chip cannot be styled into
+   something that is not in the spec. Retheme in _sheep-theme-spec.scss.
+
+   The host IS the chip. On `<button sheep-chip>` and `<a sheep-chip>` these
+   rules only strip the platform's default chrome — the behaviour underneath
+   stays native.
+
+   Chips sit on the shared `--sheep-ctl-*` metrics, so a chip, a button and a
+   text field line up on a row. Only the radius differs: a chip is a pill.
+   ========================================================================== */
+
+$tones: primary, neutral, success, warning, danger;
+$sizes: sm, md, lg;
+
+:host {
+  /* Derived from the tone's base — one value drives fill, line and tint. */
+  --_tint: color-mix(in srgb, var(--_base) 12%, transparent);
+  --_tint-hover: color-mix(in srgb, var(--_base) 20%, transparent);
+  --_tint-strong: color-mix(in srgb, var(--_base) 26%, transparent);
+  --_tint-strong-hover: color-mix(in srgb, var(--_base) 34%, transparent);
+  --_line: color-mix(in srgb, var(--_base) 42%, transparent);
+  --_motion: var(--sheep-motion-duration) var(--sheep-motion-ease);
+
+  /* Fallbacks, so a chip still lands on the spec if a modifier is missing. */
+  --_base: var(--sheep-tone-primary-base);
+  --_quiet: var(--sheep-tone-primary-quiet);
+  --_h: var(--sheep-ctl-md-height);
+  --_px: var(--sheep-ctl-md-pad-x);
+  --_fs: var(--sheep-ctl-md-font);
+  --_icon: var(--sheep-ctl-md-icon);
+  --_gap: var(--sheep-ctl-md-gap);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--_h);
+  padding: 0 var(--_px);
+
+  border: 1px solid transparent;
+  /* A pill, at every size: the one place a chip parts company with the other
+     controls, and the whole of what makes it read as a chip. */
+  border-radius: 999px;
+  background: transparent;
+
+  color: var(--_quiet);
+  font-family: var(--sheep-font-body);
+  font-size: var(--_fs);
+  font-weight: var(--sheep-font-weight-label);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  transition:
+    background-color var(--_motion),
+    border-color var(--_motion),
+    color var(--_motion);
+}
+
+/* --------------------------------------------------------------------------
+   Tones
+   -------------------------------------------------------------------------- */
+
+@each $tone in $tones {
+  :host(.sheep-chip--#{$tone}) {
+    --_base: var(--sheep-tone-#{$tone}-base);
+    --_quiet: var(--sheep-tone-#{$tone}-quiet);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Sizes
+   -------------------------------------------------------------------------- */
+
+@each $size in $sizes {
+  :host(.sheep-chip--#{$size}) {
+    --_h: var(--sheep-ctl-#{$size}-height);
+    --_px: var(--sheep-ctl-#{$size}-pad-x);
+    --_fs: var(--sheep-ctl-#{$size}-font);
+    --_icon: var(--sheep-ctl-#{$size}-icon);
+    --_gap: var(--sheep-ctl-#{$size}-gap);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Variants
+   -------------------------------------------------------------------------- */
+
+:host(.sheep-chip--outline) {
+  border-color: var(--_line);
+}
+
+:host(.sheep-chip--soft) {
+  background: var(--_tint);
+}
+
+/* --------------------------------------------------------------------------
+   Interactive hosts
+
+   `<button sheep-chip>` and `<a sheep-chip>` ARE the chip.
+   -------------------------------------------------------------------------- */
+
+:host(:is(a, button)) {
+  appearance: none;
+  margin: 0;
+  font: inherit;
+  font-size: var(--_fs);
+  font-weight: var(--sheep-font-weight-label);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:host(.sheep-chip--outline:is(a, button):hover) {
+  border-color: var(--_base);
+  background: var(--_tint);
+}
+
+:host(.sheep-chip--soft:is(a, button):hover) {
+  background: var(--_tint-hover);
+}
+
+:host(:is(a, button):active) {
+  background: var(--_tint-strong);
+}
+
+:host(:is(a, button):focus-visible) {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: var(--sheep-focus-offset);
+}
+
+/* --------------------------------------------------------------------------
+   Selected
+
+   A tinted ground, the tone's line and a leading check. Not a solid fill: a
+   filter row is many chips at once, and the spec does not flood a view with a
+   tone. The check is what makes "on" survive being read without colour.
+   -------------------------------------------------------------------------- */
+
+:host(.sheep-chip--selected) {
+  border-color: var(--_base);
+  background: var(--_tint-strong);
+}
+
+:host(.sheep-chip--selected:is(a, button):hover) {
+  background: var(--_tint-strong-hover);
+}
+
+/* The check takes the leading slot rather than sitting beside it, so a chip
+   does not change width when it is selected. */
+:host(.sheep-chip--selected) .sheep-chip__lead {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Disabled
+
+   Two routes, one look: the native attribute on a button host, and the input
+   for the plain host — which also stops the remove button being clickable.
+   -------------------------------------------------------------------------- */
+
+:host(button:disabled) {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+:host(.sheep-chip--disabled) {
+  cursor: not-allowed;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/* --------------------------------------------------------------------------
+   Slots
+   -------------------------------------------------------------------------- */
+
+.sheep-chip__label {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.sheep-chip__check,
+.sheep-chip__lead,
+.sheep-chip__tail {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.sheep-chip__lead:empty,
+.sheep-chip__tail:empty,
+.sheep-chip__label:empty {
+  display: none;
+}
+
+.sheep-chip__check svg {
+  display: block;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+
+/* Projected icons are compiled in the consumer's scope. Paint is left alone —
+   an icon declares its own fill/stroke, normally currentColor. */
+:host ::ng-deep :is(.sheep-chip__lead, .sheep-chip__tail) > :is(svg, img) {
+  display: block;
+  flex: none;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+
+/* An avatar fills its end of the pill rather than sitting inside the padding. */
+:host ::ng-deep .sheep-chip__lead > img {
+  width: calc(var(--_h) - 8px);
+  height: calc(var(--_h) - 8px);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* --------------------------------------------------------------------------
+   Remove
+
+   A second, separate button — never nested in the host, which is why
+   `removable` is refused on the interactive host forms.
+   -------------------------------------------------------------------------- */
+
+:host(.sheep-chip--removable) {
+  padding-inline-end: var(--sheep-space-1);
+}
+
+.sheep-chip__remove {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: calc(var(--_icon) + var(--sheep-space-2));
+  height: calc(var(--_icon) + var(--sheep-space-2));
+  padding: 0;
+  margin-inline-start: calc(-1 * var(--sheep-space-1));
+
+  appearance: none;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  opacity: 0.65;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--_motion),
+    opacity var(--_motion);
+}
+
+.sheep-chip__remove svg {
+  display: block;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+
+.sheep-chip__remove:hover:not(:disabled) {
+  background: var(--_tint-hover);
+  opacity: 1;
+}
+
+.sheep-chip__remove:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: 1px;
+  opacity: 1;
+}
+
+.sheep-chip__remove:disabled {
+  cursor: not-allowed;
+}
+
+/* Named by, not read as: referenced through aria-labelledby to give the remove
+   button a name of its own. */
+.sheep-chip__sr {
+  position: absolute;
+  overflow: hidden;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  .sheep-chip__remove {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: currentColor;
+  }
+  :host(.sheep-chip--selected) {
+    outline: 2px solid Highlight;
+    outline-offset: -3px;
+  }
+  :host(:is(a, button):focus-visible),
+  .sheep-chip__remove:focus-visible {
+    outline-color: Highlight;
+  }
+  :host(button:disabled),
+  :host(.sheep-chip--disabled) {
+    color: GrayText;
+    border-color: GrayText;
+    opacity: 1;
+  }
+}

@@ -5,3 +5,5 @@ export * from './lib/text-field-demo/text-field-demo';
 export * from './lib/dialog-demo/dialog-demo';
 export * from './lib/table-demo/table-demo';
 export * from './lib/tooltip-demo/tooltip-demo';
+export * from './lib/chip-demo/chip-demo';
+export * from './lib/badge-demo/badge-demo';

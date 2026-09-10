@@ -1,0 +1,166 @@
+/* ==========================================================================
+   sheep-badge
+
+   The one component in the library with a public custom-property API, and the
+   reason is in the component's doc comment: a badge paints data, and data
+   brings colours the spec has never seen. Three properties, colour only:
+
+     --sheep-badge-color   the hue; both weights are derived from it
+     --sheep-badge-text    the label colour
+     --sheep-badge-icon    the icon colour, defaulting to the label colour
+
+   Everything else — height, padding, radius, type, motion — resolves from the
+   theme layer and is not reachable from a call site. Retheme in
+   _sheep-theme-spec.scss.
+   ========================================================================== */
+
+$tones: primary, neutral, success, warning, danger;
+$sizes: sm, md, lg;
+
+:host {
+  /* One hue in, a whole badge out.
+     --sheep-badge-color is the consumer's door into this; with nothing set it
+     falls through to the tone the spec chose.
+
+     `on` and `quiet` are derived here rather than read from the tone's own
+     stops, and that is what makes a custom colour a first-class one: there is
+     a single code path, so a hue the spec has never seen is treated exactly
+     like one it ships. Both mixes are theme-aware by construction — they mix
+     toward --sheep-color-text and --sheep-color-surface, which invert with the
+     theme — and on the five built-in tones they land within a shade of the
+     hand-picked stops in _sheep-theme-spec.scss. */
+  --_base: var(--sheep-badge-color, var(--_tone-base));
+  --_on: color-mix(in srgb, var(--_base) 10%, var(--sheep-color-surface));
+  --_quiet: color-mix(in srgb, var(--_base) 65%, var(--sheep-color-text));
+  --_tint: color-mix(in srgb, var(--_base) 16%, transparent);
+  --_ring: color-mix(in srgb, var(--_base) 30%, transparent);
+
+  /* Fallbacks, so a badge still lands on the spec if a modifier is missing. */
+  --_tone-base: var(--sheep-tone-neutral-base);
+  --_h: var(--sheep-badge-md-height);
+  --_px: var(--sheep-badge-md-pad-x);
+  --_fs: var(--sheep-badge-md-font);
+  --_icon: var(--sheep-badge-md-icon);
+  --_gap: var(--sheep-badge-md-gap);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+  height: var(--_h);
+  padding: 0 var(--_px);
+
+  border-radius: var(--sheep-badge-radius);
+
+  font-family: var(--sheep-font-body);
+  font-size: var(--_fs);
+  font-weight: var(--sheep-font-weight-label);
+  line-height: 1;
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+  vertical-align: middle;
+
+  /* Reading matter, not a target. */
+  user-select: text;
+}
+
+/* --------------------------------------------------------------------------
+   Tones
+   -------------------------------------------------------------------------- */
+
+@each $tone in $tones {
+  :host(.sheep-badge--#{$tone}) {
+    --_tone-base: var(--sheep-tone-#{$tone}-base);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Sizes
+   -------------------------------------------------------------------------- */
+
+@each $size in $sizes {
+  :host(.sheep-badge--#{$size}) {
+    --_h: var(--sheep-badge-#{$size}-height);
+    --_px: var(--sheep-badge-#{$size}-pad-x);
+    --_fs: var(--sheep-badge-#{$size}-font);
+    --_icon: var(--sheep-badge-#{$size}-icon);
+    --_gap: var(--sheep-badge-#{$size}-gap);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Emphasis — the two weights of one hue.
+
+   The ring on `normal` is what keeps a tint legible on a surface that is not
+   the page background: a badge in a table cell, a badge on a sunk panel.
+   -------------------------------------------------------------------------- */
+
+:host(.sheep-badge--normal) {
+  background: var(--_tint);
+  color: var(--sheep-badge-text, var(--_quiet));
+  box-shadow: inset 0 0 0 1px var(--_ring);
+}
+
+:host(.sheep-badge--high) {
+  background: var(--_base);
+  color: var(--sheep-badge-text, var(--_on));
+}
+
+/* --------------------------------------------------------------------------
+   Content
+
+   With no icon the slot collapses and takes the gap with it; with no label the
+   badge is the icon, in a circle at the badge height.
+   -------------------------------------------------------------------------- */
+
+.sheep-badge__icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  /* Follows the label unless the caller says otherwise. */
+  color: var(--sheep-badge-icon, inherit);
+}
+
+.sheep-badge__icon:empty {
+  display: none;
+}
+
+.sheep-badge__label {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+:host(.sheep-badge--icon-only) {
+  --_px: 0;
+
+  width: var(--_h);
+  min-width: var(--_h);
+  border-radius: 50%;
+}
+
+/* Projected icons are compiled in the consumer's scope. Paint is left alone
+   beyond the slot's own `color` — an icon declares its own fill/stroke,
+   normally currentColor, which is how --sheep-badge-icon reaches it. */
+:host ::ng-deep .sheep-badge__icon > :is(svg, img) {
+  display: block;
+  flex: none;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+
+@media (forced-colors: active) {
+  :host {
+    border: 1px solid currentColor;
+    box-shadow: none;
+  }
+  :host(.sheep-badge--high) {
+    background: Highlight;
+    color: HighlightText;
+  }
+}

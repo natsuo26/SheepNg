@@ -1,0 +1,20 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* The CSS door into the badge's colour API: one declaration on an ancestor,
+   and every badge under it takes the tenant's hue — in both weights, because
+   both are derived from that one value. */
+.badge-tenant {
+  --sheep-badge-color: #0f6fff;
+}
+
+/* A list has no surface of its own; the caller decides what it sits in. */
+.badge-frame {
+  min-width: 0;
+  max-width: 460px;
+  padding: var(--sheep-space-2) 0;
+  border-radius: var(--sheep-radius-md);
+  background: var(--sheep-color-surface);
+  box-shadow: 0 0 0 1px var(--sheep-color-line);
+}

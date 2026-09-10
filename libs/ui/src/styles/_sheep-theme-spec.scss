@@ -202,6 +202,31 @@ $themes: (
   --sheep-ctl-lg-gap: 10px;
   --sheep-ctl-lg-radius: var(--sheep-radius-md);
 
+  // Badge metrics. A badge is not a control — nothing is aimed at it and
+  // nothing is typed into it — so it does not sit on the --sheep-ctl-* row
+  // heights, which are sized for a pointer target. It gets its own, smaller
+  // scale: a badge should read as a mark on something else, and the largest
+  // of these still comes in under the shortest control.
+  --sheep-badge-sm-height: 16px;
+  --sheep-badge-sm-pad-x: 5px;
+  --sheep-badge-sm-font: 10.5px;
+  --sheep-badge-sm-icon: 10px;
+  --sheep-badge-sm-gap: 3px;
+
+  --sheep-badge-md-height: 20px;
+  --sheep-badge-md-pad-x: 7px;
+  --sheep-badge-md-font: 11.5px;
+  --sheep-badge-md-icon: 12px;
+  --sheep-badge-md-gap: 4px;
+
+  --sheep-badge-lg-height: 24px;
+  --sheep-badge-lg-pad-x: 9px;
+  --sheep-badge-lg-font: 13px;
+  --sheep-badge-lg-icon: 14px;
+  --sheep-badge-lg-gap: 5px;
+
+  --sheep-badge-radius: 999px;
+
   --sheep-motion-duration: 150ms;
   --sheep-motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
   --sheep-focus-width: 2px;

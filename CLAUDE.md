@@ -61,9 +61,24 @@ Three files in `libs/ui/src/styles/`, and the order matters:
 The rules that hold this together:
 
 - **Components publish no per-instance style API.** There are deliberately zero `--sheep-button-*`-style override hooks; an earlier ~30-property set was removed. Two buttons in one app cannot drift apart.
-- Components consume **only** the `--sheep-*` roles emitted by the theme: `--sheep-color-*`, `--sheep-tone-{primary|neutral|success|warning|danger}-{base|hover|active|on|quiet}`, `--sheep-space-*`, `--sheep-radius-*`, `--sheep-ctl-{sm|md|lg}-*`, `--sheep-shadow-*`, `--sheep-motion-*`, `--sheep-focus-*`.
-- Every interactive control sits on the three `--sheep-ctl-*` size sets, so a button, a text field and a select line up on a row. A new control uses those metrics rather than its own.
+- Components consume **only** the `--sheep-*` roles emitted by the theme: `--sheep-color-*`, `--sheep-tone-{primary|neutral|success|warning|danger}-{base|hover|active|on|quiet}`, `--sheep-space-*`, `--sheep-radius-*`, `--sheep-ctl-{sm|md|lg}-*`, `--sheep-badge-{sm|md|lg}-*`, `--sheep-shadow-*`, `--sheep-motion-*`, `--sheep-focus-*`.
+- Every interactive control sits on the three `--sheep-ctl-*` size sets, so a button, a text field and a select line up on a row. A new control uses those metrics rather than its own. `sheep-badge` is not a control — nothing is aimed at it — so it rides the smaller `--sheep-badge-*` set instead; an `lg` badge is shorter than an `sm` button.
 - **If a caller needs something the spec does not offer, add a variant to the spec — do not add a hook to the component.**
+
+**The one exception, and its boundary.** `sheep-badge` publishes three custom
+properties: `--sheep-badge-color`, `--sheep-badge-text`, `--sheep-badge-icon`
+(reachable from TypeScript as the `color` / `textColor` / `iconColor` inputs,
+which do nothing but write those properties onto the host). Badges paint data,
+and data brings colours the spec has never seen — a label colour a user picked,
+a per-tenant brand, a category out of a database — and there is no variant to
+add to the spec for a colour that does not exist until runtime. The boundary is
+what keeps this from being the thin end of a wedge: **colour only**, no
+padding, radius, type or border hook, so a badge can be the wrong hue but never
+the wrong shape. Both weights (`emphasis="normal"` and `"high"`) and the text
+colour are derived from that one hue by `color-mix` against `--sheep-color-text`
+and `--sheep-color-surface`, so a custom colour goes through exactly the same
+code path as a built-in tone and stays theme-aware. No other component gets a
+hook; `sheep-chip`, which is a control, has none.
 
 Theme selection is attribute-driven and SSR-safe: `<html data-sheep-theme="dark">`,
 falling back to `prefers-color-scheme` when absent, and scopeable to a subtree.

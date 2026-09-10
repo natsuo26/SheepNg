@@ -1,0 +1,38 @@
+@if (selected()) {
+<span class="sheep-chip__check" aria-hidden="true">
+  <svg viewBox="0 0 16 16" fill="none">
+    <path
+      d="M3.5 8.4 6.4 11.3 12.5 5"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+</span>
+}
+<span class="sheep-chip__lead"><ng-content select="[sheepChipStart]" /></span>
+<span class="sheep-chip__label" [id]="labelId"><ng-content /></span>
+<span class="sheep-chip__tail"><ng-content select="[sheepChipEnd]" /></span>
+@if (removable()) {
+<!-- Referenced by the remove button rather than read on its own: the button's
+     name is this word plus the chip's label. -->
+<span class="sheep-chip__sr" [id]="removeTextId">Remove</span>
+<button
+  type="button"
+  class="sheep-chip__remove"
+  [disabled]="disabled()"
+  [attr.aria-label]="removeLabel()"
+  [attr.aria-labelledby]="removeLabel() ? null : removeLabelledBy"
+  (click)="onRemove($event)"
+>
+  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path
+      d="M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+    />
+  </svg>
+</button>
+}
