@@ -24,6 +24,50 @@ demo-app  →  @sheep-ng/demo  →  @sheep-ng/ui
 `demo-app` holds routing and layout only — every component demo lives in `libs/demo` so the
 demos stay versioned alongside the library.
 
+## Components
+
+Everything ships from `@sheep-ng/ui`. Components made of several parts export a set you can
+spread into `imports` rather than naming each piece.
+
+| Component        | Import                                    | Notes                                                              |
+| ---------------- | ----------------------------------------- | ------------------------------------------------------------------ |
+| `sheep-button`   | `SheepButtonComponent`                    | Five variants, five tones, three sizes. `shape="square"` is the icon button. |
+| `sheep-text-field` | `SHEEP_TEXT_FIELD`                      | Label, hint, prefix/suffix, counter, validation directives.        |
+| `sheep-chip`     | `SHEEP_CHIP`                              | Chip and chip set. A control, so it takes the control metrics.     |
+| `sheep-badge`    | `SheepBadgeComponent`                     | Not a control — rides the smaller badge metrics. The one component with colour hooks. |
+| `sheep-side-sheet` | `SHEEP_SIDE_SHEET`                      | Modal panel on the left or right edge. Header, body, footer.       |
+| `sheep-list`     | `SHEEP_LIST`                              | Rows composed at the call site. Drops into a CDK virtual viewport. |
+| `sheep-tree`     | `SheepTreeComponent`                      | Flattened, not nested — depth is padding, so deep trees stay cheap. |
+| `sheep-table`    | `SHEEP_TABLE`                             | Built on `cdk/table`. Column defs, toolbar, empty state, paginator. |
+| `sheep-dialog`   | `SHEEP_DIALOG`                            | Modal popup on a native `<dialog>`. Header, body, footer.          |
+| `sheepTooltip`   | `SheepTooltipDirective`                   | A directive, not an element.                                       |
+| Theme            | `SheepThemeService`, `SheepThemeSwitcherComponent` | Owns the `data-sheep-theme` attribute.                    |
+
+`number-field` and `nav-bar` are on the roadmap and appear greyed out in the demo app nav.
+
+## The theme layer
+
+Three files in `libs/ui/src/styles/`, in order:
+
+1. `_sheep-primitives.scss` — raw scales. No component reads these.
+2. `_sheep-theme-spec.scss` — the style spec in code: semantic roles, five stops per tone per
+   theme, and the invariants. **This is the one file to edit to change the look.**
+3. `sheep-theme.scss` — the entry point. Import it once from the app's global stylesheet.
+
+```scss
+@use '@sheep-ng/ui/styles/sheep-theme';
+```
+
+```html
+<html data-sheep-theme="dark">
+```
+
+With no attribute the theme follows `prefers-color-scheme`, and the attribute can be scoped to
+a subtree. Components consume only the `--sheep-*` roles the theme emits and publish no
+per-instance style hooks, so two buttons in one app cannot drift apart. If a caller needs
+something the spec does not offer, add a variant to the spec rather than a hook to the
+component.
+
 ## Prerequisites
 
 - Node.js 20+ (developed on 24.19.0)
@@ -68,9 +112,14 @@ Nx caches task results, so repeat runs are near-instant. `npx nx reset` clears t
 
    Import the component from `@sheep-ng/ui` (never by relative path across libraries).
 
-3. Add a route for the demo in `apps/demo-app/src/app/app.routes.ts`.
+3. Add a route for the demo in `apps/demo-app/src/app/app.routes.ts`, and flip the component's
+   `ready` flag in `apps/demo-app/src/app/app.ts` so the nav links to it.
 
 Both libraries default to SCSS and standalone components — see `generators` in `nx.json`.
+
+Style the component from the `--sheep-*` roles only. Every interactive control sits on the
+three `--sheep-ctl-{sm|md|lg}-*` size sets, so a new control lines up on a row with the
+existing ones rather than inventing its own metrics.
 
 ## Conventions
 
@@ -100,9 +149,11 @@ npx nx local-registry         # http://localhost:4873
 
 ## Known issues
 
-- `nx lint ui` and `nx lint demo` currently fail: the `@nx/dependency-checks` rule reports
-  `@angular/common` as an unused peer dependency. This clears itself as soon as a real
-  component uses anything from `@angular/common`.
+- `sheep-theme.service.spec.ts` fails under Vitest: `localStorage` is undefined in the jsdom
+  environment the spec runs in, so the four theme service cases throw in `beforeEach`. Every
+  other suite passes.
+- The Nx daemon can refuse commands when the drive letter case does not match (`d:\` vs
+  `D:\`). Prefix with `NX_DAEMON=false` to work around it.
 - Generators emit `@nx/eslint:lint` executor targets, which are deprecated and removed in
   Nx 24. Migrate with `npx nx g @nx/eslint:convert-to-inferred`.
 - `@nx/enforce-module-boundaries` is configured with the default permissive constraint
@@ -122,24 +173,22 @@ npx cloc . \
 
 | Metric | Value |
 |---|---|
-| Text files found | 174 |
-| Unique files counted | 167 |
-| Files ignored | 10 |
+| Files counted | 215 |
 | Tool | cloc v2.06 |
-| Duration | 0.06 s |
-| Throughput | 2,613 files/s, 220,490 lines/s |
+| Duration | 0.38 s |
+| Throughput | 565 files/s, 52,717 lines/s |
 
 ## Results
 
 | Language | Files | Blank | Comment | Code |
 |---|---:|---:|---:|---:|
-| TypeScript | 84 | 965 | 2,100 | 4,513 |
-| SCSS | 26 | 446 | 520 | 2,157 |
-| HTML | 19 | 107 | 49 | 1,788 |
+| TypeScript | 110 | 1,477 | 2,941 | 6,892 |
+| SCSS | 38 | 629 | 745 | 2,845 |
+| HTML | 28 | 163 | 73 | 2,682 |
+| Markdown | 4 | 184 | 0 | 582 |
 | JSON | 22 | 0 | 0 | 561 |
-| Markdown | 3 | 145 | 0 | 449 |
 | JavaScript | 5 | 5 | 64 | 135 |
 | SVG | 6 | 0 | 0 | 45 |
 | YAML | 1 | 5 | 6 | 17 |
 | INI | 1 | 2 | 0 | 11 |
-| **SUM** | **167** | **1,675** | **2,739** | **9,676** |
+| **SUM** | **215** | **2,465** | **3,829** | **13,770** |
