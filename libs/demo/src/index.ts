@@ -8,3 +8,4 @@ export * from './lib/tooltip-demo/tooltip-demo';
 export * from './lib/chip-demo/chip-demo';
 export * from './lib/badge-demo/badge-demo';
 export * from './lib/side-sheet-demo/side-sheet-demo';
+export * from './lib/tree-demo/tree-demo';
