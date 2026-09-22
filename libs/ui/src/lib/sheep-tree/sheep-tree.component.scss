@@ -1,0 +1,172 @@
+@use 'sass:map';
+
+/* ==========================================================================
+   sheep-tree
+
+   No public custom-property API. The `--_tree-*` values below are private — a
+   caller setting them is reaching past the spec. Retheme in
+   _sheep-theme-spec.scss.
+
+   Depth is drawn here and nowhere else. The component sets `--_tree-level` on
+   each row and this file turns it into padding, which is what lets the markup
+   be one flat run: indentation is paint, not structure. Nothing about a row at
+   depth twelve costs more than a row at depth zero.
+
+   The container paints nothing of its own. Framing a tree (a card, a rule, a
+   scroll box) is the page job, not the component one — the same call the list
+   makes.
+   ========================================================================== */
+
+$sizes: (
+  sm: (
+    height: 28px,
+    pad-x: 2,
+    gap: 2,
+    indent: 14px,
+    font: 12px,
+    twisty: 14px,
+  ),
+  md: (
+    height: 36px,
+    pad-x: 3,
+    gap: 2,
+    indent: 16px,
+    font: 13px,
+    twisty: 16px,
+  ),
+  lg: (
+    height: 44px,
+    pad-x: 4,
+    gap: 3,
+    indent: 20px,
+    font: 15px,
+    twisty: 18px,
+  ),
+);
+
+:host {
+  display: block;
+  min-width: 0;
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+}
+
+@each $size, $m in $sizes {
+  :host(.sheep-tree--#{$size}) {
+    --_tree-height: #{map.get($m, height)};
+    --_tree-pad-x: var(--sheep-space-#{map.get($m, pad-x)});
+    --_tree-gap: var(--sheep-space-#{map.get($m, gap)});
+    --_tree-indent: #{map.get($m, indent)};
+    --_tree-font: #{map.get($m, font)};
+    --_tree-twisty: #{map.get($m, twisty)};
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The row
+
+   Fixed height at every depth, which is what makes the run virtualizable:
+   `SHEEP_TREE_ROW_HEIGHT` is this number, so one `itemSize` is true of every
+   row in the tree.
+   -------------------------------------------------------------------------- */
+
+.sheep-tree__row {
+  display: flex;
+  align-items: center;
+  gap: var(--_tree-gap);
+
+  box-sizing: border-box;
+  height: var(--_tree-height);
+  /* The indent. `--_tree-level` is the only thing the template sets per row,
+     and `em`-free maths keeps every row on the same pixel grid. */
+  padding-inline: calc(
+      var(--_tree-pad-x) + var(--_tree-level, 0) * var(--_tree-indent)
+    )
+    var(--_tree-pad-x);
+
+  border-radius: var(--sheep-radius-sm);
+  color: var(--sheep-color-text);
+  font-size: var(--_tree-font);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: default;
+
+  transition: background-color var(--sheep-motion-duration)
+    var(--sheep-motion-ease);
+}
+
+.sheep-tree__row:hover {
+  background: var(--sheep-color-surface-sunk);
+}
+
+.sheep-tree__row:focus-visible {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: calc(var(--sheep-focus-offset) * -1);
+}
+
+.sheep-tree__row--selected {
+  background: color-mix(
+    in srgb,
+    var(--sheep-tone-primary-base) 14%,
+    transparent
+  );
+  color: var(--sheep-tone-primary-quiet);
+  font-weight: var(--sheep-font-weight-label);
+}
+
+.sheep-tree__row--disabled {
+  color: var(--sheep-color-text-faint);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   The twisty
+
+   A leaf keeps the same box, empty, so labels line up down a level whether or
+   not the node has children.
+   -------------------------------------------------------------------------- */
+
+.sheep-tree__twisty {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--_tree-twisty);
+  height: var(--_tree-twisty);
+
+  color: var(--sheep-color-text-faint);
+  cursor: pointer;
+}
+
+.sheep-tree__twisty--leaf {
+  cursor: default;
+}
+
+.sheep-tree__twisty svg {
+  width: 100%;
+  height: 100%;
+  transition: transform var(--sheep-motion-duration) var(--sheep-motion-ease);
+}
+
+.sheep-tree__row[aria-expanded='true'] .sheep-tree__twisty svg {
+  transform: rotate(90deg);
+}
+
+.sheep-tree__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheep-tree__row,
+  .sheep-tree__twisty svg {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .sheep-tree__row--selected {
+    outline: 1px solid CanvasText;
+  }
+}

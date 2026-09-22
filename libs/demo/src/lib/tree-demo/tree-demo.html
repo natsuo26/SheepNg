@@ -1,0 +1,131 @@
+<article class="demo-page">
+  <header class="demo-page__head">
+    <p class="demo-eyebrow">Component</p>
+    <h1 class="demo-title">sheep-tree</h1>
+    <p class="demo-lede">
+      A collapsible hierarchy that does not nest. The visible nodes are
+      flattened into one array and rendered as one flat run, so depth is
+      padding rather than structure &mdash; a node twelve levels down is one
+      row, costing exactly what a node at the top costs.
+    </p>
+  </header>
+
+  @for (section of sections; track section.id) {
+  <hr class="demo-rule" />
+
+  <section class="demo-section" [attr.aria-labelledby]="section.id + '-title'">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" [id]="section.id + '-title'">
+        {{ section.heading }}
+      </h2>
+      <p class="demo-note">{{ section.note }}</p>
+    </header>
+
+    @switch (section.id) { @case ('anatomy') {
+    <div class="demo-specimen">
+      <div class="tree-frame">
+        <sheep-tree
+          [nodes]="files"
+          [(expanded)]="filesExpanded"
+          [(selected)]="filesSelected"
+        />
+      </div>
+      <p class="demo-note">selected: {{ filesSelected() ?? 'nothing' }}</p>
+    </div>
+    } @case ('depth') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="openChain()">Open all 60 levels</sheep-button>
+        <sheep-button variant="ghost" (click)="closeChain()">
+          Collapse
+        </sheep-button>
+      </div>
+
+      <p class="demo-note">
+        {{ DEPTH }} levels in the data &middot; {{ deepVisible() }} rows in the
+        DOM &middot; all siblings
+      </p>
+
+      <div class="tree-frame tree-frame--tall">
+        <sheep-tree [nodes]="deep" [(expanded)]="deepExpanded" size="sm" />
+      </div>
+    </div>
+    } @case ('scale') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button variant="ghost" (click)="collapseBig()">
+          Collapse everything
+        </sheep-button>
+      </div>
+
+      <p class="demo-note">
+        {{ bigTotal }} nodes in the data &middot; {{ bigVisible() }} rows in the
+        DOM
+      </p>
+
+      <div class="tree-frame tree-frame--tall">
+        <sheep-tree [nodes]="big" [(expanded)]="bigExpanded" size="sm" />
+      </div>
+    </div>
+    } @case ('sizes') {
+    <div class="demo-group">
+      @for (size of sizes; track size) {
+      <div class="demo-column">
+        <p class="demo-note">{{ size }}</p>
+        <div class="tree-frame">
+          <sheep-tree [nodes]="files" [size]="size" [(expanded)]="sizeExpanded" />
+        </div>
+      </div>
+      }
+    </div>
+    } @case ('keyboard') {
+    <div class="demo-props">
+      @for (row of keys; track row.key) {
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <span class="demo-prop__name">{{ row.key }}</span>
+        </div>
+        <span class="demo-prop__type">{{ row.does }}</span>
+      </div>
+      }
+    </div>
+    } @case ('api') {
+    <div class="demo-props">
+      @for (row of api; track row.name) {
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <span class="demo-prop__name">{{ row.name }}</span>
+          <span class="demo-prop__default">{{ row.default }}</span>
+        </div>
+        <span class="demo-prop__type">{{ row.type }}</span>
+      </div>
+      }
+    </div>
+    } } @if (snippets[section.id]; as code) {
+    <pre class="demo-code"><code>{{ code }}</code></pre>
+    }
+  </section>
+  }
+
+  <hr class="demo-rule" />
+
+  <section class="demo-section" aria-labelledby="coupled-title">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" id="coupled-title">Tightly coupled</h2>
+      <p class="demo-note">
+        The markup for the tree beside it. No style hooks pass through.
+      </p>
+    </header>
+
+    <div class="tree-coupled">
+      <div class="tree-frame">
+        <sheep-tree
+          [nodes]="files"
+          [(expanded)]="filesExpanded"
+          [(selected)]="filesSelected"
+        />
+      </div>
+      <pre class="demo-code"><code>{{ snippet }}</code></pre>
+    </div>
+  </section>
+</article>

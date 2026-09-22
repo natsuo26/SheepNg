@@ -1,0 +1,54 @@
+@for (row of rows(); track row.node.id) {
+  <!--
+    One flat loop, whatever the depth. `track` is the node id, so expanding a
+    branch splices the new rows in and leaves every other row alone.
+
+    The row is a div rather than a button: a treeitem owns its own keydown and
+    must not be a tab stop of its own, since the tree is one stop with the
+    arrow keys moving inside it. Keyboard is handled on the host — see
+    onKeydown — which is what the a11y rule below is satisfied by.
+  -->
+  <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+  <div
+    #rowRef
+    class="sheep-tree__row"
+    [class.sheep-tree__row--selected]="row.node.id === selected()"
+    [class.sheep-tree__row--disabled]="row.node.disabled"
+    [style.--_tree-level]="row.level"
+    role="treeitem"
+    [attr.aria-level]="row.level + 1"
+    [attr.aria-expanded]="row.expandable ? row.expanded : null"
+    [attr.aria-selected]="row.node.id === selected()"
+    [attr.aria-disabled]="row.node.disabled ? 'true' : null"
+    [attr.tabindex]="row.node.id === tabStopId() ? 0 : -1"
+    (click)="onRowClick(row)"
+  >
+    @if (row.expandable) {
+      <!--
+        Presentational, and deliberately not a button: see onTwistyClick. It is
+        aria-hidden because the row already publishes aria-expanded, so a
+        screen reader would otherwise meet the same fact twice.
+      -->
+      <span
+        class="sheep-tree__twisty"
+        aria-hidden="true"
+        (click)="onTwistyClick($event, row)"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </span>
+    } @else {
+      <span class="sheep-tree__twisty sheep-tree__twisty--leaf" aria-hidden="true"></span>
+    }
+
+    <span class="sheep-tree__label">{{ row.node.label }}</span>
+  </div>
+}

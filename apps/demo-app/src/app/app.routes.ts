@@ -27,6 +27,10 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.ListDemo),
   },
   {
+    path: 'tree',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.TreeDemo),
+  },
+  {
     path: 'table',
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.TableDemo),
   },

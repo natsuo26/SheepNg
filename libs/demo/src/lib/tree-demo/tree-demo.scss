@@ -1,0 +1,33 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* The tree paints no frame of its own — that is the page's job, and this is
+   the page. A sunk ground and a scroll box, so the deep and large specimens
+   have somewhere to run to. */
+.tree-frame {
+  overflow: auto;
+  max-height: 320px;
+  padding: var(--sheep-space-2);
+  border: 1px solid var(--sheep-color-line);
+  border-radius: var(--sheep-radius-md);
+  background: var(--sheep-color-surface);
+}
+
+.tree-frame--tall {
+  max-height: 420px;
+}
+
+.tree-coupled {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sheep-space-6);
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .tree-coupled {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

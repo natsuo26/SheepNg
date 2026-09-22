@@ -28,7 +28,7 @@ export class App {
     { path: 'nav-bar', label: 'Nav bar', ready: false },
     { path: 'side-sheet', label: 'Side sheet', ready: true },
     { path: 'list', label: 'List', ready: true },
-    { path: 'tree', label: 'Tree', ready: false },
+    { path: 'tree', label: 'Tree', ready: true },
     { path: 'table', label: 'Table', ready: true },
     { path: 'dialog', label: 'Dialog', ready: true },
     { path: 'tooltip', label: 'Tooltip', ready: true },
