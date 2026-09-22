@@ -1,0 +1,241 @@
+<article class="demo-page">
+  <header class="demo-page__head">
+    <p class="demo-eyebrow">Component</p>
+    <h1 class="demo-title">sheep-side-sheet</h1>
+    <p class="demo-lede">
+      A modal panel anchored to the left or right edge, and nothing about what
+      is in it. Three slots &mdash; header, body, footer &mdash; and a native
+      &lt;dialog&gt; underneath, so the focus trap, the backdrop, the top layer
+      and Escape come from the platform rather than from a reimplementation of
+      it.
+    </p>
+  </header>
+
+  @for (section of sections; track section.id) {
+  <hr class="demo-rule" />
+
+  <section class="demo-section" [attr.aria-labelledby]="section.id + '-title'">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" [id]="section.id + '-title'">
+        {{ section.heading }}
+      </h2>
+      <p class="demo-note">{{ section.note }}</p>
+    </header>
+
+    @switch (section.id) { @case ('anatomy') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="anatomy.set(true)">Open filters</sheep-button>
+      </div>
+
+      <sheep-side-sheet [(open)]="anatomy">
+        <sheep-side-sheet-header>Filters</sheep-side-sheet-header>
+        <sheep-side-sheet-body>
+          <p>
+            The body is the caller's content, untouched. It supplies the reading
+            measure and the padding, and takes the scroll once there is more
+            than the panel can show.
+          </p>
+        </sheep-side-sheet-body>
+        <sheep-side-sheet-footer align="between">
+          <sheep-button variant="ghost" (click)="anatomy.set(false)">
+            Reset
+          </sheep-button>
+          <sheep-button variant="solid" (click)="anatomy.set(false)">
+            Apply
+          </sheep-button>
+        </sheep-side-sheet-footer>
+      </sheep-side-sheet>
+    </div>
+    } @case ('sides') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        @for (side of sides; track side) {
+        <sheep-button (click)="sideOpen[side].set(true)">{{ side }}</sheep-button>
+        }
+      </div>
+
+      @for (side of sides; track side) {
+      <sheep-side-sheet [side]="side" [(open)]="sideOpen[side]">
+        <sheep-side-sheet-header>side="{{ side }}"</sheep-side-sheet-header>
+        <sheep-side-sheet-body>
+          <p>
+            The panel is flush with its edge and slides in from it. The seam is
+            drawn on the inner edge only &mdash; the outer edge is the window,
+            and a line there would be a border on the browser.
+          </p>
+        </sheep-side-sheet-body>
+        <sheep-side-sheet-footer>
+          <sheep-button (click)="sideOpen[side].set(false)">Close</sheep-button>
+        </sheep-side-sheet-footer>
+      </sheep-side-sheet>
+      }
+    </div>
+    } @case ('sizes') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        @for (size of sizes; track size) {
+        <sheep-button (click)="sizeOpen[size].set(true)">{{ size }}</sheep-button>
+        }
+      </div>
+
+      @for (size of sizes; track size) {
+      <sheep-side-sheet [size]="size" [(open)]="sizeOpen[size]">
+        <sheep-side-sheet-header>Size {{ size }}</sheep-side-sheet-header>
+        <sheep-side-sheet-body>
+          <p>
+            Width and interior density move together, so the padding around a
+            short list of filters is never the padding around a record with
+            detail in it.
+          </p>
+        </sheep-side-sheet-body>
+        <sheep-side-sheet-footer>
+          <sheep-button (click)="sizeOpen[size].set(false)">Close</sheep-button>
+        </sheep-side-sheet-footer>
+      </sheep-side-sheet>
+      }
+    </div>
+    } @case ('dismissal') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="dismissible.set(true)">Dismissible</sheep-button>
+        <sheep-button tone="danger" (click)="locked.set(true)">
+          Must be finished
+        </sheep-button>
+      </div>
+
+      <p class="demo-note">
+        last closed by: {{ lastReason() ?? 'nothing yet' }}
+      </p>
+
+      <sheep-side-sheet [(open)]="dismissible" (closed)="lastReason.set($event)">
+        <sheep-side-sheet-header>Leave any way you like</sheep-side-sheet-header>
+        <sheep-side-sheet-body>
+          <p>
+            Escape, a click on the page beside the panel, or the close button in
+            the corner. Each one writes open back to false and says which it was
+            through the closed output.
+          </p>
+        </sheep-side-sheet-body>
+        <sheep-side-sheet-footer>
+          <sheep-button (click)="dismissible.set(false)">Close</sheep-button>
+        </sheep-side-sheet-footer>
+      </sheep-side-sheet>
+
+      <sheep-side-sheet size="sm" dismissible="false" [(open)]="locked">
+        <sheep-side-sheet-header>Step 2 of 3</sheep-side-sheet-header>
+        <sheep-side-sheet-body>
+          <p>
+            No close button, and Escape does nothing. The only way on is one of
+            the two answers below.
+          </p>
+        </sheep-side-sheet-body>
+        <sheep-side-sheet-footer align="between">
+          <sheep-button (click)="locked.set(false)">Back</sheep-button>
+          <sheep-button variant="solid" (click)="locked.set(false)">
+            Continue
+          </sheep-button>
+        </sheep-side-sheet-footer>
+      </sheep-side-sheet>
+    </div>
+    } @case ('optional') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="plain.set(true)">Invoice 2417</sheep-button>
+      </div>
+
+      <sheep-side-sheet [(open)]="plain">
+        <sheep-side-sheet-header>Invoice 2417</sheep-side-sheet-header>
+        <sheep-side-sheet-body>
+          <p>
+            No footer. This sheet is somewhere to look, not somewhere to decide
+            &mdash; there is nothing to confirm, and the three ways out are
+            already enough.
+          </p>
+        </sheep-side-sheet-body>
+      </sheep-side-sheet>
+    </div>
+    } @case ('scroll') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-button (click)="scrolling.set(true)">Open activity</sheep-button>
+      </div>
+
+      <sheep-side-sheet size="lg" [(open)]="scrolling">
+        <sheep-side-sheet-header>Activity</sheep-side-sheet-header>
+        <sheep-side-sheet-body>
+          @for (paragraph of paragraphs; track $index) {
+          <p>{{ paragraph }}</p>
+          }
+        </sheep-side-sheet-body>
+        <sheep-side-sheet-footer align="between">
+          <sheep-button variant="link" (click)="scrolling.set(false)">
+            Not now
+          </sheep-button>
+          <sheep-button variant="solid" (click)="scrolling.set(false)">
+            Mark read
+          </sheep-button>
+        </sheep-side-sheet-footer>
+      </sheep-side-sheet>
+    </div>
+    } @case ('versus') {
+    <div class="demo-props">
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <span class="demo-prop__name">sheep-dialog</span>
+          <span class="demo-prop__default">centred</span>
+        </div>
+        <span class="demo-prop__type">
+          one question the page has to answer before it continues
+        </span>
+      </div>
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <span class="demo-prop__name">sheep-side-sheet</span>
+          <span class="demo-prop__default">edge</span>
+        </div>
+        <span class="demo-prop__type">
+          a secondary surface worked in and then put away
+        </span>
+      </div>
+    </div>
+    } @case ('coupled') {
+    <div class="side-sheet-coupled">
+      <div class="demo-cluster">
+        <sheep-button (click)="coupled.set(true)">Open it</sheep-button>
+      </div>
+      <pre class="demo-code"><code>{{ snippet }}</code></pre>
+
+      <sheep-side-sheet [(open)]="coupled">
+        <sheep-side-sheet-header>Filters</sheep-side-sheet-header>
+        <sheep-side-sheet-body>
+          <p>The markup beside this is all there is to it.</p>
+        </sheep-side-sheet-body>
+        <sheep-side-sheet-footer align="between">
+          <sheep-button variant="ghost" (click)="coupled.set(false)">
+            Reset
+          </sheep-button>
+          <sheep-button variant="solid" (click)="coupled.set(false)">
+            Apply
+          </sheep-button>
+        </sheep-side-sheet-footer>
+      </sheep-side-sheet>
+    </div>
+    } @case ('api') {
+    <div class="demo-props">
+      @for (row of api; track row.name) {
+      <div class="demo-prop">
+        <div class="demo-prop__head">
+          <span class="demo-prop__name">{{ row.name }}</span>
+          <span class="demo-prop__default">{{ row.default }}</span>
+        </div>
+        <span class="demo-prop__type">{{ row.type }}</span>
+      </div>
+      }
+    </div>
+    } } @if (snippets[section.id]; as code) {
+    <pre class="demo-code"><code>{{ code }}</code></pre>
+    }
+  </section>
+  }
+</article>

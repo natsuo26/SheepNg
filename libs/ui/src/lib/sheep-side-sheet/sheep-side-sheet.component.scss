@@ -1,0 +1,195 @@
+@use 'sass:map';
+
+/* ==========================================================================
+   sheep-side-sheet
+
+   No public custom-property API. The `--_sht-*` values below are the contract
+   between a sheet and its three parts: they are declared on the host and read
+   by the header, body and footer through ordinary inheritance, which is what
+   keeps one sheet interior on one rhythm. They are private — a caller setting
+   them is reaching past the spec. Retheme in _sheep-theme-spec.scss.
+
+   The `<dialog>` is not the panel. It is the whole viewport: a transparent
+   sheet over the backdrop that pushes the panel against one edge. That is what
+   makes "clicked outside" answerable — a click on the surface is a click on
+   nothing — and it is why the panel can be a plain box with no positioning of
+   its own, anchored by nothing more than the surface flex alignment.
+
+   The panel is flush: full height, hard against its edge, square corners on
+   that edge. A side sheet reads as part of the window rather than as something
+   floating over it, which is the difference between it and a dialog — the
+   dialog is centred with a margin on every side precisely so that it does not.
+   ========================================================================== */
+
+$sizes: (
+  sm: (
+    width: 300px,
+    pad-x: 6,
+    pad-y: 6,
+    gap: 3,
+    font: 13px,
+    title: 15px,
+  ),
+  md: (
+    width: 380px,
+    pad-x: 8,
+    pad-y: 8,
+    gap: 3,
+    font: 13px,
+    title: 17px,
+  ),
+  lg: (
+    width: 520px,
+    pad-x: 12,
+    pad-y: 8,
+    gap: 4,
+    font: 15px,
+    title: 20px,
+  ),
+);
+
+/* No box of its own: the host is a handle for the parts to inherit from, and
+   the surface it renders is in the top layer either way. */
+:host {
+  display: contents;
+}
+
+@each $size, $m in $sizes {
+  :host(.sheep-side-sheet--#{$size}) {
+    --_sht-width: #{map.get($m, width)};
+    --_sht-pad-x: var(--sheep-space-#{map.get($m, pad-x)});
+    --_sht-pad-y: var(--sheep-space-#{map.get($m, pad-y)});
+    --_sht-gap: var(--sheep-space-#{map.get($m, gap)});
+    --_sht-font: #{map.get($m, font)};
+    --_sht-title-font: #{map.get($m, title)};
+  }
+}
+
+/* The side is two facts — which way the panel is pushed, and which way it
+   comes in from — so both are set here and read once each below. A single
+   keyframe then serves both sides. */
+:host(.sheep-side-sheet--right) {
+  --_sht-justify: flex-end;
+  --_sht-from: 100%;
+}
+
+:host(.sheep-side-sheet--left) {
+  --_sht-justify: flex-start;
+  --_sht-from: -100%;
+}
+
+/* --------------------------------------------------------------------------
+   The surface — the full viewport, transparent, above the backdrop.
+   -------------------------------------------------------------------------- */
+
+.sheep-side-sheet__surface {
+  position: fixed;
+  inset: 0;
+
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  /* No padding, unlike the dialog: a sheet is flush with its edge, so the only
+     dismissal target is the room left beside the panel. */
+  padding: 0;
+
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+/* `<dialog>` is display:none until open — only say what it becomes. */
+.sheep-side-sheet__surface[open] {
+  display: flex;
+  align-items: stretch;
+  justify-content: var(--_sht-justify);
+}
+
+.sheep-side-sheet__surface::backdrop {
+  /* ::backdrop inherits from its originating element in current browsers, so
+     the theme scrim reaches it. The fallback covers the ones where it does
+     not — a dark wash either way, so nothing about the page looks different. */
+  background: var(--sheep-color-scrim, rgba(8, 9, 15, 0.6));
+}
+
+/* --------------------------------------------------------------------------
+   The panel
+   -------------------------------------------------------------------------- */
+
+.sheep-side-sheet__panel {
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  /* Never wider than asked for, never wider than the room it has: on a narrow
+     screen the sheet takes the whole viewport rather than leaving a strip of
+     page that cannot be reached anyway. */
+  width: min(var(--_sht-width), 100%);
+  /* Height is not a choice. A side sheet spans the viewport. */
+  height: 100%;
+  /* The body scrolls; the panel itself never does, so the header and footer
+     stay where they are. */
+  overflow: hidden;
+
+  background: var(--sheep-color-surface);
+  box-shadow: var(--sheep-shadow-md);
+
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+  font-size: var(--_sht-font);
+}
+
+/* The seam against the page, on the inner edge only. The outer edge is the
+   window, and a line there would be a border on the browser. */
+:host(.sheep-side-sheet--right) .sheep-side-sheet__panel {
+  border-left: 1px solid var(--sheep-color-line);
+}
+
+:host(.sheep-side-sheet--left) .sheep-side-sheet__panel {
+  border-right: 1px solid var(--sheep-color-line);
+}
+
+/* --------------------------------------------------------------------------
+   Entry
+
+   Opening only. A closing panel is gone from the top layer the moment the
+   element closes, so animating it out would mean holding the sheet open past
+   the caller state — the state is the truth here, not the paint.
+   -------------------------------------------------------------------------- */
+
+.sheep-side-sheet__surface[open] .sheep-side-sheet__panel {
+  animation: sheep-side-sheet-slide 200ms var(--sheep-motion-ease);
+}
+
+.sheep-side-sheet__surface[open]::backdrop {
+  animation: sheep-side-sheet-fade var(--sheep-motion-duration)
+    var(--sheep-motion-ease);
+}
+
+@keyframes sheep-side-sheet-slide {
+  from {
+    transform: translateX(var(--_sht-from));
+  }
+}
+
+@keyframes sheep-side-sheet-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheep-side-sheet__surface[open] .sheep-side-sheet__panel,
+  .sheep-side-sheet__surface[open]::backdrop {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .sheep-side-sheet__panel {
+    border: 1px solid CanvasText;
+  }
+}

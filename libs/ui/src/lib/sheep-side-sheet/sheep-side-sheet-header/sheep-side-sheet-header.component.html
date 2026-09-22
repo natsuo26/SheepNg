@@ -1,0 +1,27 @@
+<h2 class="sheep-side-sheet__title"><ng-content /></h2>
+
+@if (dismissible()) {
+  <sheep-button
+    class="sheep-side-sheet__close"
+    variant="ghost"
+    tone="neutral"
+    size="sm"
+    shape="square"
+    ariaLabel="Close panel"
+    (click)="close()"
+  >
+    <svg
+      sheepButtonStart
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.75"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
+  </sheep-button>
+}
