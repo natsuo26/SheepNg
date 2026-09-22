@@ -1,0 +1,195 @@
+<article class="demo-page">
+  <header class="demo-page__head">
+    <p class="demo-eyebrow">Component</p>
+    <h1 class="demo-title">sheep-chip</h1>
+    <p class="demo-lede">
+      A compact, labelled control &mdash; a filter, an option, a value someone
+      entered, or a tag that is only there to be read. Which of those it is
+      comes from the element you write it on, so the keyboard and the
+      announcement are the platform's rather than a reimplementation of them.
+    </p>
+  </header>
+
+  @for (section of sections; track section.id) {
+  <hr class="demo-rule" />
+
+  <section class="demo-section" [attr.aria-labelledby]="section.id + '-title'">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" [id]="section.id + '-title'">
+        {{ section.heading }}
+      </h2>
+      <p class="demo-note">{{ section.note }}</p>
+    </header>
+
+    @switch (section.id) { @case ('anatomy') {
+    <div class="demo-specimen">
+      <div class="demo-group">
+        <p class="demo-eyebrow">button[sheep-chip] &mdash; filter</p>
+        <div class="demo-cluster">
+          <button sheep-chip [selected]="true">Archived</button>
+          <button sheep-chip [selected]="false">Starred</button>
+        </div>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">button[sheep-chip] &mdash; action</p>
+        <div class="demo-cluster">
+          <button sheep-chip>
+            <svg sheepChipStart viewBox="0 0 16 16" fill="none">
+              <path
+                d="M8 3.5v9M3.5 8h9"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+            Add label
+          </button>
+        </div>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">a[sheep-chip] &mdash; link</p>
+        <div class="demo-cluster">
+          <a sheep-chip href="#anatomy-title" [selected]="true">Design</a>
+          <a sheep-chip href="#anatomy-title">Frontend</a>
+        </div>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">sheep-chip &mdash; input and read-only</p>
+        <div class="demo-cluster">
+          <sheep-chip removable removeLabel="Remove design">design</sheep-chip>
+          <sheep-chip variant="soft" tone="success">Passing</sheep-chip>
+        </div>
+      </div>
+
+      <pre class="demo-code">{{ snippets['anatomy'] }}</pre>
+    </div>
+    } @case ('filter') {
+    <div class="demo-specimen">
+      <sheep-chip-set ariaLabel="Status">
+        @for (status of statuses; track status) {
+        <button
+          sheep-chip
+          [selected]="isOn(status)"
+          (click)="toggle(status)"
+        >
+          {{ status }}
+        </button>
+        }
+      </sheep-chip-set>
+
+      <p class="chip-readout">{{ summary() }}</p>
+
+      <pre class="demo-code">{{ snippets['filter'] }}</pre>
+    </div>
+    } @case ('selection') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <button sheep-chip>No selection state</button>
+        <span class="chip-annotation">no aria-pressed</span>
+      </div>
+      <div class="demo-cluster">
+        <button sheep-chip [selected]="false">Bound, off</button>
+        <span class="chip-annotation">aria-pressed="false"</span>
+      </div>
+      <div class="demo-cluster">
+        <button sheep-chip [selected]="true">Bound, on</button>
+        <span class="chip-annotation">aria-pressed="true"</span>
+      </div>
+
+      <pre class="demo-code">{{ snippets['selection'] }}</pre>
+    </div>
+    } @case ('variants') {
+    <div class="demo-specimen">
+      @for (variant of variants; track variant) {
+      <div class="demo-group">
+        <p class="demo-eyebrow">{{ variant }}</p>
+        <div class="demo-cluster">
+          @for (tone of tones; track tone) {
+          <sheep-chip [variant]="variant" [tone]="tone">{{ tone }}</sheep-chip>
+          }
+        </div>
+      </div>
+      }
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">selected</p>
+        <div class="demo-cluster">
+          @for (tone of tones; track tone) {
+          <button sheep-chip [tone]="tone" [selected]="true">{{ tone }}</button>
+          }
+        </div>
+      </div>
+
+      <pre class="demo-code">{{ snippets['variants'] }}</pre>
+    </div>
+    } @case ('sizes') {
+    <div class="demo-specimen">
+      @for (size of sizes; track size) {
+      <div class="demo-group">
+        <p class="demo-eyebrow">{{ size }}</p>
+        <div class="demo-cluster">
+          <button sheep-chip [size]="size" [selected]="true">Selected</button>
+          <sheep-chip [size]="size">Chip</sheep-chip>
+          <sheep-chip [size]="size" removable removeLabel="Remove chip"
+            >Removable</sheep-chip
+          >
+          <sheep-button [size]="size">Button, for the row</sheep-button>
+        </div>
+      </div>
+      }
+
+      <pre class="demo-code">{{ snippets['sizes'] }}</pre>
+    </div>
+    } @case ('input') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        @for (tag of tags(); track tag) {
+        <sheep-chip variant="soft" removable (removed)="drop(tag)">
+          {{ tag }}
+        </sheep-chip>
+        } @empty {
+        <p class="chip-readout">Nothing left.</p>
+        }
+      </div>
+
+      <div class="demo-cluster">
+        <sheep-button size="sm" (click)="restore()">Put them back</sheep-button>
+      </div>
+
+      <pre class="demo-code">{{ snippets['input'] }}</pre>
+    </div>
+    } @case ('disabled') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <button sheep-chip disabled>Native disabled</button>
+        <button sheep-chip [selected]="true" disabled>Selected, disabled</button>
+        <sheep-chip disabled removable removeLabel="Remove locked tag"
+          >locked</sheep-chip
+        >
+      </div>
+
+      <pre class="demo-code">{{ snippets['disabled'] }}</pre>
+    </div>
+    } @case ('api') {
+    <div class="demo-specimen">
+      <div class="demo-props">
+        @for (prop of api; track prop.name) {
+        <div class="demo-prop">
+          <div class="demo-prop__head">
+            <span class="demo-prop__name">{{ prop.name }}</span>
+            <span class="demo-prop__default">{{ prop.default }}</span>
+          </div>
+          <span class="demo-prop__type">{{ prop.type }}</span>
+        </div>
+        }
+      </div>
+
+      <pre class="demo-code">{{ snippets['api'] }}</pre>
+    </div>
+    } }
+  </section>
+  }
+</article>

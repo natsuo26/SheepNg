@@ -1,0 +1,14 @@
+/* ==========================================================================
+   sheep-chip-set
+
+   No public custom-property API. The gap comes from the theme layer, like
+   everything else. Retheme in _sheep-theme-spec.scss.
+   ========================================================================== */
+
+:host {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--sheep-space-2);
+  min-width: 0;
+}

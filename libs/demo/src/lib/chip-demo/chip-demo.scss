@@ -1,0 +1,17 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* What the filter row currently adds up to. */
+.chip-readout {
+  margin: 0;
+  color: var(--sheep-color-text-muted);
+  font-size: 12.5px;
+}
+
+/* The attribute a specimen is there to demonstrate, spelled out beside it. */
+.chip-annotation {
+  color: var(--sheep-color-text-faint);
+  font-family: var(--sheep-font-mono);
+  font-size: 11px;
+}

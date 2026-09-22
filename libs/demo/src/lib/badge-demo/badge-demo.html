@@ -1,0 +1,256 @@
+<article class="demo-page">
+  <header class="demo-page__head">
+    <p class="demo-eyebrow">Component</p>
+    <h1 class="demo-title">sheep-badge</h1>
+    <p class="demo-lede">
+      A small mark that carries a status, a count or a label. Five tones in two
+      weights, both derived from a single colour &mdash; which is what lets you
+      hand it a colour out of your own data and get the same coherent pair
+      back.
+    </p>
+  </header>
+
+  @for (section of sections; track section.id) {
+  <hr class="demo-rule" />
+
+  <section class="demo-section" [attr.aria-labelledby]="section.id + '-title'">
+    <header class="demo-section__head">
+      <h2 class="demo-section__title" [id]="section.id + '-title'">
+        {{ section.heading }}
+      </h2>
+      <p class="demo-note">{{ section.note }}</p>
+    </header>
+
+    @switch (section.id) { @case ('anatomy') {
+    <div class="demo-specimen">
+      <div class="demo-cluster">
+        <sheep-badge tone="success" label="Passing" />
+        <sheep-badge tone="danger" emphasis="high" label="7 failed" />
+        <sheep-badge tone="primary" label="v2.1.0" />
+        <sheep-badge tone="warning" ariaLabel="Needs review">
+          <svg sheepBadgeIcon viewBox="0 0 16 16" fill="none">
+            <path
+              d="M8 4.2v4.4M8 11.2v.6"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </sheep-badge>
+      </div>
+
+      <pre class="demo-code">{{ snippets['anatomy'] }}</pre>
+    </div>
+    } @case ('tones') {
+    <div class="demo-specimen">
+      @for (emphasis of emphases; track emphasis) {
+      <div class="demo-group">
+        <p class="demo-eyebrow">{{ emphasis }}</p>
+        <div class="demo-cluster">
+          @for (tone of tones; track tone) {
+          <sheep-badge [tone]="tone" [emphasis]="emphasis" [label]="tone" />
+          }
+        </div>
+      </div>
+      }
+
+      <pre class="demo-code">{{ snippets['tones'] }}</pre>
+    </div>
+    } @case ('sizes') {
+    <div class="demo-specimen">
+      @for (size of sizes; track size) {
+      <div class="demo-group">
+        <p class="demo-eyebrow">{{ size }}</p>
+        <div class="demo-cluster">
+          <sheep-badge [size]="size" tone="primary" label="Beta" />
+          <sheep-badge
+            [size]="size"
+            tone="primary"
+            emphasis="high"
+            label="Beta"
+          />
+          <sheep-badge [size]="size" tone="primary" ariaLabel="Verified">
+            <svg viewBox="0 0 16 16" fill="none" sheepBadgeIcon>
+              <path
+                d="M3.8 8.3 6.6 11 12.2 5"
+                stroke="currentColor"
+                stroke-width="1.9"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </sheep-badge>
+        </div>
+      </div>
+      }
+
+      <pre class="demo-code">{{ snippets['sizes'] }}</pre>
+    </div>
+    } @case ('icon') {
+    <div class="demo-specimen">
+      <div class="demo-group">
+        <p class="demo-eyebrow">icon and label</p>
+        <div class="demo-cluster">
+          <sheep-badge tone="success" label="Passing">
+            <svg viewBox="0 0 16 16" fill="none" sheepBadgeIcon>
+              <path
+                d="M3.8 8.3 6.6 11 12.2 5"
+                stroke="currentColor"
+                stroke-width="1.9"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </sheep-badge>
+          <sheep-badge tone="danger" emphasis="high" label="Failed">
+            <svg viewBox="0 0 16 16" fill="none" sheepBadgeIcon>
+              <path
+                d="M4.6 4.6 11.4 11.4M11.4 4.6 4.6 11.4"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </sheep-badge>
+        </div>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">label only</p>
+        <div class="demo-cluster">
+          <sheep-badge tone="success" label="Passing" />
+          <sheep-badge tone="danger" emphasis="high" label="Failed" />
+        </div>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">icon only &mdash; a circle, and it needs a name</p>
+        <div class="demo-cluster">
+          <sheep-badge tone="success" ariaLabel="Passing">
+            <svg viewBox="0 0 16 16" fill="none" sheepBadgeIcon>
+              <path
+                d="M3.8 8.3 6.6 11 12.2 5"
+                stroke="currentColor"
+                stroke-width="1.9"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </sheep-badge>
+          <sheep-badge tone="danger" emphasis="high" ariaLabel="Failed">
+            <svg viewBox="0 0 16 16" fill="none" sheepBadgeIcon>
+              <path
+                d="M4.6 4.6 11.4 11.4M11.4 4.6 4.6 11.4"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+              />
+            </svg>
+          </sheep-badge>
+        </div>
+      </div>
+
+      <pre class="demo-code">{{ snippets['icon'] }}</pre>
+    </div>
+    } @case ('custom') {
+    <div class="demo-specimen">
+      <div class="demo-group">
+        <p class="demo-eyebrow">colours from data, both weights</p>
+        <div class="demo-cluster">
+          @for (label of labels; track label.name) {
+          <sheep-badge [color]="label.color" [label]="label.name" />
+          }
+        </div>
+        <div class="demo-cluster">
+          @for (label of labels; track label.name) {
+          <sheep-badge
+            [color]="label.color"
+            emphasis="high"
+            [label]="label.name"
+          />
+          }
+        </div>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">font and icon colour, overridden</p>
+        <div class="demo-cluster">
+          <sheep-badge
+            color="#1f2933"
+            emphasis="high"
+            textColor="#ffd400"
+            iconColor="#ff7a45"
+            label="Custom"
+          >
+            <svg viewBox="0 0 16 16" fill="none" sheepBadgeIcon>
+              <path
+                d="M8 2.6 9.8 6.3l4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L2.2 6.9l4-.6z"
+                stroke="currentColor"
+                stroke-width="1.3"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </sheep-badge>
+          <sheep-badge
+            color="#0f6fff"
+            emphasis="high"
+            textColor="#eaf2ff"
+            label="Text override"
+          />
+        </div>
+      </div>
+
+      <div class="demo-group">
+        <p class="demo-eyebrow">
+          from CSS &mdash; a colour that belongs to a context, not to one badge
+        </p>
+        <div class="demo-cluster badge-tenant">
+          <sheep-badge label="Acme" />
+          <sheep-badge emphasis="high" label="Acme" />
+          <sheep-badge label="Enterprise" />
+        </div>
+      </div>
+
+      <pre class="demo-code">{{ snippets['custom'] }}</pre>
+    </div>
+    } @case ('context') {
+    <div class="demo-specimen">
+      <div class="badge-frame">
+        <sheep-list divided>
+          @for (build of builds; track build.id) {
+          <sheep-list-item>
+            <div sheepListItemTitle>{{ build.branch }}</div>
+            <div sheepListItemLine>Build #{{ build.id }}</div>
+            <sheep-badge
+              sheepListItemMeta
+              [tone]="build.tone"
+              [emphasis]="build.emphasis"
+              [label]="build.status"
+            />
+          </sheep-list-item>
+          }
+        </sheep-list>
+      </div>
+
+      <pre class="demo-code">{{ snippets['context'] }}</pre>
+    </div>
+    } @case ('api') {
+    <div class="demo-specimen">
+      <div class="demo-props">
+        @for (prop of api; track prop.name) {
+        <div class="demo-prop">
+          <div class="demo-prop__head">
+            <span class="demo-prop__name">{{ prop.name }}</span>
+            <span class="demo-prop__default">{{ prop.default }}</span>
+          </div>
+          <span class="demo-prop__type">{{ prop.type }}</span>
+        </div>
+        }
+      </div>
+
+      <pre class="demo-code">{{ snippets['api'] }}</pre>
+    </div>
+    } }
+  </section>
+  }
+</article>

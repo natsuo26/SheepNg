@@ -11,6 +11,14 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.TextFieldDemo),
   },
   {
+    path: 'chips',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.ChipDemo),
+  },
+  {
+    path: 'badges',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.BadgeDemo),
+  },
+  {
     path: 'list',
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.ListDemo),
   },
