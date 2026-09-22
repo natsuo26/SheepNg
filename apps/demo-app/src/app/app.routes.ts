@@ -19,6 +19,10 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.BadgeDemo),
   },
   {
+    path: 'side-sheet',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.SideSheetDemo),
+  },
+  {
     path: 'list',
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.ListDemo),
   },

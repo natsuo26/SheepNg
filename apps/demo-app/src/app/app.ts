@@ -26,7 +26,7 @@ export class App {
     { path: 'chips', label: 'Chips', ready: true },
     { path: 'badges', label: 'Badges', ready: true },
     { path: 'nav-bar', label: 'Nav bar', ready: false },
-    { path: 'side-sheet', label: 'Side sheet', ready: false },
+    { path: 'side-sheet', label: 'Side sheet', ready: true },
     { path: 'list', label: 'List', ready: true },
     { path: 'tree', label: 'Tree', ready: false },
     { path: 'table', label: 'Table', ready: true },

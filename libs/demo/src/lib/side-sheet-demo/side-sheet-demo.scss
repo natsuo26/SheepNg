@@ -1,0 +1,19 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* The one section that pairs a sheet with its markup: the trigger sits beside
+   the snippet rather than above it, since the sheet itself opens over both. */
+.side-sheet-coupled {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sheep-space-6);
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .side-sheet-coupled {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

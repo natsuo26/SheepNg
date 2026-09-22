@@ -1,0 +1,32 @@
+/* ==========================================================================
+   sheep-side-sheet-footer
+
+   Density comes from the sheet through the inherited `--_sht-*` contract.
+   Nothing here is styleable per instance.
+
+   A rule above the row, for the same reason the header has one below it: the
+   body scrolls between them, and the line is what keeps the actions reading as
+   a fixed row rather than as the end of the content.
+   ========================================================================== */
+
+:host {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--_sht-gap);
+
+  box-sizing: border-box;
+  padding: var(--_sht-pad-y) var(--_sht-pad-x);
+
+  border-top: 1px solid var(--sheep-color-line);
+}
+
+:host(.sheep-side-sheet__footer--start) {
+  justify-content: flex-start;
+}
+
+:host(.sheep-side-sheet__footer--between) {
+  justify-content: space-between;
+}

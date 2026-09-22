@@ -1,0 +1,34 @@
+/* ==========================================================================
+   sheep-side-sheet-body
+
+   Density comes from the sheet through the inherited `--_sht-*` contract.
+   Nothing here is styleable per instance.
+   ========================================================================== */
+
+:host {
+  /* The one part that gives: it takes the slack while the panel has room, and
+     `min-height: 0` is what lets it shrink far enough to scroll once it does
+     not — without it a flex item refuses to go below its content. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* The panel is full height and sits over the page, so a body scrolled to its
+     end must not hand the rest of the gesture to the document behind it. */
+  overscroll-behavior: contain;
+
+  display: block;
+  box-sizing: border-box;
+  padding: var(--_sht-pad-y) var(--_sht-pad-x);
+
+  color: var(--sheep-color-text-muted);
+  line-height: 1.55;
+}
+
+/* The caller prose, sitting on the body rhythm rather than the browser one. */
+:host ::ng-deep :is(p, ul, ol):first-child {
+  margin-top: 0;
+}
+
+:host ::ng-deep :is(p, ul, ol):last-child {
+  margin-bottom: 0;
+}

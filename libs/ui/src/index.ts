@@ -15,3 +15,5 @@ export * from './lib/sheep-tooltip/index';
 export * from './lib/sheep-chip/index';
 
 export * from './lib/sheep-badge/index';
+
+export * from './lib/sheep-side-sheet/index';
