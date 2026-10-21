@@ -73,7 +73,7 @@ export class DialogDemo {
   <sheep-dialog-header>Rename folder</sheep-dialog-header>
 
   <sheep-dialog-body>
-    <sheep-text-field [(value)]="name" />
+    <sheep-input [(value)]="name" />
   </sheep-dialog-body>
 
   <sheep-dialog-footer>

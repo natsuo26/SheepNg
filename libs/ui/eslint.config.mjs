@@ -14,7 +14,10 @@ export default [
                 "error",
                 {
                     ignoredFiles: [
-                        "{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}"
+                        "{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}",
+                        // Test-only imports (the router, in the nav bar spec)
+                        // are not dependencies of the published package.
+                        "{projectRoot}/**/*.spec.ts"
                     ]
                 }
             ]

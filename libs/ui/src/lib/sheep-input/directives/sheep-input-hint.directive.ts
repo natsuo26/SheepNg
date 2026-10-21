@@ -8,6 +8,6 @@ import { Directive } from '@angular/core';
  * replaces it while one is showing.
  */
 @Directive({
-  selector: '[sheepTextFieldHint]',
+  selector: '[sheepInputHint]',
 })
-export class SheepTextFieldHintDirective {}
+export class SheepInputHintDirective {}

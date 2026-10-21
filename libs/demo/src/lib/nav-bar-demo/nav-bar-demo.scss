@@ -1,0 +1,21 @@
+@use '../../styles/demo-kit' as demo;
+
+@include demo.kit;
+
+/* A specimen bar is framed so its edges read as a bar rather than as a run of
+   links floating in the page. */
+.nav-bar-frame {
+  border-radius: var(--sheep-radius-md);
+  box-shadow: 0 0 0 1px var(--sheep-color-line);
+}
+
+/* Narrower than its items, so the overflow fades have something to show. */
+.nav-bar-narrow {
+  max-width: 520px;
+}
+
+.nav-bar-brand {
+  font-family: var(--sheep-font-heading);
+  font-weight: var(--sheep-font-weight-heading);
+  font-size: 14px;
+}

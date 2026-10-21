@@ -1,5 +1,5 @@
 /**
- * The value sets behind `sheep-text-field`'s appearance inputs.
+ * The value sets behind `sheep-input`'s appearance inputs.
  *
  * Each list is the single source of truth for its axis: the matching type is
  * derived from the tuple, so adding a value widens the type automatically and
@@ -16,14 +16,14 @@
  * boxes. `soft` adds a sunk ground under the same rule, for a form dense
  * enough that the rows need telling apart.
  */
-export const SHEEP_TEXT_FIELD_VARIANTS = ['underline', 'soft'] as const;
+export const SHEEP_INPUT_VARIANTS = ['underline', 'soft'] as const;
 
-export type SheepTextFieldVariant = (typeof SHEEP_TEXT_FIELD_VARIANTS)[number];
+export type SheepInputVariant = (typeof SHEEP_INPUT_VARIANTS)[number];
 
 /** Control size. Shared with every other control in the library. */
-export const SHEEP_TEXT_FIELD_SIZES = ['sm', 'md', 'lg'] as const;
+export const SHEEP_INPUT_SIZES = ['sm', 'md', 'lg'] as const;
 
-export type SheepTextFieldSize = (typeof SHEEP_TEXT_FIELD_SIZES)[number];
+export type SheepInputSize = (typeof SHEEP_INPUT_SIZES)[number];
 
 /**
  * Native `type` of the underlying `<input>`.
@@ -37,7 +37,7 @@ export type SheepTextFieldSize = (typeof SHEEP_TEXT_FIELD_SIZES)[number];
  * themselves and add the reveal toggle and the validation that make those two
  * types worth having.
  */
-export const SHEEP_TEXT_FIELD_TYPES = [
+export const SHEEP_INPUT_TYPES = [
   'text',
   'password',
   'email',
@@ -46,4 +46,4 @@ export const SHEEP_TEXT_FIELD_TYPES = [
   'url',
 ] as const;
 
-export type SheepTextFieldType = (typeof SHEEP_TEXT_FIELD_TYPES)[number];
+export type SheepInputType = (typeof SHEEP_INPUT_TYPES)[number];

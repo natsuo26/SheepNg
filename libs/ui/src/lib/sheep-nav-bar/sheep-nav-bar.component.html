@@ -1,0 +1,52 @@
+<div class="sheep-nav-bar__start"><ng-content select="[sheepNavBarStart]" /></div>
+<div class="sheep-nav-bar__track">
+  <!-- The step buttons are a pointer convenience and nothing more: a keyboard
+       user tabs through the items and the row scrolls to follow focus, and a
+       screen reader reads every item whether it is scrolled into view or not.
+       So they are out of the tab order and out of the accessibility tree,
+       rather than two unlabelled stops in front of every bar. -->
+  @if (moreStart()) {
+  <button
+    type="button"
+    class="sheep-nav-bar__step sheep-nav-bar__step--start"
+    tabindex="-1"
+    aria-hidden="true"
+    (click)="step(-1)"
+  >
+    <svg viewBox="0 0 16 16" fill="none">
+      <path
+        d="M10 3.5 5.5 8l4.5 4.5"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </button>
+  }
+  <!-- The landmark wraps the items only: the start and end slots are beside
+       the navigation, not part of it. The <nav> is also the scroller. -->
+  <nav #nav class="sheep-nav-bar__nav" [attr.aria-label]="ariaLabel()">
+    <div #items class="sheep-nav-bar__items"><ng-content /></div>
+  </nav>
+  @if (moreEnd()) {
+  <button
+    type="button"
+    class="sheep-nav-bar__step sheep-nav-bar__step--end"
+    tabindex="-1"
+    aria-hidden="true"
+    (click)="step(1)"
+  >
+    <svg viewBox="0 0 16 16" fill="none">
+      <path
+        d="M6 3.5 10.5 8 6 12.5"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  </button>
+  }
+</div>
+<div class="sheep-nav-bar__end"><ng-content select="[sheepNavBarEnd]" /></div>

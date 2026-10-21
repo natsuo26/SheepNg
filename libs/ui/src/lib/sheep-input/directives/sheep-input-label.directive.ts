@@ -9,6 +9,6 @@ import { Directive } from '@angular/core';
  * label, it is gone the moment the user types.
  */
 @Directive({
-  selector: '[sheepTextFieldLabel]',
+  selector: '[sheepInputLabel]',
 })
-export class SheepTextFieldLabelDirective {}
+export class SheepInputLabelDirective {}

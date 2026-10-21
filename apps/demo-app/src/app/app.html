@@ -1,33 +1,30 @@
 <div class="app">
-  <header class="app__bar">
-    <div class="app__brand">
-      <img
-        class="app__mark"
-        src="sheepng-icon-transparent-accent.svg"
-        alt=""
-        width="21"
-        height="21"
-      />
-      <span class="app__name">sheep&#8209;ng</span>
-      <span class="app__version">ui 0.1.0</span>
-    </div>
+  <header class="app__header">
+    <sheep-nav-bar ariaLabel="Components">
+      <div sheepNavBarStart class="app__brand">
+        <img
+          class="app__mark"
+          src="sheepng-icon-transparent-accent.svg"
+          alt=""
+          width="21"
+          height="21"
+        />
+        <span class="app__name">sheep&#8209;ng</span>
+        <span class="app__version">ui 0.1.0</span>
+      </div>
 
-    <nav class="app__nav" aria-label="Components">
-      @for (item of components; track item.path) { @if (item.ready) {
+      @for (item of components; track item.path) {
       <a
-        class="app__link"
+        sheep-nav-bar-item
         [routerLink]="item.path"
-        routerLinkActive="app__link--on"
+        routerLinkActive
+        ariaCurrentWhenActive="page"
         >{{ item.label }}</a
       >
-      } @else {
-      <span class="app__link app__link--soon" aria-disabled="true"
-        >{{ item.label }}</span
-      >
-      } }
-    </nav>
+      }
 
-    <sheep-theme-switcher />
+      <sheep-theme-switcher sheepNavBarEnd />
+    </sheep-nav-bar>
   </header>
 
   <main class="app__main">

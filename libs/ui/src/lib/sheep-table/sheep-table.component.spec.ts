@@ -103,7 +103,7 @@ describe('SheepTableComponent', () => {
 
   /** Types `term` into one column's filter box, the way a user would. */
   async function filterBy(column: number, term: string): Promise<void> {
-    // The panel's box is a `sheep-text-field`; its native input is the thing
+    // The panel's box is a `sheep-input`; its native input is the thing
     // a user types into, popover or not.
     const input = only<HTMLInputElement>(
       '.sheep-table__filter-panel input',

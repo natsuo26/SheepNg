@@ -32,9 +32,10 @@ spread into `imports` rather than naming each piece.
 | Component        | Import                                    | Notes                                                              |
 | ---------------- | ----------------------------------------- | ------------------------------------------------------------------ |
 | `sheep-button`   | `SheepButtonComponent`                    | Five variants, five tones, three sizes. `shape="square"` is the icon button. |
-| `sheep-text-field` | `SHEEP_TEXT_FIELD`                      | Label, hint, prefix/suffix, counter, validation directives.        |
+| `sheep-input`    | `SHEEP_INPUT`                             | Single-line input. Label, hint, prefix/suffix; password, email, number, counter and validation directives. |
 | `sheep-chip`     | `SHEEP_CHIP`                              | Chip and chip set. A control, so it takes the control metrics.     |
 | `sheep-badge`    | `SheepBadgeComponent`                     | Not a control — rides the smaller badge metrics. The one component with colour hooks. |
+| `sheep-nav-bar`  | `SHEEP_NAV_BAR`                           | Bar and item. Current item is `aria-current`, so `routerLinkActive` drives it. Overflow scrolls. |
 | `sheep-side-sheet` | `SHEEP_SIDE_SHEET`                      | Modal panel on the left or right edge. Header, body, footer.       |
 | `sheep-list`     | `SHEEP_LIST`                              | Rows composed at the call site. Drops into a CDK virtual viewport. |
 | `sheep-tree`     | `SheepTreeComponent`                      | Flattened, not nested — depth is padding, so deep trees stay cheap. |
@@ -43,7 +44,23 @@ spread into `imports` rather than naming each piece.
 | `sheepTooltip`   | `SheepTooltipDirective`                   | A directive, not an element.                                       |
 | Theme            | `SheepThemeService`, `SheepThemeSwitcherComponent` | Owns the `data-sheep-theme` attribute.                    |
 
-`number-field` and `nav-bar` are on the roadmap and appear greyed out in the demo app nav.
+There is no separate number field: `<sheep-input sheepNumber min="0" step="0.01">` covers it, and a
+dedicated component would re-expose the same label, hint, sizes and validation and drift from it.
+`sheep-input` was previously `sheep-text-field` — see the rename note below.
+
+## Renamed: `sheep-text-field` → `sheep-input`
+
+A breaking change. Every name moved together, so a find-and-replace in this order migrates a
+consumer:
+
+| Was | Now |
+| --- | --- |
+| `SHEEP_TEXT_FIELD` (and `SHEEP_TEXT_FIELD_*`) | `SHEEP_INPUT` (and `SHEEP_INPUT_*`) |
+| `SheepTextField*` (component, directives, types, `provideSheepTextFieldMessages`) | `SheepInput*` |
+| `sheepTextFieldLabel` / `Hint` / `Prefix` / `Suffix` | `sheepInputLabel` / `Hint` / `Prefix` / `Suffix` |
+| `<sheep-text-field>` | `<sheep-input>` |
+
+`sheepPassword`, `sheepEmail`, `sheepCounter` and `sheepValidate` keep their names.
 
 ## The theme layer
 

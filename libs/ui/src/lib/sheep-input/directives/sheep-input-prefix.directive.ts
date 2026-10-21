@@ -9,6 +9,6 @@ import { Directive } from '@angular/core';
  * squared to the control's icon metric.
  */
 @Directive({
-  selector: '[sheepTextFieldPrefix]',
+  selector: '[sheepInputPrefix]',
 })
-export class SheepTextFieldPrefixDirective {}
+export class SheepInputPrefixDirective {}

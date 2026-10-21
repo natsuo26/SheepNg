@@ -1,15 +1,15 @@
 import { Injectable, signal } from '@angular/core';
-import type { SheepTextFieldType } from './sheep-text-field.constants';
+import type { SheepInputType } from './sheep-input.constants';
 
 /**
- * The seam every extra piece of text-field behaviour arrives through.
+ * The seam every extra piece of input behaviour arrives through.
  *
  * The field itself is a value, a box and a label. Everything beyond that —
  * masking a password, validating an address, counting characters — is a
  * directive on the host element that contributes through this contract:
  *
  * ```html
- * <sheep-text-field sheepPassword sheepCounter [sheepValidate]="notReserved">
+ * <sheep-input sheepPassword sheepCounter [sheepValidate]="notReserved">
  * ```
  *
  * Each hook is a plain function of the field's current state, not a signal the
@@ -18,7 +18,7 @@ import type { SheepTextFieldType } from './sheep-text-field.constants';
  * an input, a store — is tracked exactly as if the field had read it directly.
  * A feature therefore never pushes: it answers.
  */
-export interface SheepTextFieldFeature {
+export interface SheepInputFeature {
   /**
    * Native attributes to put on the `<input>`.
    *
@@ -26,28 +26,54 @@ export interface SheepTextFieldFeature {
    * feature to name a key wins. Set only what the feature is actually about:
    * `sheepEmail` sets the type and the keyboard hints, and nothing else.
    */
-  readonly attrs?: (ctx: SheepTextFieldState) => SheepTextFieldAttrs;
+  readonly attrs?: (ctx: SheepInputState) => SheepInputAttrs;
 
   /**
    * Errors for the current value, or `null` when there is nothing to say.
    *
    * Runs on every value change. It is display-only: see the note on
-   * `SheepTextFieldValidateDirective` about who owns validity when a signal
+   * `SheepInputValidateDirective` about who owns validity when a signal
    * form is bound to the field.
    */
   readonly validate?: (
-    ctx: SheepTextFieldState,
+    ctx: SheepInputState,
   ) => readonly SheepFieldError[] | null;
 
   /** A button rendered at the trailing edge, inside the box. */
-  readonly action?: (ctx: SheepTextFieldState) => SheepTextFieldAction | null;
+  readonly action?: (ctx: SheepInputState) => SheepInputAction | null;
 
   /** Text rendered at the trailing end of the footer row, beside the hint. */
-  readonly status?: (ctx: SheepTextFieldState) => string | null;
+  readonly status?: (ctx: SheepInputState) => string | null;
+
+  /**
+   * Whether an insertion may happen, answered with the value it would leave.
+   *
+   * Asked before the browser applies a typed, pasted or dropped insertion;
+   * `false` from any feature refuses it and the value does not change.
+   * Deletions are never asked — a field the user cannot clear is worse than
+   * one that briefly holds something invalid.
+   *
+   * It is a filter, not a validator: answer for values that could still
+   * become valid as typing continues (`-`, `1.`), and leave judging the
+   * finished value to `validate`.
+   */
+  readonly accept?: (next: string, ctx: SheepInputState) => boolean;
+
+  /**
+   * The value one step up (`1`) or down (`-1`) from the current one, or
+   * `null` to leave the key alone.
+   *
+   * Asked on Arrow Up and Arrow Down. The first feature to answer wins, and
+   * the key's default — moving the caret to an end — is cancelled.
+   */
+  readonly stepValue?: (
+    direction: 1 | -1,
+    ctx: SheepInputState,
+  ) => string | null;
 }
 
 /** The field state a feature is handed on every call. */
-export interface SheepTextFieldState {
+export interface SheepInputState {
   /** The current value, as the user has typed it. */
   readonly value: string;
   /** The field's `maxLength`, whether set directly or bound by a form. */
@@ -63,8 +89,8 @@ export interface SheepTextFieldState {
  * platform should treat the text being typed, and nothing else. Value,
  * validity and disabled state stay the field's.
  */
-export interface SheepTextFieldAttrs {
-  readonly type?: SheepTextFieldType;
+export interface SheepInputAttrs {
+  readonly type?: SheepInputType;
   readonly inputmode?: string;
   readonly autocapitalize?: string;
   readonly autocorrect?: string;
@@ -78,7 +104,7 @@ export interface SheepTextFieldAttrs {
  * the library needs no icon registry and a feature is free to draw whatever it
  * means. The field paints it in `currentColor` at the control's icon size.
  */
-export interface SheepTextFieldAction {
+export interface SheepInputAction {
   /** Accessible name. The button has no text. */
   readonly label: string;
   /** `d` attributes, stroked on a 24×24 viewBox. */
@@ -106,21 +132,21 @@ export interface SheepFieldError {
 /**
  * The registry a field keeps of the features declared on it.
  *
- * Provided by `SheepTextFieldComponent`, so a feature directive depends on
+ * Provided by `SheepInputComponent`, so a feature directive depends on
  * this and never on the component: the field reads the registry, the
  * directives write to it, and neither imports the other. Features are declared
  * on the host element, so they live and die with the field and there is
  * nothing to unregister.
  */
 @Injectable()
-export class SheepTextFieldFeatures {
-  private readonly registered = signal<readonly SheepTextFieldFeature[]>([]);
+export class SheepInputFeatures {
+  private readonly registered = signal<readonly SheepInputFeature[]>([]);
 
   /** Registration order, which is also the order attributes merge in. */
   readonly all = this.registered.asReadonly();
 
   /** Called by a feature directive from its constructor. */
-  add(feature: SheepTextFieldFeature): void {
+  add(feature: SheepInputFeature): void {
     this.registered.update((features) => [...features, feature]);
   }
 }
