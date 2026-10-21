@@ -1,6 +1,7 @@
 {
   "name": "@sheep-ng/ui",
   "version": "0.0.1",
+  "customElements": "custom-elements.json",
   "peerDependencies": {
     "@angular/core": "^22.0.0",
     "@angular/cdk": "^22.0.0",

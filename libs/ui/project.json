@@ -18,6 +18,17 @@
     "scope:shared"
   ],
   "targets": {
+    "manifest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node tools/ui-manifest/generate.mjs"
+      },
+      "configurations": {
+        "check": {
+          "command": "node tools/ui-manifest/generate.mjs --check"
+        }
+      }
+    },
     "build": {
       "executor": "@nx/angular:package",
       "outputs": [
@@ -33,7 +44,10 @@
           "tsConfig": "libs/ui/tsconfig.lib.prod.json"
         },
         "development": {}
-      }
+      },
+      "dependsOn": [
+        "manifest"
+      ]
     },
     "nx-release-publish": {
       "options": {

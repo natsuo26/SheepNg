@@ -6,7 +6,9 @@
       "glob": "**/*.scss",
       "input": "./src/styles",
       "output": "./styles"
-    }
+    },
+    "AGENTS.md",
+    "custom-elements.json"
   ],
   "lib": {
     "entryFile": "src/index.ts"
