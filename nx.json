@@ -47,8 +47,9 @@
     }
   },
   "release": {
+    "projects": ["ui"],
     "version": {
-      "preVersionCommand": "npx nx run-many -t build"
+      "preVersionCommand": "npx nx build ui"
     }
   },
   "generators": {
