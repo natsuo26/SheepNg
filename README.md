@@ -46,21 +46,6 @@ spread into `imports` rather than naming each piece.
 
 There is no separate number field: `<sheep-input sheepNumber min="0" step="0.01">` covers it, and a
 dedicated component would re-expose the same label, hint, sizes and validation and drift from it.
-`sheep-input` was previously `sheep-text-field` — see the rename note below.
-
-## Renamed: `sheep-text-field` → `sheep-input`
-
-A breaking change. Every name moved together, so a find-and-replace in this order migrates a
-consumer:
-
-| Was | Now |
-| --- | --- |
-| `SHEEP_TEXT_FIELD` (and `SHEEP_TEXT_FIELD_*`) | `SHEEP_INPUT` (and `SHEEP_INPUT_*`) |
-| `SheepTextField*` (component, directives, types, `provideSheepTextFieldMessages`) | `SheepInput*` |
-| `sheepTextFieldLabel` / `Hint` / `Prefix` / `Suffix` | `sheepInputLabel` / `Hint` / `Prefix` / `Suffix` |
-| `<sheep-text-field>` | `<sheep-input>` |
-
-`sheepPassword`, `sheepEmail`, `sheepCounter` and `sheepValidate` keep their names.
 
 ## The theme layer
 

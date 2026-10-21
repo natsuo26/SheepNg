@@ -1,11 +1,64 @@
 # @sheep-ng/ui
 
-The `@sheep-ng` component library. Standalone, zoneless-friendly Angular components.
+Standalone, signal-based Angular components with a single theme layer: buttons,
+inputs, chips, badges, a nav bar, lists, a tree, a table, dialogs, side sheets
+and tooltips. Zoneless-ready, `OnPush` throughout, light and dark themes built in.
+
+## Install
 
 ```sh
-nx test ui     # unit tests
-nx build ui    # package to dist/libs/ui
+npm install @sheep-ng/ui @angular/cdk
 ```
+
+Requires Angular 22 (`@angular/core`, `@angular/forms` and `@angular/cdk`, all `^22`).
+
+## Quick start
+
+1. Import the theme once, from your app's **global** stylesheet (`src/styles.scss`).
+   Without it the components render unstyled.
+
+   ```scss
+   @use '@sheep-ng/ui/styles/sheep-theme';
+   ```
+
+2. Import components into a standalone component and use them:
+
+   ```ts
+   import { Component, signal } from '@angular/core';
+   import { SHEEP_INPUT, SheepButtonComponent } from '@sheep-ng/ui';
+
+   @Component({
+     selector: 'app-profile',
+     imports: [SheepButtonComponent, SHEEP_INPUT],
+     template: `
+       <sheep-input [(value)]="name" required>
+         <span sheepInputLabel>Display name</span>
+       </sheep-input>
+       <sheep-button variant="solid" (click)="save()">Save</sheep-button>
+     `,
+   })
+   export class Profile {
+     protected readonly name = signal('');
+     protected save(): void {}
+   }
+   ```
+
+Multi-part components export a set to spread into `imports`: `SHEEP_INPUT`,
+`SHEEP_LIST`, `SHEEP_TABLE`, `SHEEP_DIALOG`, `SHEEP_SIDE_SHEET`, `SHEEP_CHIP`,
+`SHEEP_NAV_BAR`. The rest are imported singly: `SheepButtonComponent`,
+`SheepBadgeComponent`, `SheepTreeComponent`, `SheepTooltipDirective`,
+`SheepThemeSwitcherComponent`.
+
+## For AI assistants and tooling
+
+The package ships two files for coding assistants and editor tooling:
+
+- **`AGENTS.md`**: how to use the library correctly, including the rules and
+  the common mistakes.
+- **`custom-elements.json`**: a [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest)
+  of the whole public API: every element and directive, with input types and
+  defaults, outputs, slots and the import to use. `package.json` points at it
+  through the standard `customElements` field.
 
 ## The theme layer
 
@@ -14,23 +67,24 @@ timing resolves from `--sheep-*` custom properties emitted by the theme layer,
 so two buttons in one app cannot drift apart. **To change how components look,
 change the theme — not the call site.**
 
-| File                                | Role                                                                                                                                          |
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/styles/_sheep-primitives.scss` | Raw scales: tonal ramps, space, radius, type stacks. No component reads these.                                                                |
-| `src/styles/_sheep-theme-spec.scss` | The style spec in code: semantic roles and tone stops per theme, plus invariant scales and control metrics. **Edit this to change the look.** |
-| `src/styles/sheep-theme.scss`       | Entry point. Emits `:root`, the `prefers-color-scheme` fallback, and `[data-sheep-theme]`.                                                    |
-
 Import the entry point once, from the app's global stylesheet:
 
 ```scss
 @use '@sheep-ng/ui/styles/sheep-theme';
 ```
 
-Sass does not read TypeScript path mappings, so **inside this repo** the app
-resolves it through a Sass load path instead — `stylePreprocessorOptions.includePaths`
-in `apps/demo-app/project.json` points at `libs/ui/src/styles`, and the app
-writes `@use 'sheep-theme';`. Published consumers use the package path above,
-which works because `ng-package.json` ships `src/styles` to `styles/`.
+It emits the `--sheep-*` roles on `:root`, a `prefers-color-scheme` fallback,
+and a `[data-sheep-theme]` scope per theme. To re-brand, override roles after
+the import, at `:root` or on a `[data-sheep-theme]` scope, never per
+component:
+
+```scss
+@use '@sheep-ng/ui/styles/sheep-theme';
+
+:root {
+  --sheep-color-accent: #0f766e;
+}
+```
 
 ### Choosing a theme
 
@@ -49,8 +103,23 @@ the source of truth for paint. It exposes `preference()` (including `system`),
 `localStorage` under `sheep-ng:theme`. `SheepThemeSwitcherComponent`
 (`<sheep-theme-switcher>`) is the ready-made Light / Dark / System control.
 
-To avoid a flash of the wrong theme, paint the remembered value before boot —
-see the inline script in `apps/demo-app/src/index.html`.
+To avoid a flash of the wrong theme, paint the remembered value before Angular
+boots, from an inline script in `index.html`'s `<head>`:
+
+```html
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('sheep-ng:theme');
+      if (t === 'light' || t === 'dark') {
+        document.documentElement.setAttribute('data-sheep-theme', t);
+      }
+    } catch (e) {
+      /* storage unavailable: fall back to prefers-color-scheme */
+    }
+  })();
+</script>
+```
 
 ## Scope
 
@@ -61,11 +130,6 @@ not be: a layout DSL is not a standard part of a component library. It is a
 second, parallel way to write CSS that every consumer then has to learn, and
 it competes with the platform primitives — flexbox, grid, semantic HTML — that
 already do the job and that consumers already know.
-
-Pages that need documentation chrome own it themselves. `libs/demo` keeps its
-page vocabulary in `libs/demo/src/styles/_demo-kit.scss`, private to that
-library, built from the same `--sheep-*` roles the components read. It
-re-themes in step with them and ships to nobody.
 
 ## `sheep-button`
 
@@ -183,7 +247,7 @@ There is nothing to switch on, and two cases resolve themselves:
 - A leading prefix keeps its width but fades out while the label rests over it,
   so the value never shifts sideways under the caret.
 
-`SHEEP_INPUT` is the field plus its eight directives, ready to drop into a
+`SHEEP_INPUT` is the field plus its nine directives, ready to drop into a
 component's `imports`. The pieces are standalone and importable one at a time,
 but a directive that is never written is never instantiated, so importing the
 set costs nothing.
@@ -245,6 +309,7 @@ plain field carries none of their weight.
 | `sheepInputSuffix` | Content after the value, inside the box.                      |
 | `sheepPassword`        | `type="password"` plus a reveal toggle.                       |
 | `sheepEmail`           | `type="email"`, the mobile keyboard hints, and the check.     |
+| `sheepNumber`          | A number pad, a keystroke filter, Arrow Up/Down stepping and `min` / `max` / `step` checks. The value stays a string. |
 | `sheepCounter`         | A count in the footer, against `maxLength` when there is one. |
 | `[sheepValidate]`      | A rule of your own: `(value: string) => string \| null`.      |
 
@@ -256,10 +321,19 @@ Write your own by implementing `SheepInputFeature` and registering with the
 the field's state called inside the field's own `computed`s, so a signal the
 feature reads on the way through is tracked as if the field had read it.
 
-**Who owns validity.** `sheepEmail` and `sheepValidate` raise errors the _field_
+Numbers use `sheepNumber`, not `type="number"`:
+
+```html
+<sheep-input sheepNumber min="0" step="0.01" [(value)]="price">
+  <span sheepInputLabel>Price</span>
+  <span sheepInputPrefix>$</span>
+</sheep-input>
+```
+
+**Who owns validity.** `sheepEmail`, `sheepNumber` and `sheepValidate` raise errors the _field_
 renders. A signal form cannot see them, so a form-bound field would show the
 message while the form still thought itself valid. On a form-bound field, put
-the rule in the schema — `email()`, `validate()` — where the form can act on it.
+the rule in the schema — `email()`, `min()`, `max()`, `validate()` — where the form can act on it.
 Reach for the directives on a field with no form behind it.
 
 ### Inputs
@@ -389,3 +463,13 @@ past the panel's edge cannot throw the dialog away.
 
 `prefers-reduced-motion` drops the entry animation, and `forced-colors` gives
 the panel a system-coloured border.
+
+## More components
+
+`sheep-chip`, `sheep-badge`, `sheep-nav-bar`, `sheep-list`, `sheep-tree`,
+`sheep-table`, `sheep-side-sheet` and `sheepTooltip` are covered with examples in
+`AGENTS.md`, and in full, input by input, in `custom-elements.json`.
+
+## License
+
+MIT

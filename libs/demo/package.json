@@ -1,6 +1,7 @@
 {
   "name": "@sheep-ng/demo",
   "version": "0.0.1",
+  "private": true,
   "peerDependencies": {
     "@angular/core": "^22.0.0",
     "@angular/common": "^22.0.0",
@@ -8,6 +9,5 @@
     "@sheep-ng/ui": "0.0.1",
     "@angular/forms": "^22.0.0"
   },
-  "sideEffects": false,
-  "private": true
+  "sideEffects": false
 }
