@@ -10,19 +10,19 @@ import {
 } from '@angular/forms/signals';
 import {
   SheepButtonComponent,
-  SHEEP_TEXT_FIELD,
-  SHEEP_TEXT_FIELD_SIZES,
-  SHEEP_TEXT_FIELD_VARIANTS,
+  SHEEP_INPUT,
+  SHEEP_INPUT_SIZES,
+  SHEEP_INPUT_VARIANTS,
   type SheepFieldValidator,
-  type SheepTextFieldSize,
-  type SheepTextFieldVariant,
+  type SheepInputSize,
+  type SheepInputVariant,
 } from '@sheep-ng/ui';
 
 /** Names the sign-up demo refuses, so the custom rule has something to say. */
 const TAKEN = new Set(['admin', 'root', 'sheep']);
 
 /**
- * Showcase for `sheep-text-field`.
+ * Showcase for `sheep-input`.
  *
  * The page is semantic HTML dressed by the demo page kit — see
  * `libs/demo/src/styles/_demo-kit.scss`. That layout vocabulary is
@@ -30,17 +30,17 @@ const TAKEN = new Set(['admin', 'root', 'sheep']);
  * components and a theme, never a way to lay out a page.
  */
 @Component({
-  selector: 'sheep-demo-text-field',
-  imports: [SHEEP_TEXT_FIELD, SheepButtonComponent, FormField],
-  templateUrl: './text-field-demo.html',
-  styleUrl: './text-field-demo.scss',
+  selector: 'sheep-demo-input',
+  imports: [SHEEP_INPUT, SheepButtonComponent, FormField],
+  templateUrl: './input-demo.html',
+  styleUrl: './input-demo.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TextFieldDemo {
-  protected readonly sizes: readonly SheepTextFieldSize[] =
-    SHEEP_TEXT_FIELD_SIZES;
-  protected readonly variants: readonly SheepTextFieldVariant[] =
-    SHEEP_TEXT_FIELD_VARIANTS;
+export class InputDemo {
+  protected readonly sizes: readonly SheepInputSize[] =
+    SHEEP_INPUT_SIZES;
+  protected readonly variants: readonly SheepInputVariant[] =
+    SHEEP_INPUT_VARIANTS;
 
   /** Section order and copy, so the template stays structural. */
   protected readonly sections: readonly {
@@ -84,6 +84,11 @@ export class TextFieldDemo {
       note: 'The field is a value and a box. Masking, address validation and counting arrive as directives on the host element, so a plain field carries none of their weight.',
     },
     {
+      id: 'numbers',
+      heading: 'Numbers',
+      note: 'sheepNumber, not type="number". The keyboard is a number pad, keystrokes that could not become a number are refused, the arrow keys step, and min, max and step are checked. The mouse wheel is left to the page, and a typo is never silently read back as an empty field.',
+    },
+    {
       id: 'validation',
       heading: 'Rules of your own',
       note: 'sheepValidate takes a function of the value. Return a string to say what is wrong, or nothing at all.',
@@ -117,6 +122,9 @@ export class TextFieldDemo {
 
   protected readonly password = signal('');
   protected readonly emailValue = signal('');
+  protected readonly quantity = signal('1');
+  protected readonly price = signal('');
+  protected readonly offset = signal('0');
   protected readonly bio = signal('Keeps sheep.');
 
   // --- custom validation ----------------------------------------------------
@@ -181,44 +189,44 @@ export class TextFieldDemo {
    * coupled code block is absent here — it already has one.
    */
   protected readonly snippets: Record<string, string> = {
-    sizes: `<sheep-text-field size="sm">
-  <span sheepTextFieldLabel>Breed</span>
-</sheep-text-field>
+    sizes: `<sheep-input size="sm">
+  <span sheepInputLabel>Breed</span>
+</sheep-input>
 
-<sheep-text-field size="lg">
-  <span sheepTextFieldLabel>Breed</span>
-</sheep-text-field>`,
+<sheep-input size="lg">
+  <span sheepInputLabel>Breed</span>
+</sheep-input>`,
 
-    variants: `<sheep-text-field>
-  <span sheepTextFieldLabel>Pasture</span>
-</sheep-text-field>
+    variants: `<sheep-input>
+  <span sheepInputLabel>Pasture</span>
+</sheep-input>
 
-<sheep-text-field variant="soft">
-  <span sheepTextFieldLabel>Pasture</span>
-</sheep-text-field>`,
+<sheep-input variant="soft">
+  <span sheepInputLabel>Pasture</span>
+</sheep-input>`,
 
-    states: `<sheep-text-field disabled value="Locked by your admin">...</sheep-text-field>
-<sheep-text-field readonly [(value)]="flockId">...</sheep-text-field>
-<sheep-text-field pending [(value)]="username">...</sheep-text-field>
+    states: `<sheep-input disabled value="Locked by your admin">...</sheep-input>
+<sheep-input readonly [(value)]="flockId">...</sheep-input>
+<sheep-input pending [(value)]="username">...</sheep-input>
 
-<sheep-text-field required touched [errors]="[{ kind: 'required' }]">
-  <span sheepTextFieldLabel>Farm name</span>
-</sheep-text-field>`,
+<sheep-input required touched [errors]="[{ kind: 'required' }]">
+  <span sheepInputLabel>Farm name</span>
+</sheep-input>`,
 
-    affixes: `<sheep-text-field type="url" [(value)]="workspace">
-  <span sheepTextFieldLabel>Workspace</span>
-  <span sheepTextFieldPrefix>https://</span>
-  <span sheepTextFieldSuffix>.sheep.ng</span>
-</sheep-text-field>
+    affixes: `<sheep-input type="url" [(value)]="workspace">
+  <span sheepInputLabel>Workspace</span>
+  <span sheepInputPrefix>https://</span>
+  <span sheepInputSuffix>.sheep.ng</span>
+</sheep-input>
 
-<sheep-text-field type="search" placeholder="Search the flock">
-  <span sheepTextFieldLabel>Search</span>
-  <svg sheepTextFieldPrefix viewBox="0 0 24 24">...</svg>
-</sheep-text-field>`,
+<sheep-input type="search" placeholder="Search the flock">
+  <span sheepInputLabel>Search</span>
+  <svg sheepInputPrefix viewBox="0 0 24 24">...</svg>
+</sheep-input>`,
 
-    api: `import { SHEEP_TEXT_FIELD } from '@sheep-ng/ui';
+    api: `import { SHEEP_INPUT } from '@sheep-ng/ui';
 
-@Component({ imports: [SHEEP_TEXT_FIELD], ... })`,
+@Component({ imports: [SHEEP_INPUT], ... })`,
   };
 
   /** The public API, rendered from one source so it cannot drift from the code. */
@@ -261,24 +269,29 @@ export class TextFieldDemo {
     { name: 'minLength / maxLength', default: 'undefined', type: 'number' },
     { name: 'pattern', default: '[]', type: 'RegExp[]' },
     { name: '(touch)', default: '—', type: 'output<void> — emitted on blur' },
-    { name: 'sheepTextFieldLabel', default: '—', type: 'the label' },
+    { name: 'sheepInputLabel', default: '—', type: 'the label' },
     {
-      name: 'sheepTextFieldHint',
+      name: 'sheepInputHint',
       default: '—',
       type: 'guidance under the field',
     },
     {
-      name: 'sheepTextFieldPrefix',
+      name: 'sheepInputPrefix',
       default: '—',
       type: 'content before the value',
     },
     {
-      name: 'sheepTextFieldSuffix',
+      name: 'sheepInputSuffix',
       default: '—',
       type: 'content after the value',
     },
     { name: 'sheepPassword', default: '—', type: 'mask plus a reveal toggle' },
     { name: 'sheepEmail', default: '—', type: 'email type, hints and check' },
+    {
+      name: 'sheepNumber min / max / step',
+      default: '— / — / any',
+      type: 'number pad, filter, arrow keys and check; value stays a string',
+    },
     { name: 'sheepCounter', default: '—', type: 'a count in the footer' },
     {
       name: 'sheepValidate',
@@ -286,7 +299,7 @@ export class TextFieldDemo {
       type: '(value: string) => string | null',
     },
     {
-      name: 'SHEEP_TEXT_FIELD_MESSAGES',
+      name: 'SHEEP_INPUT_MESSAGES',
       default: 'English',
       type: 'error text and toggle labels',
     },
@@ -303,35 +316,52 @@ export class TextFieldDemo {
    value never shifts sideways under the
    caret. */`;
 
-  protected readonly anatomySnippet = `<sheep-text-field [(value)]="name" required>
-  <span sheepTextFieldLabel>Display name</span>
-  <span sheepTextFieldHint>Shown on your profile.</span>
-</sheep-text-field>
+  protected readonly anatomySnippet = `<sheep-input [(value)]="name" required>
+  <span sheepInputLabel>Display name</span>
+  <span sheepInputHint>Shown on your profile.</span>
+</sheep-input>
 
 /* No [id], no [for], no aria-describedby.
    The field wires its own parts together. */`;
 
-  protected readonly directivesSnippet = `<sheep-text-field sheepPassword autocomplete="new-password">
-  <span sheepTextFieldLabel>Password</span>
-</sheep-text-field>
+  protected readonly directivesSnippet = `<sheep-input sheepPassword autocomplete="new-password">
+  <span sheepInputLabel>Password</span>
+</sheep-input>
 
-<sheep-text-field sheepEmail autocomplete="email">
-  <span sheepTextFieldLabel>Email</span>
-</sheep-text-field>
+<sheep-input sheepEmail autocomplete="email">
+  <span sheepInputLabel>Email</span>
+</sheep-input>
 
-<sheep-text-field sheepCounter [maxLength]="120">
-  <span sheepTextFieldLabel>Bio</span>
-</sheep-text-field>
+<sheep-input sheepCounter [maxLength]="120">
+  <span sheepInputLabel>Bio</span>
+</sheep-input>
 
 /* Each directive sets the type it owns, so there is
    no type="password" beside sheepPassword to drift. */`;
 
+  protected readonly numbersSnippet = `<sheep-input sheepNumber min="1" max="99" step="1" [(value)]="quantity">
+  <span sheepInputLabel>Quantity</span>
+</sheep-input>
+
+<sheep-input sheepNumber min="0" step="0.01" [(value)]="price">
+  <span sheepInputLabel>Price</span>
+  <span sheepInputPrefix>$</span>
+</sheep-input>
+
+<sheep-input sheepNumber min="-12" max="14" [(value)]="offset">
+  <span sheepInputLabel>UTC offset</span>
+</sheep-input>
+
+/* The value is a string, as typed - "" is nothing
+   entered, not zero. Convert where it is used:
+   Number(quantity()). */`;
+
   protected readonly validationSnippet = `protected readonly notTaken: SheepFieldValidator = (value) =>
   TAKEN.has(value.toLowerCase()) ? \`“\${value}” is already taken.\` : null;`;
 
-  protected readonly validationTemplate = `<sheep-text-field [sheepValidate]="notTaken">
-  <span sheepTextFieldLabel>Handle</span>
-</sheep-text-field>`;
+  protected readonly validationTemplate = `<sheep-input [sheepValidate]="notTaken">
+  <span sheepInputLabel>Handle</span>
+</sheep-input>`;
 
   protected readonly formsSnippet = `readonly model = signal({ email: '', password: '' });
 
@@ -343,13 +373,13 @@ readonly f = form(this.model, (path) => {
 });`;
 
   protected readonly formsTemplate = `<form (submit)="onSubmit($event)">
-  <sheep-text-field [formField]="f.email">
-    <span sheepTextFieldLabel>Email</span>
-  </sheep-text-field>
+  <sheep-input [formField]="f.email">
+    <span sheepInputLabel>Email</span>
+  </sheep-input>
 
-  <sheep-text-field [formField]="f.password" sheepPassword>
-    <span sheepTextFieldLabel>Password</span>
-  </sheep-text-field>
+  <sheep-input [formField]="f.password" sheepPassword>
+    <span sheepInputLabel>Password</span>
+  </sheep-input>
 
   <sheep-button type="submit">Create account</sheep-button>
 </form>
@@ -359,7 +389,7 @@ readonly f = form(this.model, (path) => {
    back the other way. */`;
 
   protected readonly messagesSnippet = `providers: [
-  provideSheepTextFieldMessages({
+  provideSheepInputMessages({
     errors: { required: 'Bitte ausfüllen.' },
     showPassword: 'Passwort anzeigen',
     hidePassword: 'Passwort verbergen',

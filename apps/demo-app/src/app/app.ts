@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { SheepThemeSwitcherComponent } from '@sheep-ng/ui';
+import { SHEEP_NAV_BAR, SheepThemeSwitcherComponent } from '@sheep-ng/ui';
 
 /**
  * The app shell: brand, component nav, theme switcher. Layout only — every
@@ -11,6 +11,7 @@ import { SheepThemeSwitcherComponent } from '@sheep-ng/ui';
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
+    SHEEP_NAV_BAR,
     SheepThemeSwitcherComponent,
   ],
   selector: 'sheep-app-root',
@@ -18,19 +19,18 @@ import { SheepThemeSwitcherComponent } from '@sheep-ng/ui';
   styleUrl: './app.scss',
 })
 export class App {
-  /** The library roadmap, in nav order. `ready` gates the route link. */
+  /** The component pages, in nav order. */
   protected readonly components = [
-    { path: 'button', label: 'Button', ready: true },
-    { path: 'text-field', label: 'Text field', ready: true },
-    { path: 'number-field', label: 'Number field', ready: false },
-    { path: 'chips', label: 'Chips', ready: true },
-    { path: 'badges', label: 'Badges', ready: true },
-    { path: 'nav-bar', label: 'Nav bar', ready: false },
-    { path: 'side-sheet', label: 'Side sheet', ready: true },
-    { path: 'list', label: 'List', ready: true },
-    { path: 'tree', label: 'Tree', ready: true },
-    { path: 'table', label: 'Table', ready: true },
-    { path: 'dialog', label: 'Dialog', ready: true },
-    { path: 'tooltip', label: 'Tooltip', ready: true },
+    { path: 'button', label: 'Button' },
+    { path: 'input', label: 'Input' },
+    { path: 'chips', label: 'Chips' },
+    { path: 'badges', label: 'Badges' },
+    { path: 'nav-bar', label: 'Nav bar' },
+    { path: 'side-sheet', label: 'Side sheet' },
+    { path: 'list', label: 'List' },
+    { path: 'tree', label: 'Tree' },
+    { path: 'table', label: 'Table' },
+    { path: 'dialog', label: 'Dialog' },
+    { path: 'tooltip', label: 'Tooltip' },
   ];
 }

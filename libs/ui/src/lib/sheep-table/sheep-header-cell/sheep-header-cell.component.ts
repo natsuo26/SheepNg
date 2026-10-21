@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 import { CdkHeaderCell } from '@angular/cdk/table';
 import { SheepButtonComponent } from '../../sheep-button/sheep-button.component';
-import { SheepTextFieldComponent } from '../../sheep-text-field/sheep-text-field.component';
-import { SheepTextFieldLabelDirective } from '../../sheep-text-field/directives/sheep-text-field-label.directive';
+import { SheepInputComponent } from '../../sheep-input/sheep-input.component';
+import { SheepInputLabelDirective } from '../../sheep-input/directives/sheep-input-label.directive';
 import { SheepColumnDefDirective } from '../directives/sheep-column-def.directive';
 import { SheepTableComponent } from '../sheep-table.component';
 import { SHEEP_TABLE_MESSAGES } from '../sheep-table.messages';
@@ -67,8 +67,8 @@ const FILTER_PARTS =
 @Component({
   selector: 'sheep-header-cell',
   imports: [
-    SheepTextFieldComponent,
-    SheepTextFieldLabelDirective,
+    SheepInputComponent,
+    SheepInputLabelDirective,
     SheepButtonComponent,
   ],
   templateUrl: './sheep-header-cell.component.html',
@@ -98,7 +98,7 @@ export class SheepHeaderCellComponent extends CdkHeaderCell {
   private readonly triggerRef =
     viewChild<ElementRef<HTMLButtonElement>>('trigger');
   private readonly panelRef = viewChild<ElementRef<HTMLElement>>('panel');
-  private readonly field = viewChild(SheepTextFieldComponent);
+  private readonly field = viewChild(SheepInputComponent);
 
   protected readonly isOpen = signal(false);
 

@@ -1,11 +1,11 @@
 import { Directive, inject, signal } from '@angular/core';
 import {
-  SheepTextFieldFeatures,
-  type SheepTextFieldAction,
-  type SheepTextFieldAttrs,
-  type SheepTextFieldFeature,
-} from '../sheep-text-field.feature';
-import { SHEEP_TEXT_FIELD_MESSAGES } from '../sheep-text-field.messages';
+  SheepInputFeatures,
+  type SheepInputAction,
+  type SheepInputAttrs,
+  type SheepInputFeature,
+} from '../sheep-input.feature';
+import { SHEEP_INPUT_MESSAGES } from '../sheep-input.messages';
 
 /** An open eye, then an eye with a stroke through it. 24×24, stroked. */
 const EYE = [
@@ -23,9 +23,9 @@ const EYE_OFF = [
  * Turns the field into a password field with a reveal toggle.
  *
  * ```html
- * <sheep-text-field sheepPassword autocomplete="current-password">
- *   <span sheepTextFieldLabel>Password</span>
- * </sheep-text-field>
+ * <sheep-input sheepPassword autocomplete="current-password">
+ *   <span sheepInputLabel>Password</span>
+ * </sheep-input>
  * ```
  *
  * It sets the type itself, so there is no `type="password"` to keep in sync
@@ -36,27 +36,27 @@ const EYE_OFF = [
  *
  * The toggle is a real focusable button so a keyboard user can reach it, but
  * it takes no focus on a mouse click, so the caret stays where it was
- * mid-word. Its accessible name comes from `SHEEP_TEXT_FIELD_MESSAGES`.
+ * mid-word. Its accessible name comes from `SHEEP_INPUT_MESSAGES`.
  *
  * Leave `autocomplete` to the call site: only it knows whether this is the
  * password being entered (`current-password`) or chosen (`new-password`), and
  * getting that wrong is what makes a manager fill the wrong box.
  */
 @Directive({
-  selector: 'sheep-text-field[sheepPassword]',
+  selector: 'sheep-input[sheepPassword]',
 })
-export class SheepTextFieldPasswordDirective implements SheepTextFieldFeature {
-  private readonly messages = inject(SHEEP_TEXT_FIELD_MESSAGES);
+export class SheepInputPasswordDirective implements SheepInputFeature {
+  private readonly messages = inject(SHEEP_INPUT_MESSAGES);
 
   /** Whether the value is currently legible. Resets nowhere else. */
   private readonly revealed = signal(false);
 
-  readonly attrs = (): SheepTextFieldAttrs =>
+  readonly attrs = (): SheepInputAttrs =>
     this.revealed()
       ? { type: 'text', autocapitalize: 'none', autocorrect: 'off', spellcheck: false }
       : { type: 'password' };
 
-  readonly action = (): SheepTextFieldAction => ({
+  readonly action = (): SheepInputAction => ({
     label: this.revealed()
       ? this.messages.hidePassword
       : this.messages.showPassword,
@@ -66,6 +66,6 @@ export class SheepTextFieldPasswordDirective implements SheepTextFieldFeature {
   });
 
   constructor() {
-    inject(SheepTextFieldFeatures).add(this);
+    inject(SheepInputFeatures).add(this);
   }
 }

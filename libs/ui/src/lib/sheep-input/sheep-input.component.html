@@ -1,22 +1,22 @@
-<div class="sheep-text-field__label-row">
-  <label class="sheep-text-field__label" [attr.for]="inputId">
-    <span class="sheep-text-field__label-text"
-      ><ng-content select="[sheepTextFieldLabel]"
+<div class="sheep-input__label-row">
+  <label class="sheep-input__label" [attr.for]="inputId">
+    <span class="sheep-input__label-text"
+      ><ng-content select="[sheepInputLabel]"
     /></span>
     @if (required()) {
-    <span class="sheep-text-field__required" aria-hidden="true">*</span>
+    <span class="sheep-input__required" aria-hidden="true">*</span>
     }
   </label>
 </div>
 
-<div class="sheep-text-field__box">
-  <span class="sheep-text-field__affix sheep-text-field__affix--start"
-    ><ng-content select="[sheepTextFieldPrefix]"
+<div class="sheep-input__box">
+  <span class="sheep-input__affix sheep-input__affix--start"
+    ><ng-content select="[sheepInputPrefix]"
   /></span>
 
   <input
     #input
-    class="sheep-text-field__input"
+    class="sheep-input__input"
     [id]="inputId"
     [attr.type]="resolvedType()"
     [attr.name]="name() || null"
@@ -38,23 +38,25 @@
     [readOnly]="readonly()"
     [disabled]="disabled()"
     [value]="value()"
+    (beforeinput)="onBeforeInput($event)"
+    (keydown)="onKeydown($event)"
     (input)="onInput($event)"
     (focus)="onFocus()"
     (blur)="onBlur()"
   />
 
   @if (pending()) {
-  <span class="sheep-text-field__spinner" aria-hidden="true"></span>
+  <span class="sheep-input__spinner" aria-hidden="true"></span>
   }
 
-  <span class="sheep-text-field__affix sheep-text-field__affix--end"
-    ><ng-content select="[sheepTextFieldSuffix]"
+  <span class="sheep-input__affix sheep-input__affix--end"
+    ><ng-content select="[sheepInputSuffix]"
   /></span>
 
   @for (action of actions(); track action.label) {
   <button
     type="button"
-    class="sheep-text-field__action"
+    class="sheep-input__action"
     [attr.aria-label]="action.label"
     [attr.aria-pressed]="action.pressed === undefined ? null : action.pressed"
     [attr.aria-controls]="inputId"
@@ -79,22 +81,22 @@
   }
 </div>
 
-<div class="sheep-text-field__footer">
-  <div class="sheep-text-field__support">
-    <span class="sheep-text-field__hint" [id]="hintId"
-      ><ng-content select="[sheepTextFieldHint]"
+<div class="sheep-input__footer">
+  <div class="sheep-input__support">
+    <span class="sheep-input__hint" [id]="hintId"
+      ><ng-content select="[sheepInputHint]"
     /></span>
 
     @if (showErrors()) {
-    <p class="sheep-text-field__error" [id]="errorId" role="alert">
+    <p class="sheep-input__error" [id]="errorId" role="alert">
       @for (message of messagesToShow(); track $index) {
-      <span class="sheep-text-field__error-line">{{ message }}</span>
+      <span class="sheep-input__error-line">{{ message }}</span>
       }
     </p>
     }
   </div>
 
   @if (status()) {
-  <span class="sheep-text-field__status" aria-hidden="true">{{ status() }}</span>
+  <span class="sheep-input__status" aria-hidden="true">{{ status() }}</span>
   }
 </div>

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   sheep-text-field
+   sheep-input
 
    No public custom-property API. Every colour, metric, radius and timing
    resolves from the theme layer (`--sheep-*`), so a field cannot be styled
@@ -44,7 +44,7 @@ $sizes: sm, md, lg;
    -------------------------------------------------------------------------- */
 
 @each $size in $sizes {
-  :host(.sheep-text-field--#{$size}) {
+  :host(.sheep-input--#{$size}) {
     --_h: var(--sheep-ctl-#{$size}-height);
     --_px: var(--sheep-ctl-#{$size}-pad-x);
     --_fs: var(--sheep-ctl-#{$size}-font);
@@ -69,7 +69,7 @@ $sizes: sm, md, lg;
 
 /* No side or top borders in either variant, so the value starts flush with the
    label above it — the plain look depends on that column being straight. */
-:host(.sheep-text-field--underline) {
+:host(.sheep-input--underline) {
   --_px: 0;
 
   /* Height is the value plus its breath, NOT the shared control height. A
@@ -80,7 +80,7 @@ $sizes: sm, md, lg;
   --_h: calc(var(--_text-h) + var(--_fs) * 0.7 + var(--_rule));
 }
 
-:host(.sheep-text-field--soft) {
+:host(.sheep-input--soft) {
   --_ground: var(--sheep-color-surface-sunk);
 }
 
@@ -92,7 +92,7 @@ $sizes: sm, md, lg;
    transform and a font-size on one element and moves nothing else.
    -------------------------------------------------------------------------- */
 
-.sheep-text-field__label-row {
+.sheep-input__label-row {
   /* Positioned, so the label can leave the row and drop into the box; raised,
      so it paints over it once there. The box is positioned too — it carries
      the focus rule — and would otherwise win on document order and hide the
@@ -104,11 +104,11 @@ $sizes: sm, md, lg;
 
 /* Nothing projected: the row collapses instead of leaving a gap, so a labelled
    field and an unlabelled one still start at the same y. */
-.sheep-text-field__label-row:has(.sheep-text-field__label-text:empty) {
+.sheep-input__label-row:has(.sheep-input__label-text:empty) {
   display: none;
 }
 
-.sheep-text-field__label {
+.sheep-input__label {
   position: absolute;
   inset: 0 auto 0 0;
   max-width: 100%;
@@ -138,7 +138,7 @@ $sizes: sm, md, lg;
    value takes a pixel off the box's usable height, so it counts. All of it is
    arithmetic on the control metrics rather than numbers typed in, so a retuned
    size scale carries the label with it. */
-:host(:not(.sheep-text-field--floated)) .sheep-text-field__label {
+:host(:not(.sheep-input--floated)) .sheep-input__label {
   font-size: var(--_fs);
   color: var(--sheep-color-text-faint);
   transform: translate(
@@ -152,24 +152,24 @@ $sizes: sm, md, lg;
 /* Autofill can land a value without an input event, which would leave the
    label sitting on top of the filled text. Geometry only: the browser paints
    an autofilled field in its own colours anyway. */
-:host(:has(.sheep-text-field__input:autofill)) .sheep-text-field__label {
+:host(:has(.sheep-input__input:autofill)) .sheep-input__label {
   font-size: var(--_label-fs);
   transform: none;
 }
 
-.sheep-text-field__required {
+.sheep-input__required {
   color: var(--sheep-tone-danger-base);
 }
 
-:host(.sheep-text-field--errored) .sheep-text-field__label {
+:host(.sheep-input--errored) .sheep-input__label {
   color: var(--sheep-tone-danger-quiet);
 }
 
-:host(:focus-within) .sheep-text-field__label {
+:host(:focus-within) .sheep-input__label {
   color: var(--sheep-color-accent);
 }
 
-:host(.sheep-text-field--disabled) .sheep-text-field__label {
+:host(.sheep-input--disabled) .sheep-input__label {
   cursor: not-allowed;
   opacity: 0.55;
 }
@@ -178,7 +178,7 @@ $sizes: sm, md, lg;
    Box
    -------------------------------------------------------------------------- */
 
-.sheep-text-field__box {
+.sheep-input__box {
   position: relative;
 
   display: flex;
@@ -204,7 +204,7 @@ $sizes: sm, md, lg;
     background-color var(--_motion);
 }
 
-.sheep-text-field__box:hover {
+.sheep-input__box:hover {
   border-bottom-color: var(--sheep-color-text-faint);
 }
 
@@ -216,7 +216,7 @@ $sizes: sm, md, lg;
    defined by not having. The rule doubles in weight and takes the accent, at
    full width — a larger indicator than the outline it replaces, not a
    quieter one. */
-.sheep-text-field__box::after {
+.sheep-input__box::after {
   content: '';
   position: absolute;
   inset: auto 0 calc(-1 * var(--_rule)) 0;
@@ -228,35 +228,35 @@ $sizes: sm, md, lg;
   transition: transform var(--_motion);
 }
 
-.sheep-text-field__box:has(.sheep-text-field__input:focus-visible)::after {
+.sheep-input__box:has(.sheep-input__input:focus-visible)::after {
   transform: scaleX(1);
 }
 
 /* Errored: the rule is already the wrong colour before focus arrives, so it
    is drawn at full width rather than grown. */
-:host(.sheep-text-field--errored) .sheep-text-field__box,
-:host(.sheep-text-field--errored) .sheep-text-field__box:hover {
+:host(.sheep-input--errored) .sheep-input__box,
+:host(.sheep-input--errored) .sheep-input__box:hover {
   border-bottom-color: var(--sheep-tone-danger-base);
 }
 
-:host(.sheep-text-field--errored) .sheep-text-field__box::after {
+:host(.sheep-input--errored) .sheep-input__box::after {
   background: var(--sheep-tone-danger-base);
 }
 
 /* Not editable, but still readable and copyable — so the rule breaks up
    instead of the field growing a ground it otherwise never has. */
-:host(.sheep-text-field--readonly) .sheep-text-field__box,
-:host(.sheep-text-field--readonly) .sheep-text-field__box:hover {
+:host(.sheep-input--readonly) .sheep-input__box,
+:host(.sheep-input--readonly) .sheep-input__box:hover {
   border-bottom-style: dashed;
   border-bottom-color: var(--sheep-color-line);
 }
 
-:host(.sheep-text-field--disabled) .sheep-text-field__box {
+:host(.sheep-input--disabled) .sheep-input__box {
   cursor: not-allowed;
   opacity: 0.45;
 }
 
-:host(.sheep-text-field--disabled) .sheep-text-field__box:hover {
+:host(.sheep-input--disabled) .sheep-input__box:hover {
   border-bottom-color: var(--_line);
 }
 
@@ -264,7 +264,7 @@ $sizes: sm, md, lg;
    Input — chrome-free, because the rule under it is all the chrome there is.
    -------------------------------------------------------------------------- */
 
-.sheep-text-field__input {
+.sheep-input__input {
   flex: 1 1 auto;
 
   box-sizing: border-box;
@@ -285,17 +285,17 @@ $sizes: sm, md, lg;
   -webkit-tap-highlight-color: transparent;
 }
 
-.sheep-text-field__input:focus,
-.sheep-text-field__input:focus-visible {
+.sheep-input__input:focus,
+.sheep-input__input:focus-visible {
   outline: none;
 }
 
-.sheep-text-field__input::placeholder {
+.sheep-input__input::placeholder {
   color: var(--sheep-color-text-faint);
   opacity: 1;
 }
 
-.sheep-text-field__input:disabled {
+.sheep-input__input:disabled {
   cursor: not-allowed;
   /* The box already dims; dimming twice reads as broken. */
   opacity: 1;
@@ -303,9 +303,9 @@ $sizes: sm, md, lg;
 }
 
 /* Chrome's own reveal and clear buttons duplicate ours and cannot be themed. */
-.sheep-text-field__input::-ms-reveal,
-.sheep-text-field__input::-ms-clear,
-.sheep-text-field__input::-webkit-search-cancel-button {
+.sheep-input__input::-ms-reveal,
+.sheep-input__input::-ms-clear,
+.sheep-input__input::-webkit-search-cancel-button {
   display: none;
 }
 
@@ -313,7 +313,7 @@ $sizes: sm, md, lg;
    Affixes — whatever the caller marked as prefix or suffix.
    -------------------------------------------------------------------------- */
 
-.sheep-text-field__affix {
+.sheep-input__affix {
   display: inline-flex;
   flex: none;
   align-items: center;
@@ -325,24 +325,24 @@ $sizes: sm, md, lg;
   white-space: nowrap;
 }
 
-.sheep-text-field__affix:empty {
+.sheep-input__affix:empty {
   display: none;
 }
 
 /* The resting label stands where a leading affix does. The affix fades in as
    the label lifts out of the way, keeping its width throughout so the value
    never shifts sideways under the caret. */
-.sheep-text-field__affix--start {
+.sheep-input__affix--start {
   transition: opacity var(--_motion);
 }
 
-:host(:not(.sheep-text-field--floated)) .sheep-text-field__affix--start {
+:host(:not(.sheep-input--floated)) .sheep-input__affix--start {
   opacity: 0;
 }
 
 /* Projected icons are compiled in the consumer's scope. Paint is left alone —
    an icon declares its own fill/stroke, normally currentColor. */
-:host ::ng-deep .sheep-text-field__affix > :is(svg, img) {
+:host ::ng-deep .sheep-input__affix > :is(svg, img) {
   display: block;
   flex: none;
   width: var(--_icon);
@@ -353,7 +353,7 @@ $sizes: sm, md, lg;
    Feature actions — the password toggle and anything else a directive adds.
    -------------------------------------------------------------------------- */
 
-.sheep-text-field__action {
+.sheep-input__action {
   display: inline-flex;
   flex: none;
   align-items: center;
@@ -374,24 +374,24 @@ $sizes: sm, md, lg;
   transition: color var(--_motion);
 }
 
-.sheep-text-field__action:hover:not(:disabled) {
+.sheep-input__action:hover:not(:disabled) {
   color: var(--sheep-color-text);
 }
 
-.sheep-text-field__action[aria-pressed='true'] {
+.sheep-input__action[aria-pressed='true'] {
   color: var(--sheep-color-accent);
 }
 
-.sheep-text-field__action:focus-visible {
+.sheep-input__action:focus-visible {
   outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
   outline-offset: var(--sheep-focus-offset);
 }
 
-.sheep-text-field__action:disabled {
+.sheep-input__action:disabled {
   cursor: not-allowed;
 }
 
-.sheep-text-field__action > svg {
+.sheep-input__action > svg {
   display: block;
   width: 100%;
   height: 100%;
@@ -401,7 +401,7 @@ $sizes: sm, md, lg;
    Pending — an async validator is in flight.
    -------------------------------------------------------------------------- */
 
-.sheep-text-field__spinner {
+.sheep-input__spinner {
   flex: none;
   box-sizing: border-box;
   width: var(--_icon);
@@ -411,10 +411,10 @@ $sizes: sm, md, lg;
   border-top-color: transparent;
   border-radius: 50%;
 
-  animation: sheep-text-field-spin 600ms linear infinite;
+  animation: sheep-input-spin 600ms linear infinite;
 }
 
-@keyframes sheep-text-field-spin {
+@keyframes sheep-input-spin {
   to {
     transform: rotate(1turn);
   }
@@ -426,7 +426,7 @@ $sizes: sm, md, lg;
 
 /* Hidden until it has something to say, so a bare field is exactly a label and
    a box tall and a column of fields does not jitter. */
-.sheep-text-field__footer {
+.sheep-input__footer {
   display: none;
   align-items: baseline;
   justify-content: space-between;
@@ -438,52 +438,52 @@ $sizes: sm, md, lg;
   line-height: 1.45;
 }
 
-.sheep-text-field__footer:has(.sheep-text-field__hint:not(:empty)),
-.sheep-text-field__footer:has(.sheep-text-field__error),
-.sheep-text-field__footer:has(.sheep-text-field__status) {
+.sheep-input__footer:has(.sheep-input__hint:not(:empty)),
+.sheep-input__footer:has(.sheep-input__error),
+.sheep-input__footer:has(.sheep-input__status) {
   display: flex;
 }
 
-.sheep-text-field__support {
+.sheep-input__support {
   min-width: 0;
 }
 
-.sheep-text-field__hint {
+.sheep-input__hint {
   display: block;
   color: var(--sheep-color-text-faint);
 }
 
-.sheep-text-field__hint:empty {
+.sheep-input__hint:empty {
   display: none;
 }
 
 /* The error replaces the hint rather than stacking under it: two lines of
    guidance, one of which is now wrong, is worse than one. */
-:host(.sheep-text-field--errored) .sheep-text-field__hint {
+:host(.sheep-input--errored) .sheep-input__hint {
   display: none;
 }
 
-.sheep-text-field__error {
+.sheep-input__error {
   margin: 0;
   color: var(--sheep-tone-danger-quiet);
-  animation: sheep-text-field-raise var(--sheep-motion-duration)
+  animation: sheep-input-raise var(--sheep-motion-duration)
     var(--sheep-motion-ease);
 }
 
 /* The message arrives from under the box rather than appearing whole, so a
    line of text turning up below a field reads as a consequence of leaving it. */
-@keyframes sheep-text-field-raise {
+@keyframes sheep-input-raise {
   from {
     opacity: 0;
     transform: translateY(-3px);
   }
 }
 
-.sheep-text-field__error-line {
+.sheep-input__error-line {
   display: block;
 }
 
-.sheep-text-field__status {
+.sheep-input__status {
   flex: none;
   color: var(--sheep-color-text-faint);
   font-variant-numeric: tabular-nums;
@@ -494,34 +494,34 @@ $sizes: sm, md, lg;
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .sheep-text-field__box,
-  .sheep-text-field__box::after,
-  .sheep-text-field__action,
-  .sheep-text-field__label,
-  .sheep-text-field__affix--start {
+  .sheep-input__box,
+  .sheep-input__box::after,
+  .sheep-input__action,
+  .sheep-input__label,
+  .sheep-input__affix--start {
     transition: none;
   }
-  .sheep-text-field__error {
+  .sheep-input__error {
     animation: none;
   }
-  .sheep-text-field__spinner {
+  .sheep-input__spinner {
     animation-duration: 1.6s;
   }
 }
 
 @media (forced-colors: active) {
-  .sheep-text-field__box {
+  .sheep-input__box {
     border-bottom-color: currentColor;
   }
-  .sheep-text-field__box::after {
+  .sheep-input__box::after {
     background: Highlight;
   }
-  :host(.sheep-text-field--disabled) .sheep-text-field__box {
+  :host(.sheep-input--disabled) .sheep-input__box {
     border-bottom-color: GrayText;
     opacity: 1;
   }
-  :host(.sheep-text-field--disabled) .sheep-text-field__label,
-  :host(.sheep-text-field--disabled) .sheep-text-field__input {
+  :host(.sheep-input--disabled) .sheep-input__label,
+  :host(.sheep-input--disabled) .sheep-input__input {
     color: GrayText;
     opacity: 1;
   }

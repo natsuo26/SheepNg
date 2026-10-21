@@ -134,17 +134,17 @@ Focus is a 2px accent outline, never the browser default and never a soft glow.
 `prefers-reduced-motion` drops the transitions and slows the spinner, and
 `forced-colors` hands the palette over to system colours.
 
-## `sheep-text-field`
+## `sheep-input`
 
 ```ts
-import { SHEEP_TEXT_FIELD } from '@sheep-ng/ui';
+import { SHEEP_INPUT } from '@sheep-ng/ui';
 ```
 
 ```html
-<sheep-text-field [(value)]="name" required>
-  <span sheepTextFieldLabel>Display name</span>
-  <span sheepTextFieldHint>Shown on your profile.</span>
-</sheep-text-field>
+<sheep-input [(value)]="name" required>
+  <span sheepInputLabel>Display name</span>
+  <span sheepInputHint>Shown on your profile.</span>
+</sheep-input>
 ```
 
 It renders a real `<input>`, so typing, selection, autofill, IME composition and
@@ -183,7 +183,7 @@ There is nothing to switch on, and two cases resolve themselves:
 - A leading prefix keeps its width but fades out while the label rests over it,
   so the value never shifts sideways under the caret.
 
-`SHEEP_TEXT_FIELD` is the field plus its eight directives, ready to drop into a
+`SHEEP_INPUT` is the field plus its eight directives, ready to drop into a
 component's `imports`. The pieces are standalone and importable one at a time,
 but a directive that is never written is never instantiated, so importing the
 set costs nothing.
@@ -195,9 +195,9 @@ to end and nothing else appears at the call site:
 
 ```html
 <form (submit)="onSubmit($event)">
-  <sheep-text-field [formField]="f.email">
-    <span sheepTextFieldLabel>Email</span>
-  </sheep-text-field>
+  <sheep-input [formField]="f.email">
+    <span sheepInputLabel>Email</span>
+  </sheep-input>
 </form>
 ```
 
@@ -214,13 +214,13 @@ errors, touched and constraint bindings above.
 ### Errors
 
 An error is `{ kind, message? }` — the shape signal forms uses. Text resolves
-from the error's own `message` first, then from `SHEEP_TEXT_FIELD_MESSAGES`,
+from the error's own `message` first, then from `SHEEP_INPUT_MESSAGES`,
 which is where `required` and `email` get one sentence for the whole app.
 A `kind` with no text renders nothing rather than leaking the kind.
 
 ```ts
 providers: [
-  provideSheepTextFieldMessages({
+  provideSheepInputMessages({
     errors: { required: 'Bitte ausfüllen.' },
     showPassword: 'Passwort anzeigen',
   }),
@@ -239,10 +239,10 @@ plain field carries none of their weight.
 
 | Directive              | Adds                                                          |
 | ---------------------- | ------------------------------------------------------------- |
-| `sheepTextFieldLabel`  | The label. Projected into a real `<label for>`.               |
-| `sheepTextFieldHint`   | Guidance in the footer, referenced by `aria-describedby`.     |
-| `sheepTextFieldPrefix` | Content before the value, inside the box.                     |
-| `sheepTextFieldSuffix` | Content after the value, inside the box.                      |
+| `sheepInputLabel`  | The label. Projected into a real `<label for>`.               |
+| `sheepInputHint`   | Guidance in the footer, referenced by `aria-describedby`.     |
+| `sheepInputPrefix` | Content before the value, inside the box.                     |
+| `sheepInputSuffix` | Content after the value, inside the box.                      |
 | `sheepPassword`        | `type="password"` plus a reveal toggle.                       |
 | `sheepEmail`           | `type="email"`, the mobile keyboard hints, and the check.     |
 | `sheepCounter`         | A count in the footer, against `maxLength` when there is one. |
@@ -251,8 +251,8 @@ plain field carries none of their weight.
 `sheepPassword` and `sheepEmail` set the type themselves, so there is no
 `type="password"` beside them to drift out of sync.
 
-Write your own by implementing `SheepTextFieldFeature` and registering with the
-`SheepTextFieldFeatures` the field provides. Each hook is a plain function of
+Write your own by implementing `SheepInputFeature` and registering with the
+`SheepInputFeatures` the field provides. Each hook is a plain function of
 the field's state called inside the field's own `computed`s, so a signal the
 feature reads on the way through is tracked as if the field had read it.
 

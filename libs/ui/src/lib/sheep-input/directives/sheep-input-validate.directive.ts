@@ -1,10 +1,10 @@
 import { Directive, inject, input } from '@angular/core';
 import {
-  SheepTextFieldFeatures,
+  SheepInputFeatures,
   type SheepFieldError,
-  type SheepTextFieldFeature,
-  type SheepTextFieldState,
-} from '../sheep-text-field.feature';
+  type SheepInputFeature,
+  type SheepInputState,
+} from '../sheep-input.feature';
 
 /**
  * A rule of the caller's own, run over the value on every keystroke.
@@ -18,7 +18,7 @@ import {
  *   RESERVED.has(value.toLowerCase()) ? 'That name is taken.' : null;
  * ```
  * ```html
- * <sheep-text-field [sheepValidate]="notReserved">
+ * <sheep-input [sheepValidate]="notReserved">
  * ```
  *
  * Whatever it returns is merged with the errors the field was handed, resolved
@@ -29,12 +29,12 @@ import {
  * form bound to this field will not see it and will still consider itself
  * valid. Use this on a field with no form behind it. On a form-bound field the
  * equivalent is `validate()` in the schema, which the form can actually act
- * on — see `SheepTextFieldEmailDirective` for the same note.
+ * on — see `SheepInputEmailDirective` for the same note.
  */
 @Directive({
-  selector: 'sheep-text-field[sheepValidate]',
+  selector: 'sheep-input[sheepValidate]',
 })
-export class SheepTextFieldValidateDirective implements SheepTextFieldFeature {
+export class SheepInputValidateDirective implements SheepInputFeature {
   /** The rule. Called with the raw value, including the empty string. */
   readonly validator = input.required<SheepFieldValidator>({
     alias: 'sheepValidate',
@@ -42,7 +42,7 @@ export class SheepTextFieldValidateDirective implements SheepTextFieldFeature {
 
   readonly validate = ({
     value,
-  }: SheepTextFieldState): readonly SheepFieldError[] | null => {
+  }: SheepInputState): readonly SheepFieldError[] | null => {
     const result = this.validator()(value);
     if (result === null || result === undefined) {
       return null;
@@ -54,7 +54,7 @@ export class SheepTextFieldValidateDirective implements SheepTextFieldFeature {
   };
 
   constructor() {
-    inject(SheepTextFieldFeatures).add(this);
+    inject(SheepInputFeatures).add(this);
   }
 }
 

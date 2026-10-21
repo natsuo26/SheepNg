@@ -8,10 +8,10 @@ import {
   minLength,
   required,
 } from '@angular/forms/signals';
-import { SHEEP_TEXT_FIELD } from './sheep-text-field.imports';
-import { SheepTextFieldComponent } from './sheep-text-field.component';
-import { provideSheepTextFieldMessages } from './sheep-text-field.messages';
-import type { SheepFieldValidator } from './directives/sheep-text-field-validate.directive';
+import { SHEEP_INPUT } from './sheep-input.imports';
+import { SheepInputComponent } from './sheep-input.component';
+import { provideSheepInputMessages } from './sheep-input.messages';
+import type { SheepFieldValidator } from './directives/sheep-input-validate.directive';
 
 /** Every query a test needs, against whichever host is mounted. */
 const input = (fixture: ComponentFixture<unknown>): HTMLInputElement =>
@@ -22,15 +22,15 @@ const label = (fixture: ComponentFixture<unknown>): HTMLLabelElement =>
 
 const errorText = (fixture: ComponentFixture<unknown>): string | null =>
   fixture.nativeElement
-    .querySelector('.sheep-text-field__error')
+    .querySelector('.sheep-input__error')
     ?.textContent.trim() ?? null;
 
 const action = (fixture: ComponentFixture<unknown>): HTMLButtonElement =>
-  fixture.nativeElement.querySelector('.sheep-text-field__action');
+  fixture.nativeElement.querySelector('.sheep-input__action');
 
 const status = (fixture: ComponentFixture<unknown>): string | null =>
   fixture.nativeElement
-    .querySelector('.sheep-text-field__status')
+    .querySelector('.sheep-input__status')
     ?.textContent.trim() ?? null;
 
 const type = async (
@@ -48,17 +48,17 @@ const blur = async (fixture: ComponentFixture<unknown>): Promise<void> => {
   await fixture.whenStable();
 };
 
-describe('SheepTextFieldComponent', () => {
+describe('SheepInputComponent', () => {
   describe('on its own', () => {
-    let fixture: ComponentFixture<SheepTextFieldComponent>;
-    let component: SheepTextFieldComponent;
+    let fixture: ComponentFixture<SheepInputComponent>;
+    let component: SheepInputComponent;
 
     beforeEach(async () => {
       await TestBed.configureTestingModule({
-        imports: [SheepTextFieldComponent],
+        imports: [SheepInputComponent],
       }).compileComponents();
 
-      fixture = TestBed.createComponent(SheepTextFieldComponent);
+      fixture = TestBed.createComponent(SheepInputComponent);
       component = fixture.componentInstance;
       await fixture.whenStable();
     });
@@ -75,9 +75,9 @@ describe('SheepTextFieldComponent', () => {
     it('defaults to the underline variant at md', () => {
       const classes: DOMTokenList = fixture.nativeElement.classList;
 
-      expect(classes).toContain('sheep-text-field');
-      expect(classes).toContain('sheep-text-field--underline');
-      expect(classes).toContain('sheep-text-field--md');
+      expect(classes).toContain('sheep-input');
+      expect(classes).toContain('sheep-input--underline');
+      expect(classes).toContain('sheep-input--md');
     });
 
     it('points the label at the input it labels', () => {
@@ -86,7 +86,7 @@ describe('SheepTextFieldComponent', () => {
     });
 
     it('gives each field its own ids', async () => {
-      const other = TestBed.createComponent(SheepTextFieldComponent);
+      const other = TestBed.createComponent(SheepInputComponent);
       await other.whenStable();
 
       expect(input(other).id).not.toBe(input(fixture).id);
@@ -96,18 +96,18 @@ describe('SheepTextFieldComponent', () => {
       // The label is the placeholder until the field is in use, and its home
       // is the row above the box. Nothing about the box moves either way.
       expect(fixture.nativeElement.classList).not.toContain(
-        'sheep-text-field--floated',
+        'sheep-input--floated',
       );
 
       input(fixture).dispatchEvent(new Event('focus'));
       await fixture.whenStable();
       expect(fixture.nativeElement.classList).toContain(
-        'sheep-text-field--floated',
+        'sheep-input--floated',
       );
 
       await blur(fixture);
       expect(fixture.nativeElement.classList).not.toContain(
-        'sheep-text-field--floated',
+        'sheep-input--floated',
       );
     });
 
@@ -116,7 +116,7 @@ describe('SheepTextFieldComponent', () => {
       await blur(fixture);
 
       expect(fixture.nativeElement.classList).toContain(
-        'sheep-text-field--floated',
+        'sheep-input--floated',
       );
     });
 
@@ -127,7 +127,7 @@ describe('SheepTextFieldComponent', () => {
       // Otherwise the two would print on top of each other, and the
       // placeholder is the one the caller asked for.
       expect(fixture.nativeElement.classList).toContain(
-        'sheep-text-field--floated',
+        'sheep-input--floated',
       );
     });
 
@@ -159,7 +159,7 @@ describe('SheepTextFieldComponent', () => {
 
       expect(input(fixture).disabled).toBe(true);
       expect(fixture.nativeElement.classList).toContain(
-        'sheep-text-field--disabled',
+        'sheep-input--disabled',
       );
     });
 
@@ -246,7 +246,7 @@ describe('SheepTextFieldComponent', () => {
       const errorId = input(fixture).getAttribute('aria-describedby');
       expect(errorId).not.toBe(hintId);
       expect(
-        fixture.nativeElement.querySelector('.sheep-text-field__error').id,
+        fixture.nativeElement.querySelector('.sheep-input__error').id,
       ).toBe(errorId);
     });
 
@@ -273,15 +273,15 @@ describe('SheepTextFieldComponent', () => {
     // gets its own host rather than one host toggling attributes it cannot.
 
     @Component({
-      imports: [SHEEP_TEXT_FIELD],
-      template: `<sheep-text-field sheepPassword ariaLabel="Password" />`,
+      imports: [SHEEP_INPUT],
+      template: `<sheep-input sheepPassword ariaLabel="Password" />`,
     })
     class PasswordHost {}
 
     @Component({
-      imports: [SHEEP_TEXT_FIELD],
+      imports: [SHEEP_INPUT],
       template: `
-        <sheep-text-field sheepCounter [maxLength]="max()" ariaLabel="Bio" />
+        <sheep-input sheepCounter [maxLength]="max()" ariaLabel="Bio" />
       `,
     })
     class CounterHost {
@@ -289,8 +289,8 @@ describe('SheepTextFieldComponent', () => {
     }
 
     @Component({
-      imports: [SHEEP_TEXT_FIELD],
-      template: `<sheep-text-field sheepEmail ariaLabel="Email" />`,
+      imports: [SHEEP_INPUT],
+      template: `<sheep-input sheepEmail ariaLabel="Email" />`,
     })
     class EmailHost {}
 
@@ -362,8 +362,8 @@ describe('SheepTextFieldComponent', () => {
 
   describe('sheepValidate', () => {
     @Component({
-      imports: [SHEEP_TEXT_FIELD],
-      template: `<sheep-text-field [sheepValidate]="rule()" />`,
+      imports: [SHEEP_INPUT],
+      template: `<sheep-input [sheepValidate]="rule()" />`,
     })
     class Host {
       readonly rule = signal<SheepFieldValidator>(() => null);
@@ -398,15 +398,15 @@ describe('SheepTextFieldComponent', () => {
   describe('localisation', () => {
     it('takes overridden messages from the injector, keeping the rest', async () => {
       await TestBed.configureTestingModule({
-        imports: [SheepTextFieldComponent],
+        imports: [SheepInputComponent],
         providers: [
-          provideSheepTextFieldMessages({
+          provideSheepInputMessages({
             errors: { required: 'Bitte ausfüllen.' },
           }),
         ],
       }).compileComponents();
 
-      const fixture = TestBed.createComponent(SheepTextFieldComponent);
+      const fixture = TestBed.createComponent(SheepInputComponent);
       fixture.componentRef.setInput('touched', true);
       fixture.componentRef.setInput('errors', [
         { kind: 'required' },
@@ -421,11 +421,11 @@ describe('SheepTextFieldComponent', () => {
 
   describe('bound to a signal form', () => {
     @Component({
-      imports: [SHEEP_TEXT_FIELD, FormField],
+      imports: [SHEEP_INPUT, FormField],
       template: `
-        <sheep-text-field [formField]="f.email">
-          <span sheepTextFieldLabel>Email</span>
-        </sheep-text-field>
+        <sheep-input [formField]="f.email">
+          <span sheepInputLabel>Email</span>
+        </sheep-input>
       `,
     })
     class Host {
@@ -485,5 +485,168 @@ describe('SheepTextFieldComponent', () => {
 
       expect(input(fixture).disabled).toBe(true);
     });
+  });
+});
+
+describe('sheepNumber', () => {
+  @Component({
+    imports: [SHEEP_INPUT],
+    template: `
+      <sheep-input
+        sheepNumber
+        ariaLabel="Amount"
+        [min]="min()"
+        [max]="max()"
+        [step]="step()"
+        [(value)]="value"
+      />
+    `,
+  })
+  class Host {
+    readonly min = signal<number | undefined>(0);
+    readonly max = signal<number | undefined>(10);
+    readonly step = signal<number | undefined>(undefined);
+    readonly value = signal('');
+  }
+
+  let fixture: ComponentFixture<Host>;
+  let host: Host;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({ imports: [Host] }).compileComponents();
+    fixture = TestBed.createComponent(Host);
+    host = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  /**
+   * Dispatches the `beforeinput` the browser would send for typing `data` at
+   * the end of the current value, and reports whether it was let through.
+   */
+  const offer = (data: string): boolean => {
+    const el = input(fixture);
+    el.setSelectionRange(el.value.length, el.value.length);
+    const event = new InputEvent('beforeinput', {
+      data,
+      inputType: 'insertText',
+      cancelable: true,
+    });
+    el.dispatchEvent(event);
+    return !event.defaultPrevented;
+  };
+
+  const press = async (key: string): Promise<void> => {
+    input(fixture).dispatchEvent(
+      new KeyboardEvent('keydown', { key, cancelable: true }),
+    );
+    await fixture.whenStable();
+  };
+
+  it('stays a text input, so the wheel and the browser parser stay out of it', () => {
+    expect(input(fixture).getAttribute('type')).toBe('text');
+  });
+
+  it('asks for the number pad that fits the range and step', async () => {
+    expect(input(fixture).getAttribute('inputmode')).toBe('decimal');
+
+    host.step.set(1);
+    await fixture.whenStable();
+    expect(input(fixture).getAttribute('inputmode')).toBe('numeric');
+
+    // Neither phone pad has a minus key, so a field that takes negatives
+    // keeps the full keyboard.
+    host.min.set(-5);
+    await fixture.whenStable();
+    expect(input(fixture).hasAttribute('inputmode')).toBe(false);
+  });
+
+  it('refuses keystrokes that could not become a number', async () => {
+    expect(offer('a')).toBe(false);
+    expect(offer('e')).toBe(false);
+    expect(offer('-')).toBe(false); // min is 0
+    expect(offer('4')).toBe(true);
+
+    await type(fixture, '4.');
+    expect(offer('.')).toBe(false); // a second point
+    expect(offer('5')).toBe(true);
+  });
+
+  it('lets a minus through when min allows it, and a point only when step does', async () => {
+    host.min.set(undefined);
+    host.step.set(1);
+    await fixture.whenStable();
+
+    expect(offer('-')).toBe(true);
+    expect(offer('.')).toBe(false);
+  });
+
+  it('flags a value outside the range or off the step grid once touched', async () => {
+    await type(fixture, '11');
+    await blur(fixture);
+    expect(errorText(fixture)).toBe('This is above the allowed maximum.');
+
+    host.step.set(0.5);
+    await type(fixture, '2.25');
+    expect(errorText(fixture)).toBe('This is not one of the allowed values.');
+
+    await type(fixture, '2.5');
+    expect(errorText(fixture)).toBeNull();
+  });
+
+  it('does not treat an empty field as an error', async () => {
+    await blur(fixture);
+    expect(errorText(fixture)).toBeNull();
+  });
+
+  it('flags pasted text that is not a number', async () => {
+    // A value set without a beforeinput — a paste with no data, a form reset —
+    // still goes through the check.
+    await type(fixture, '1-2');
+    await blur(fixture);
+    expect(errorText(fixture)).toBe('Enter a number.');
+  });
+
+  it('steps with the arrow keys, held inside min and max', async () => {
+    host.step.set(0.1);
+    await fixture.whenStable();
+
+    await press('ArrowUp');
+    expect(host.value()).toBe('0');
+
+    await press('ArrowUp');
+    await press('ArrowUp');
+    await press('ArrowUp');
+    // Printed clean, not 0.30000000000000004.
+    expect(host.value()).toBe('0.3');
+
+    await press('ArrowDown');
+    await press('ArrowDown');
+    await press('ArrowDown');
+    await press('ArrowDown');
+    expect(host.value()).toBe('0');
+
+    host.value.set('9.95');
+    await fixture.whenStable();
+    await press('ArrowUp');
+    expect(host.value()).toBe('10');
+  });
+
+  it('leaves the arrows alone on a field that is not a number', async () => {
+    @Component({
+      imports: [SHEEP_INPUT],
+      template: `<sheep-input ariaLabel="Name" [(value)]="value" />`,
+    })
+    class Plain {
+      readonly value = signal('7');
+    }
+
+    const plain = TestBed.createComponent(Plain);
+    await plain.whenStable();
+    const event = new KeyboardEvent('keydown', { key: 'ArrowUp', cancelable: true });
+    input(plain).dispatchEvent(event);
+    await plain.whenStable();
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(plain.componentInstance.value()).toBe('7');
   });
 });

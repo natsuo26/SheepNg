@@ -4,7 +4,7 @@ export * from './lib/sheep-list/index';
 
 export * from './lib/theme/index';
 
-export * from './lib/sheep-text-field/index';
+export * from './lib/sheep-input/index';
 
 export * from './lib/sheep-dialog/index';
 
@@ -19,3 +19,5 @@ export * from './lib/sheep-badge/index';
 export * from './lib/sheep-side-sheet/index';
 
 export * from './lib/sheep-tree/index';
+
+export * from './lib/sheep-nav-bar/index';

@@ -105,7 +105,10 @@ emulated encapsulation keeps two pages from colliding.
 
 Related judgement calls already made: no separate `sheep-icon-button` (it is
 `shape="square"` on `sheep-button`, since a second component would re-expose the
-same variants/tones/sizes and drift).
+same variants/tones/sizes and drift). No separate `sheep-number-field` either, for
+the same reason — `<sheep-input sheepNumber>` covers it (a text input with a number pad,
+keystroke filter, arrow-key stepping and min/max/step checks; deliberately not native
+`type="number"`, whose wheel-changes-value and parse-to-empty behaviour it exists to avoid).
 
 ## Known issues
 

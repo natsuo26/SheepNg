@@ -14,18 +14,18 @@ import {
 } from '@angular/core';
 import type { FormValueControl, ValidationError } from '@angular/forms/signals';
 import type {
-  SheepTextFieldSize,
-  SheepTextFieldType,
-  SheepTextFieldVariant,
-} from './sheep-text-field.constants';
+  SheepInputSize,
+  SheepInputType,
+  SheepInputVariant,
+} from './sheep-input.constants';
 import {
-  SheepTextFieldFeatures,
+  SheepInputFeatures,
   type SheepFieldError,
-  type SheepTextFieldAction,
-  type SheepTextFieldAttrs,
-  type SheepTextFieldState,
-} from './sheep-text-field.feature';
-import { SHEEP_TEXT_FIELD_MESSAGES } from './sheep-text-field.messages';
+  type SheepInputAction,
+  type SheepInputAttrs,
+  type SheepInputState,
+} from './sheep-input.feature';
+import { SHEEP_INPUT_MESSAGES } from './sheep-input.messages';
 
 /** Distinguishes one field's generated ids from the next one's. */
 let nextId = 0;
@@ -39,10 +39,10 @@ let nextId = 0;
  * them, and wires the `id` / `aria-describedby` / `aria-invalid` between them:
  *
  * ```html
- * <sheep-text-field [(value)]="name">
- *   <span sheepTextFieldLabel>Display name</span>
- *   <span sheepTextFieldHint>Shown on your profile.</span>
- * </sheep-text-field>
+ * <sheep-input [(value)]="name">
+ *   <span sheepInputLabel>Display name</span>
+ *   <span sheepInputHint>Shown on your profile.</span>
+ * </sheep-input>
  * ```
  *
  * It implements signal forms' `FormValueControl<string>`, so `[formField]`
@@ -51,12 +51,12 @@ let nextId = 0;
  * the native input as real attributes:
  *
  * ```html
- * <sheep-text-field [formField]="f.email"><span sheepTextFieldLabel>Email</span></sheep-text-field>
+ * <sheep-input [formField]="f.email"><span sheepInputLabel>Email</span></sheep-input>
  * ```
  *
  * Everything past a value and a label is a directive on the host element —
- * `sheepPassword`, `sheepEmail`, `sheepCounter`, `sheepValidate` — so a plain
- * field carries none of their weight. See `SheepTextFieldFeature`.
+ * `sheepPassword`, `sheepEmail`, `sheepNumber`, `sheepCounter`, `sheepValidate` — so a plain
+ * field carries none of their weight. See `SheepInputFeature`.
  *
  * The field is a rule, not a box: one hairline under the value, with empty
  * space doing the framing. Its label floats — resting inside the box in place
@@ -68,33 +68,34 @@ let nextId = 0;
  * spec'd looks rather than opening one up.
  */
 @Component({
-  selector: 'sheep-text-field',
+  selector: 'sheep-input',
   imports: [],
-  templateUrl: './sheep-text-field.component.html',
-  styleUrl: './sheep-text-field.component.scss',
+  templateUrl: './sheep-input.component.html',
+  styleUrl: './sheep-input.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [SheepTextFieldFeatures],
+  providers: [SheepInputFeatures],
   host: {
-    class: 'sheep-text-field',
+    class: 'sheep-input',
     '[class]': 'classes()',
   },
 })
-export class SheepTextFieldComponent implements FormValueControl<string> {
+export class SheepInputComponent implements FormValueControl<string> {
   // --- appearance ----------------------------------------------------------
 
   /** Visual weight. Defaults to `underline`. */
-  readonly variant = input<SheepTextFieldVariant>('underline');
+  readonly variant = input<SheepInputVariant>('underline');
 
   /** Control size. Defaults to `md`. */
-  readonly size = input<SheepTextFieldSize>('md');
+  readonly size = input<SheepInputSize>('md');
 
   /**
    * Native input type. Defaults to `text`.
    *
-   * A feature directive that owns a type — `sheepPassword`, `sheepEmail` —
+   * A feature directive that owns a type — `sheepPassword`, `sheepEmail`,
+   * `sheepNumber` —
    * sets it itself and overrides this.
    */
-  readonly type = input<SheepTextFieldType>('text');
+  readonly type = input<SheepInputType>('text');
 
   // --- content -------------------------------------------------------------
 
@@ -104,7 +105,7 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
   /** Native `autocomplete` token. Worth setting on every real form field. */
   readonly autocomplete = input<string | null>(null);
 
-  /** Accessible name. Required when no `sheepTextFieldLabel` is projected. */
+  /** Accessible name. Required when no `sheepInputLabel` is projected. */
   readonly ariaLabel = input<string | null>(null);
 
   // --- the signal-forms control contract -----------------------------------
@@ -182,8 +183,8 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
   // --- internals -----------------------------------------------------------
 
   /** The features declared on this element, in the order they were written. */
-  private readonly features = inject(SheepTextFieldFeatures).all;
-  private readonly messages = inject(SHEEP_TEXT_FIELD_MESSAGES);
+  private readonly features = inject(SheepInputFeatures).all;
+  private readonly messages = inject(SHEEP_INPUT_MESSAGES);
 
   private readonly inputRef =
     viewChild.required<ElementRef<HTMLInputElement>>('input');
@@ -194,7 +195,7 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
    * Generated rather than required from the caller: the association between
    * the three is the component's job, not the call site's.
    */
-  private readonly uid = `sheep-text-field-${++nextId}`;
+  private readonly uid = `sheep-input-${++nextId}`;
   protected readonly inputId = `${this.uid}-input`;
   protected readonly hintId = `${this.uid}-hint`;
   protected readonly errorId = `${this.uid}-error`;
@@ -231,18 +232,18 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
   );
 
   /** What every feature hook is handed. */
-  private readonly state = computed<SheepTextFieldState>(() => ({
+  private readonly state = computed<SheepInputState>(() => ({
     value: this.value(),
     maxLength: this.maxLength(),
     inert: this.isInert(),
   }));
 
   /** Feature attributes merged over the component's own `type`. */
-  private readonly attrs = computed<SheepTextFieldAttrs>(() => {
+  private readonly attrs = computed<SheepInputAttrs>(() => {
     const state = this.state();
     return this.features()
       .map((feature) => feature.attrs?.(state))
-      .reduce<SheepTextFieldAttrs>(
+      .reduce<SheepInputAttrs>(
         (merged, attrs) => (attrs ? { ...merged, ...attrs } : merged),
         {},
       );
@@ -299,11 +300,11 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
   );
 
   /** Trailing buttons contributed by features, in registration order. */
-  protected readonly actions = computed<readonly SheepTextFieldAction[]>(() => {
+  protected readonly actions = computed<readonly SheepInputAction[]>(() => {
     const state = this.state();
     return this.features()
       .map((feature) => feature.action?.(state))
-      .filter((action): action is SheepTextFieldAction => !!action);
+      .filter((action): action is SheepInputAction => !!action);
   });
 
   /** Trailing footer text — the character counter, normally. */
@@ -327,17 +328,62 @@ export class SheepTextFieldComponent implements FormValueControl<string> {
 
   protected readonly classes = computed(
     () =>
-      `sheep-text-field--${this.variant()} sheep-text-field--${this.size()}` +
-      (this.isFloating() ? ' sheep-text-field--floated' : '') +
-      (this.showErrors() ? ' sheep-text-field--errored' : '') +
-      (this.disabled() ? ' sheep-text-field--disabled' : '') +
-      (this.readonly() ? ' sheep-text-field--readonly' : ''),
+      `sheep-input--${this.variant()} sheep-input--${this.size()}` +
+      (this.isFloating() ? ' sheep-input--floated' : '') +
+      (this.showErrors() ? ' sheep-input--errored' : '') +
+      (this.disabled() ? ' sheep-input--disabled' : '') +
+      (this.readonly() ? ' sheep-input--readonly' : ''),
   );
 
   // --- events --------------------------------------------------------------
 
   protected onInput(event: Event): void {
     this.value.set((event.target as HTMLInputElement).value);
+  }
+
+  /**
+   * Puts an insertion to every feature that filters, before the browser
+   * applies it.
+   *
+   * The value the insertion would leave is worked out here — the selection
+   * replaced by the inserted text — so a feature answers about a whole value
+   * and never has to reason about carets. An insertion with no `data` (some
+   * drag-and-drop paths) is let through; `validate` still sees the result.
+   */
+  protected onBeforeInput(event: Event): void {
+    const { inputType, data } = event as InputEvent;
+    if (!inputType?.startsWith('insert') || data == null) return;
+
+    const filters = this.features().filter((feature) => feature.accept);
+    if (filters.length === 0) return;
+
+    const input = event.target as HTMLInputElement;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? start;
+    const next = input.value.slice(0, start) + data + input.value.slice(end);
+    const state = this.state();
+
+    if (filters.some((feature) => !feature.accept?.(next, state))) {
+      event.preventDefault();
+    }
+  }
+
+  /** Arrow Up / Arrow Down, offered to the features that step. */
+  protected onKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    if (this.isInert()) return;
+
+    const direction = event.key === 'ArrowUp' ? 1 : -1;
+    const state = this.state();
+
+    for (const feature of this.features()) {
+      const next = feature.stepValue?.(direction, state);
+      if (next != null) {
+        event.preventDefault();
+        this.value.set(next);
+        return;
+      }
+    }
   }
 
   protected onFocus(): void {

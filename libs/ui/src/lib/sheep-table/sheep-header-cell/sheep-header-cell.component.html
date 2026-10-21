@@ -59,14 +59,14 @@
     [attr.id]="panelId"
     (toggle)="onToggle($event)"
   >
-    <sheep-text-field
+    <sheep-input
       variant="soft"
       [size]="fieldSize()"
       [value]="term()"
       (valueChange)="setTerm($event)"
     >
-      <span sheepTextFieldLabel>{{ filterLabel() }}</span>
-    </sheep-text-field>
+      <span sheepInputLabel>{{ filterLabel() }}</span>
+    </sheep-input>
 
     <sheep-button
       size="sm"

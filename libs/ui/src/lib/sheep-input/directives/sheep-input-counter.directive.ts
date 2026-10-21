@@ -1,15 +1,15 @@
 import { Directive, inject } from '@angular/core';
 import {
-  SheepTextFieldFeatures,
-  type SheepTextFieldFeature,
-  type SheepTextFieldState,
-} from '../sheep-text-field.feature';
+  SheepInputFeatures,
+  type SheepInputFeature,
+  type SheepInputState,
+} from '../sheep-input.feature';
 
 /**
  * Shows how much has been typed, at the trailing end of the footer.
  *
  * ```html
- * <sheep-text-field sheepCounter [maxLength]="80">
+ * <sheep-input sheepCounter [maxLength]="80">
  * ```
  *
  * With a `maxLength` it reads `12/80`, and with none it just counts. The limit
@@ -22,15 +22,15 @@ import {
  * anyone wants read aloud.
  */
 @Directive({
-  selector: 'sheep-text-field[sheepCounter]',
+  selector: 'sheep-input[sheepCounter]',
 })
-export class SheepTextFieldCounterDirective implements SheepTextFieldFeature {
-  readonly status = ({ value, maxLength }: SheepTextFieldState): string =>
+export class SheepInputCounterDirective implements SheepInputFeature {
+  readonly status = ({ value, maxLength }: SheepInputState): string =>
     maxLength === undefined
       ? `${value.length}`
       : `${value.length}/${maxLength}`;
 
   constructor() {
-    inject(SheepTextFieldFeatures).add(this);
+    inject(SheepInputFeatures).add(this);
   }
 }

@@ -1,0 +1,170 @@
+/* ==========================================================================
+   sheep-nav-bar-item
+
+   No public custom-property API. Every colour, metric and timing resolves from
+   the theme layer (`--sheep-*`). Retheme in _sheep-theme-spec.scss.
+
+   The host IS the item: these rules strip the platform chrome off an <a> or a
+   <button> and leave the behaviour underneath native. Items sit on the shared
+   `--sheep-ctl-*` metrics, so a button in the bar's end slot lines up with the
+   links beside it.
+   ========================================================================== */
+
+$sizes: sm, md, lg;
+
+:host {
+  --_motion: var(--sheep-motion-duration) var(--sheep-motion-ease);
+
+  /* Fallbacks, so an item still lands on the spec if a modifier is missing. */
+  --_h: var(--sheep-ctl-md-height);
+  --_px: var(--sheep-ctl-md-pad-x);
+  --_fs: var(--sheep-ctl-md-font);
+  --_icon: var(--sheep-ctl-md-icon);
+  --_gap: var(--sheep-ctl-md-gap);
+  --_radius: var(--sheep-ctl-md-radius);
+
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  height: var(--_h);
+  padding: 0 var(--_px);
+  margin: 0;
+
+  appearance: none;
+  border: 0;
+  border-radius: var(--_radius);
+  background: transparent;
+
+  color: var(--sheep-color-text-muted);
+  font: inherit;
+  font-family: var(--sheep-font-body);
+  font-size: var(--_fs);
+  font-weight: var(--sheep-font-weight-label);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--_motion),
+    color var(--_motion);
+}
+
+@each $size in $sizes {
+  :host(.sheep-nav-bar-item--#{$size}) {
+    --_h: var(--sheep-ctl-#{$size}-height);
+    --_px: var(--sheep-ctl-#{$size}-pad-x);
+    --_fs: var(--sheep-ctl-#{$size}-font);
+    --_icon: var(--sheep-ctl-#{$size}-icon);
+    --_gap: var(--sheep-ctl-#{$size}-gap);
+    --_radius: var(--sheep-ctl-#{$size}-radius);
+  }
+}
+
+:host(:hover) {
+  color: var(--sheep-color-text);
+  background: color-mix(in srgb, var(--sheep-color-accent) 12%, transparent);
+}
+
+:host(:active) {
+  background: color-mix(in srgb, var(--sheep-color-accent) 20%, transparent);
+}
+
+/* Drawn inside the item: the bar's item row is a scroller, and a scroller
+   clips anything drawn past its edges — an outset ring included. */
+:host(:focus-visible) {
+  outline: var(--sheep-focus-width) solid var(--sheep-color-accent);
+  outline-offset: calc(-1 * var(--sheep-focus-width));
+}
+
+/* --------------------------------------------------------------------------
+   Current
+
+   Keyed off aria-current, not a class: the attribute is what a screen reader
+   announces, so it is what gets painted. Text at full strength plus an accent
+   rule under the label — the rule, not the colour, is what survives being
+   read without colour.
+   -------------------------------------------------------------------------- */
+
+:host([aria-current]:not([aria-current='false'])) {
+  color: var(--sheep-color-text);
+}
+
+:host([aria-current]:not([aria-current='false']))::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--_px);
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--sheep-color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Disabled
+   -------------------------------------------------------------------------- */
+
+:host(.sheep-nav-bar-item--disabled) {
+  color: var(--sheep-color-text-faint);
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* A link has no native disabled, so it is made deaf to the pointer here. A
+   button is native-disabled and needs only the cursor. */
+:host(a.sheep-nav-bar-item--disabled) {
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Slots
+   -------------------------------------------------------------------------- */
+
+.sheep-nav-bar-item__lead,
+.sheep-nav-bar-item__tail {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+
+.sheep-nav-bar-item__lead:empty,
+.sheep-nav-bar-item__tail:empty {
+  display: none;
+}
+
+/* Projected icons are compiled in the consumer's scope. Paint is left alone —
+   an icon declares its own fill/stroke, normally currentColor. */
+:host ::ng-deep .sheep-nav-bar-item__lead > :is(svg, img) {
+  display: block;
+  width: var(--_icon);
+  height: var(--_icon);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  :host(:focus-visible) {
+    outline-color: Highlight;
+  }
+  /* A background is repainted as Canvas in forced colours, which would erase
+     the rule; opt it out so the current item keeps its mark. */
+  :host([aria-current]:not([aria-current='false']))::after {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+  :host(.sheep-nav-bar-item--disabled) {
+    color: GrayText;
+    opacity: 1;
+  }
+}

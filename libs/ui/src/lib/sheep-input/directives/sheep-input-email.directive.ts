@@ -1,11 +1,11 @@
 import { Directive, inject } from '@angular/core';
 import {
-  SheepTextFieldFeatures,
+  SheepInputFeatures,
   type SheepFieldError,
-  type SheepTextFieldAttrs,
-  type SheepTextFieldFeature,
-  type SheepTextFieldState,
-} from '../sheep-text-field.feature';
+  type SheepInputAttrs,
+  type SheepInputFeature,
+  type SheepInputState,
+} from '../sheep-input.feature';
 
 /**
  * Angular's own address pattern, so a field validated here and a field
@@ -22,9 +22,9 @@ const EMAIL_ERROR: readonly SheepFieldError[] = [{ kind: 'email' }];
  * Turns the field into an email field: the type, the keyboard, and the check.
  *
  * ```html
- * <sheep-text-field sheepEmail autocomplete="email">
- *   <span sheepTextFieldLabel>Work email</span>
- * </sheep-text-field>
+ * <sheep-input sheepEmail autocomplete="email">
+ *   <span sheepInputLabel>Work email</span>
+ * </sheep-input>
  * ```
  *
  * Beyond `type="email"` it turns off the four things a phone keyboard does to
@@ -43,10 +43,10 @@ const EMAIL_ERROR: readonly SheepFieldError[] = [{ kind: 'email' }];
  * same applies to `sheepValidate`.
  */
 @Directive({
-  selector: 'sheep-text-field[sheepEmail]',
+  selector: 'sheep-input[sheepEmail]',
 })
-export class SheepTextFieldEmailDirective implements SheepTextFieldFeature {
-  readonly attrs = (): SheepTextFieldAttrs => ({
+export class SheepInputEmailDirective implements SheepInputFeature {
+  readonly attrs = (): SheepInputAttrs => ({
     type: 'email',
     inputmode: 'email',
     autocapitalize: 'none',
@@ -56,10 +56,10 @@ export class SheepTextFieldEmailDirective implements SheepTextFieldFeature {
 
   readonly validate = ({
     value,
-  }: SheepTextFieldState): readonly SheepFieldError[] | null =>
+  }: SheepInputState): readonly SheepFieldError[] | null =>
     value === '' || EMAIL.test(value) ? null : EMAIL_ERROR;
 
   constructor() {
-    inject(SheepTextFieldFeatures).add(this);
+    inject(SheepInputFeatures).add(this);
   }
 }

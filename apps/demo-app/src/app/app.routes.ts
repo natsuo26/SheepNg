@@ -7,8 +7,8 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.ButtonDemo),
   },
   {
-    path: 'text-field',
-    loadComponent: () => import('@sheep-ng/demo').then((m) => m.TextFieldDemo),
+    path: 'input',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.InputDemo),
   },
   {
     path: 'chips',
@@ -17,6 +17,10 @@ export const appRoutes: Route[] = [
   {
     path: 'badges',
     loadComponent: () => import('@sheep-ng/demo').then((m) => m.BadgeDemo),
+  },
+  {
+    path: 'nav-bar',
+    loadComponent: () => import('@sheep-ng/demo').then((m) => m.NavBarDemo),
   },
   {
     path: 'side-sheet',

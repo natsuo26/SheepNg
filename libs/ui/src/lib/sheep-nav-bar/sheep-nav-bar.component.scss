@@ -1,0 +1,192 @@
+/* ==========================================================================
+   sheep-nav-bar
+
+   No public custom-property API. Every colour, metric and timing resolves from
+   the theme layer (`--sheep-*`), so a bar cannot be styled into something that
+   is not in the spec. Retheme in _sheep-theme-spec.scss.
+
+   Three regions on one row: start and end take what they need and never
+   shrink; the items take the rest and scroll sideways when that is not
+   enough. The bar keeps one height whatever is in it.
+   ========================================================================== */
+
+/* Width of an edge fade, and the room the step button sits in. Matches
+   EDGE_CLEARANCE in the component. */
+$edge: 48px;
+
+:host {
+  display: flex;
+  align-items: center;
+  gap: var(--sheep-space-8);
+
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--sheep-space-2) var(--sheep-space-8);
+
+  background: var(--sheep-color-bg);
+  color: var(--sheep-color-text);
+  font-family: var(--sheep-font-body);
+
+  /* The rule fades at its ends rather than stopping cleanly, in step with the
+     rest of the library's hairlines. */
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(
+      to right,
+      transparent,
+      var(--sheep-color-line) 48px,
+      var(--sheep-color-line) calc(100% - 48px),
+      transparent
+    )
+    1;
+}
+
+.sheep-nav-bar__start,
+.sheep-nav-bar__end {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--sheep-space-3);
+}
+
+.sheep-nav-bar__start:empty,
+.sheep-nav-bar__end:empty {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Items
+
+   The <nav> is the scroller. No scrollbar: on a touch screen the row is
+   swiped, on a keyboard it follows focus, with a mouse the step buttons page
+   it, and a bar-height scrollbar under a row of links reads as a broken
+   layout. The fades and the step buttons are what say there is more.
+   -------------------------------------------------------------------------- */
+
+.sheep-nav-bar__track {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+}
+
+.sheep-nav-bar__nav {
+  --_fade-start: 0px;
+  --_fade-end: 0px;
+  --_fade-dir: to right;
+
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  /* Tabbing to an item past the edge stops it clear of the fade and the step
+     button, rather than flush against the edge underneath them. */
+  scroll-padding-inline: $edge;
+
+  mask-image: linear-gradient(
+    var(--_fade-dir),
+    transparent,
+    #000 var(--_fade-start),
+    #000 calc(100% - var(--_fade-end)),
+    transparent
+  );
+}
+
+.sheep-nav-bar__nav:dir(rtl) {
+  --_fade-dir: to left;
+}
+
+.sheep-nav-bar__nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* A fade only on an edge that has items past it, so a row that fits — and the
+   first item of a row at rest — is never dimmed. */
+:host(.sheep-nav-bar--more-start) .sheep-nav-bar__nav {
+  --_fade-start: #{$edge};
+}
+
+:host(.sheep-nav-bar--more-end) .sheep-nav-bar__nav {
+  --_fade-end: #{$edge};
+}
+
+.sheep-nav-bar__items {
+  display: flex;
+  align-items: center;
+  gap: var(--sheep-space-1);
+  width: max-content;
+}
+
+/* --------------------------------------------------------------------------
+   Step buttons
+
+   Laid over the faded edge rather than beside the row, so appearing and
+   disappearing never shifts an item under the pointer.
+   -------------------------------------------------------------------------- */
+
+.sheep-nav-bar__step {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  width: var(--sheep-ctl-sm-height);
+  height: var(--sheep-ctl-sm-height);
+  padding: 0;
+  margin: 0;
+  translate: 0 -50%;
+
+  appearance: none;
+  border: 1px solid var(--sheep-color-line);
+  border-radius: 50%;
+  background: var(--sheep-color-bg);
+  box-shadow: var(--sheep-shadow-sm);
+  color: var(--sheep-color-text-muted);
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--sheep-motion-duration) var(--sheep-motion-ease),
+    color var(--sheep-motion-duration) var(--sheep-motion-ease);
+}
+
+.sheep-nav-bar__step--start {
+  inset-inline-start: 0;
+}
+
+.sheep-nav-bar__step--end {
+  inset-inline-end: 0;
+}
+
+/* The chevrons point the physical way the row moves. */
+.sheep-nav-bar__step:dir(rtl) svg {
+  scale: -1 1;
+}
+
+.sheep-nav-bar__step:hover {
+  color: var(--sheep-color-text);
+  background: color-mix(in srgb, var(--sheep-color-accent) 12%, var(--sheep-color-bg));
+}
+
+.sheep-nav-bar__step svg {
+  display: block;
+  width: var(--sheep-ctl-sm-icon);
+  height: var(--sheep-ctl-sm-icon);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheep-nav-bar__step {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .sheep-nav-bar__step {
+    border-color: ButtonText;
+  }
+}
