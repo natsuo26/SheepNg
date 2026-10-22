@@ -1,0 +1,60 @@
+# Builds the demo app and publishes it to GitHub Pages at
+# https://natsuo26.github.io/SheepNg/
+#
+# One-time setup: Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+name: Deploy demo to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; let an in-flight one finish rather than cancel it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build demo-app
+        run: npx nx build demo-app --configuration=github-pages
+        env:
+          NX_DAEMON: 'false'
+
+      # Pages has no SPA rewrite: serve index.html for unknown paths so deep
+      # links like /SheepNg/badges survive a reload. .nojekyll stops Jekyll
+      # from dropping files that start with an underscore.
+      - name: Add SPA fallback
+        run: |
+          cp dist/apps/demo-app/browser/index.html dist/apps/demo-app/browser/404.html
+          touch dist/apps/demo-app/browser/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/apps/demo-app/browser
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
